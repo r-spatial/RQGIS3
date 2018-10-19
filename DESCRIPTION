@@ -1,8 +1,8 @@
-Package: RQGIS
+Package: RQGIS3
 Date: 2018-08-14
 Type: Package
-Title: Integrating R with QGIS
-Version: 1.0.4.9000
+Title: Integrating R with QGIS3
+Version: 1.0.1.9000
 Authors@R: c(
     person("Jannes", "Muenchow",
     email = "jannes.muenchow@uni-jena.de", 
@@ -21,8 +21,8 @@ Description: Establishes an interface between R and 'QGIS', i.e. it allows
     This in turn creates a powerful environment for advanced and innovative
     (geo-)statistical geocomputing. 'QGIS' is licensed under GPL version 2 or
     greater and is available from <http://www.qgis.org/en/site/>.
-URL: https://github.com/jannes-m/RQGIS
-BugReports: https://github.com/jannes-m/RQGIS/issues
+URL: https://github.com/jannes-m/RQGIS3
+BugReports: https://github.com/jannes-m/RQGIS3/issues
 License: GPL-3
 LazyData: TRUE
 Encoding: UTF-8
