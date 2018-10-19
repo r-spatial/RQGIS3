@@ -8,8 +8,11 @@ params = pass_args(alg, elevation = "C:/Users/pi37pat/Desktop/dem.tif",
 
 alg = "qgis:aspect"
 get_args_man(alg)
-params = pass_args(alg, INPUT = "C:/Users/pi37pat/Desktop/dem.tif", OUTPUT = "aspect.tif")
-
+params = pass_args(alg,
+                   # INPUT = "C:/Users/pi37pat/Desktop/dem.tif", 
+                   INPUT = dem,
+                   OUTPUT = file.path(tempdir(), "aspect.tif"))
+run_qgis(alg, params = params)
 # find_algorithms("voronoi")
 alg = "qgis:voronoipolygons"
 get_usage(alg)
