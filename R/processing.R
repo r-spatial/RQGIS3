@@ -38,7 +38,7 @@ set_env <- function(root = NULL, new = FALSE, dev = FALSE, ...) {
   if ("qgis_env" %in% ls(.RQGIS_cache) && new == FALSE) {
     return(get("qgis_env", envir = .RQGIS_cache))
   }
-
+  
   if (Sys.info()["sysname"] == "Windows") {
     if (is.null(root)) {
       # raw command
@@ -47,7 +47,7 @@ set_env <- function(root = NULL, new = FALSE, dev = FALSE, ...) {
       # /s include all subfolders
       # findstr allows you to use regular expressions
       # raw <- "C: & dir /s /b | findstr"
-
+      
       # ok, it's better to just set the working directory and change it back
       # to the directory when exiting the function
       cwd <- getwd()
@@ -69,7 +69,7 @@ set_env <- function(root = NULL, new = FALSE, dev = FALSE, ...) {
       raw <- "dir /s /b | %SystemRoot%\\System32\\findstr /r"
       cmd <- paste(raw, shQuote("bin\\\\qgis.bat$ | bin\\\\qgis-ltr.bat$"))
       root <- shell(cmd, intern = TRUE)
-
+      
       if (length(root) == 0) {
         stop(
           "Sorry, we could not find QGIS on your C: drive. ",
@@ -78,7 +78,7 @@ set_env <- function(root = NULL, new = FALSE, dev = FALSE, ...) {
         )
         # > 2 because we are looking for qgis.bat and qgis-ltr.bat
         # and in OSGeo4W64, we find both of them
-        } else if (length(root) > 2) {
+      } else if (length(root) > 2) {
         stop(
           "There are several QGIS installations on your system. ",
           "Please choose one of them:\n",
@@ -97,7 +97,7 @@ set_env <- function(root = NULL, new = FALSE, dev = FALSE, ...) {
     # make sure that the root path does not end with some sort of slash
     root <- gsub("/{1,}$", "", root)
   }
-
+  
   if (Sys.info()["sysname"] == "Darwin") {
     if (is.null(root)) {
       message("Checking for homebrew osgeo4mac installation on your system. \n")
@@ -163,7 +163,7 @@ set_env <- function(root = NULL, new = FALSE, dev = FALSE, ...) {
       }
     }
   }
-
+  
   if (Sys.info()["sysname"] == "Linux") {
     if (is.null(root)) {
       message("Assuming that your root path is '/usr'!")
@@ -179,8 +179,8 @@ set_env <- function(root = NULL, new = FALSE, dev = FALSE, ...) {
   qgis_env <- list(root = root)
   qgis_env <- c(qgis_env, check_apps(root = root, dev = dev))
   assign("qgis_env", qgis_env, envir = .RQGIS_cache)
-
-
+  
+  
   # write warning if Kyngchaos QGIS for Mac is installed
   if (any(grepl("/Applications", qgis_env))) {
     warning(
@@ -195,7 +195,7 @@ set_env <- function(root = NULL, new = FALSE, dev = FALSE, ...) {
       )
     )
   }
-
+  
   # return your result
   qgis_env
 }
@@ -218,30 +218,30 @@ set_env <- function(root = NULL, new = FALSE, dev = FALSE, ...) {
 #' }
 #' @export
 open_app <- function(qgis_env = set_env()) {
-
+  
   # check for server infrastructure
   check_for_server()
-
+  
   # be a good citizen and restore the PATH
   settings <- as.list(Sys.getenv())
   # since we are adding quite a few new environment variables these will remain
   # (PYTHONPATH, QT_PLUGIN_PATH, etc.). We could unset these before exiting the
   # function but I am not sure if this is necessary
-
+  
   # Well, well, not sure if we should change it back or if we at least have to
   # get rid off Anaconda Python or other Python binaries - yes, we do, otherwise
   # reticulate might run into problems when loading modules because it might try
   # to load them first from the other binaries indicated in PATH
-
+  
   # on.exit(do.call(Sys.setenv, settings))
-
+  
   # resetting system settings on exit causes that SAGA algorithms cannot be
   # processed anymore, find out why this is!!!
-
+  
   if (Sys.info()["sysname"] == "Windows") {
     # run Windows setup
     setup_win(qgis_env = qgis_env)
-
+    
     # Ok, basically, we added a few new paths (especially under Windows) but
     # that's about it, we don't have to change that back. Only under Windows we
     # start with a clean, i.e. empty PATH, and delete everything what was in
@@ -253,8 +253,8 @@ open_app <- function(qgis_env = set_env()) {
   } else if (Sys.info()["sysname"] == "Darwin") {
     setup_mac(qgis_env = qgis_env)
   }
-
-
+  
+  
   # make sure that QGIS is not already running (this would crash R) app =
   # QgsApplication([], True)  # see below
   # We can only run the test after we have set all the paths. Otherwise
@@ -268,7 +268,7 @@ open_app <- function(qgis_env = set_env()) {
   if (!inherits(tmp, "try-error")) {
     stop("Python QGIS application is already running.")
   }
-
+  
   py_run_string("import os, sys, re, webbrowser")
   py_run_string("from qgis.core import *")
   py_run_string("from osgeo import ogr")
@@ -293,17 +293,17 @@ open_app <- function(qgis_env = set_env()) {
   py_run_string("QgsApplication.initQgis()")
   code <- paste0("sys.path.append(r'", qgis_env$python_plugins, "')")
   py_run_string(code)
-
+  
   # starting from 2.14.17 and 2.18.11, QgsApplication.setPrefixPath changes the
   # decimal separator, I don't know why...
   # the next line should turn off locale-specific separators
   Sys.setlocale("LC_NUMERIC", "C")
-
+  
   # attach further modules, our RQGIS class (needed for alglist, algoptions,
   # alghelp)
   py_file <- system.file("python", "python_funs.py", package = "RQGIS")
   py_run_file(py_file)
-  # initialize our RQGIS class
+  # instantiate/initialize RQGIS class
   py_run_string("RQGIS = RQGIS()")
 }
 
@@ -331,7 +331,7 @@ open_app <- function(qgis_env = set_env()) {
 #' }
 qgis_session_info <- function(qgis_env = set_env()) {
   tmp <- try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
-
+  
   # retrieve the output
   suppressWarnings(
     out <-
@@ -341,14 +341,14 @@ qgis_session_info <- function(qgis_env = set_env()) {
   py_run_string(
     "try:\n  del(my_session_info)\nexcept:\  pass"
   )
-
+  
   if ((Sys.info()["sysname"] == "Linux" | Sys.info()["sysname"] == "FreeBSD") &&
-    (out$grass6 | out$grass7)) {
+      (out$grass6 | out$grass7)) {
     # find out which GRASS version is available
     # inspired by link2GI::searchGRASSX
     # Problem: sometimes the batch command is interrupted or does not finish...
     # my_grass <- searchGRASSX()
-
+    
     # Problem: sometimes the shell command is interrupted, therefore run it
     # 15 times to make sure to retrieve a result (not the most elegant solution)
     cmd <- paste0(
@@ -365,9 +365,9 @@ qgis_session_info <- function(qgis_env = set_env()) {
           try(system(cmd, intern = TRUE, ignore.stderr = TRUE), silent = TRUE)
       })
     }
-
-
-
+    
+    
+    
     # QGIS developer team took care of this issue, so we can eventually delete
     # it
     # if (grepl("72", my_grass)) {
@@ -378,7 +378,7 @@ qgis_session_info <- function(qgis_env = set_env()) {
     #                  "'https://lists.osgeo.org/pipermail/qgis-user/2017-",
     #                  "January/038907.html'. Then restart R again."))
     # }
-
+    
     if (length(my_grass) > 0) {
       my_grass <- lapply(seq(length(my_grass)), function(i) {
         version <- grep(
@@ -397,17 +397,9 @@ qgis_session_info <- function(qgis_env = set_env()) {
       out$grass7 <- ifelse(length(grass7) == 0, out$grass7, grass7)
     }
   }
-
+  
   # sort it again since Python dictionary sorting is random
-  out = out[c("qgis_version", "gdal", "grass6", "grass7", "saga",
-              "supported_saga_versions")]
-  # if supported_saga_versions is empty (since 2.18) don't return it
-  if (length(out$supported_saga_versions) == 1 && 
-             out$supported_saga_versions == "") {
-    out[names(out) != "supported_saga_versions"]
-  } else {
-    out
-  }
+  out[sort(names(out))]
 }
 
 #' @title Find and list available QGIS algorithms
@@ -445,16 +437,16 @@ find_algorithms <- function(search_term = NULL, name_only = FALSE,
                             qgis_env = set_env()) {
   # check if the QGIS application has already been started
   tmp <- try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
-
+  
   # Advantage of this approach: we are using directly alglist and do not have to
   # save it in inst
   # Disadvantage: more processing
-  algs <- py_capture_output(py_run_string("processing.alglist()"))
+  algs <- py_capture_output(py_run_string("RQGIS.alglist()"))
   algs <- gsub("\n", "', '", algs)
   algs <- unlist(strsplit(algs, "', |, '"))
   algs <- unlist(strsplit(algs, '", '))
   algs <- gsub("\\['|'\\]|'", "", algs)
-
+  
   # quick-and-dirty, maybe there is a more elegant approach...
   if (Sys.info()["sysname"] == "Windows") {
     algs <- gsub('\\\\|"', "", shQuote(algs))
@@ -462,12 +454,12 @@ find_algorithms <- function(search_term = NULL, name_only = FALSE,
     algs <- gsub('\\\\|"', "", algs)
   }
   algs <- algs[algs != ""]
-
+  
   # use regular expressions to query all available algorithms
   if (!is.null(search_term)) {
     algs <- grep(search_term, algs, value = TRUE)
   }
-
+  
   if (name_only) {
     algs <- gsub(".*>", "", algs)
   }
@@ -500,9 +492,11 @@ find_algorithms <- function(search_term = NULL, name_only = FALSE,
 get_usage <- function(alg = NULL, intern = FALSE,
                       qgis_env = set_env()) {
   tmp <- try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
+  
   out <-
-    py_capture_output(py_run_string(sprintf("processing.alghelp('%s')", alg)))
+    py_capture_output(py_run_string(sprintf("RQGIS.alghelp('%s')", alg)))
   out <- gsub("^\\[|\\]$|'", "", out)
+  # some refining needed here, e.g., in case of qgis:distancematrix
   out <- gsub(", ", "\n", out)
   if (intern) {
     out
@@ -533,7 +527,7 @@ get_options <- function(alg = "", intern = FALSE,
   tmp <- try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
   out <-
     py_capture_output(py_run_string(
-      sprintf("processing.algoptions('%s')", alg)
+      sprintf("RQGIS.get_options('%s')", alg)
     ))
   out <- gsub("^\\[|\\]$|'", "", out)
   out <- gsub(", ", "\n", out)
@@ -570,15 +564,15 @@ get_options <- function(alg = "", intern = FALSE,
 #' open_help(alg = "grass:v.overlay")
 #' }
 open_help <- function(alg = "", qgis_env = set_env()) {
-
+  
   # check if the QGIS application has already been started
   tmp <- try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
-
+  
   algs <- find_algorithms(name_only = TRUE, qgis_env = qgis_env)
   if (!alg %in% algs) {
     stop("The specified algorithm ", alg, " does not exist.")
   }
-
+  
   if (grepl("grass", alg)) {
     # open GRASS online help
     open_grass_help(alg)
@@ -626,19 +620,19 @@ get_args_man <- function(alg = "", options = TRUE,
                          qgis_env = set_env()) {
   # check if the QGIS application has already been started
   tmp <- try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
-
+  
   algs <- find_algorithms(name_only = TRUE, qgis_env = qgis_env)
   if (!alg %in% algs) {
     stop("The specified algorithm ", alg, " does not exist.")
   }
-
+  
   args <- py_run_string(
     sprintf(
       "algorithm_params = RQGIS.get_args_man('%s')",
       alg
     )
   )$algorithm_params
-
+  
   # If desired, select the first option if a function argument has several
   # options to choose from
   if (options && length(args$vals[args$opts]) > 0) {
@@ -748,7 +742,7 @@ pass_args <- function(alg, ..., params = NULL, NA_flag = -99999,
   if (length(dots) > 0) {
     params <- dots
   }
-
+  
   dups <- duplicated(names(params))
   if (any(dups)) {
     stop(
@@ -756,7 +750,7 @@ pass_args <- function(alg, ..., params = NULL, NA_flag = -99999,
       paste(names(params)[dups], collapse = ", ")
     )
   }
-
+  
   # collect all the function arguments and respective default values for the
   # specified geoalgorithm we need to suppress the message here, otherwise
   # default values will be printed to the console. Before printing such a
@@ -766,7 +760,7 @@ pass_args <- function(alg, ..., params = NULL, NA_flag = -99999,
   suppressMessages(
     params_all <- get_args_man(alg, options = TRUE)
   )
-
+  
   # check if there are too few/many function arguments
   ind <- setdiff(names(params), names(params_all))
   if (length(ind) > 0) {
@@ -777,7 +771,7 @@ pass_args <- function(alg, ..., params = NULL, NA_flag = -99999,
       paste(sprintf("'%s'", names(params_all)), collapse = ", ")
     )
   }
-
+  
   # if function arguments are missing, QGIS will use the default since we submit
   # our parameter-arguments as a Python-dictionary (see Processing.runAlgorithm)
   # nevertheless, we will indicate them already here since we have already
@@ -788,7 +782,7 @@ pass_args <- function(alg, ..., params = NULL, NA_flag = -99999,
   params_2[names(params)] <- params
   params <- params_2
   rm(params_2)
-
+  
   # print a message if default values have been automatically chosen. This will
   # happen if the user has specified not all arguments via ... or if he used a
   # parameter-argument list without indicating an optional parameter.
@@ -806,8 +800,8 @@ pass_args <- function(alg, ..., params = NULL, NA_flag = -99999,
       "See get_options('", alg, "') for all available options."
     )
   }
-
-
+  
+  
   # retrieve the options for a specific parameter
   opts <- py_run_string(sprintf("opts = RQGIS.get_options('%s')", alg))$opts
   # add number notation in Python lingo, i.e. count from 0 to the length of the
@@ -815,7 +809,7 @@ pass_args <- function(alg, ..., params = NULL, NA_flag = -99999,
   opts <- lapply(opts, function(x) {
     data.frame(name = x, number = 0:(length(x) - 1), stringsAsFactors = FALSE)
   })
-
+  
   int <- intersect(names(params), names(opts))
   ls_1 <- lapply(int, function(x) {
     # if the user specified a named notation replace it by number notation if
@@ -833,7 +827,7 @@ pass_args <- function(alg, ..., params = NULL, NA_flag = -99999,
       opts[[x]][
         opts[[x]]$name == params[[x]] | saga_test == params[[x]],
         "number"
-      ]
+        ]
     } else {
       # otherwise return the user input but check if the number is ok given the
       # user has specified a number
@@ -852,7 +846,7 @@ pass_args <- function(alg, ..., params = NULL, NA_flag = -99999,
   })
   # replace the named input by number input in the parameter-argument list
   params[int] <- ls_1
-
+  
   # Save Spatial-Objects (sp, sf and raster)
   # here, we would like to retrieve the type type of the argument (which is list
   # element 4)
@@ -864,7 +858,7 @@ pass_args <- function(alg, ..., params = NULL, NA_flag = -99999,
     type_name = out$type_name,
     NA_flag = NA_flag
   )
-
+  
   # if the user has only specified an output filename without a directory path,
   # make sure that the output will be saved to the current directory (R default)
   # if the user has not specified any output files, the QGIS temporary folder
@@ -888,7 +882,7 @@ pass_args <- function(alg, ..., params = NULL, NA_flag = -99999,
       x
     }
   })
-
+  
   # provide automatically extent objects in case the user has not specified them
   # (most often needed for the GRASS_REGION_PARAMETER)
   
@@ -904,8 +898,8 @@ pass_args <- function(alg, ..., params = NULL, NA_flag = -99999,
     )
     # final bounding box in the QGIS/GRASS notation
     params[ind] <- paste(ext, collapse = ",")
-    }    
-
+  }    
+  
   # make sure function again arguments are in the correct order is not srictly
   # necessary any longer since we use a Python dictionary to pass our arguments.
   # However, otherwise, the user might become confused... and for
@@ -913,11 +907,11 @@ pass_args <- function(alg, ..., params = NULL, NA_flag = -99999,
   # here has also the advantage that the function tells the user all missing
   # function arguments, QGIS returns only one at a time
   params <- params[names(params_all)]
-
+  
+  # RQGIS.check_args() only available for QGIS 2
   check <- py_run_string(sprintf(
     "check = RQGIS.check_args('%s', %s)", alg,
-    py_unicode(r_to_py(unlist(params)))
-  ))$check
+    paste0("[", convert_to_tuple(params), "]")))$check
   # stop the function if wrong arguments were supplied, e.g.,
   # 'grass7:r.slope.aspect":
   # format must be an integer, so you cannot supply "hallo", the same goes for
@@ -927,7 +921,8 @@ pass_args <- function(alg, ..., params = NULL, NA_flag = -99999,
       "Invalid argument value '%s' for parameter '%s'\n",
       check, names(check)
     ))
-  }
+  }  
+  
   # # clean up after yourself!!
   py_run_string(
     "try:\n  del(out, opts, check)\nexcept:\  pass"
@@ -1015,24 +1010,24 @@ pass_args <- function(alg, ..., params = NULL, NA_flag = -99999,
 run_qgis <- function(alg = NULL, ..., params = NULL, load_output = FALSE,
                      show_output_paths = TRUE, NA_flag = -99999,
                      qgis_env = set_env()) {
-
+  
   # check if the QGIS application has already been started
   tmp <- try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
-
+  
   # check under Linux which GRASS version is in use. If its GRASS72 the user
   # might have to add a softlink due to as QGIS bug
   # QGIS developer core team took care of this issue (at least since QGIS
   # 2.14.13), so we can eventually delete this
-
+  
   # if (Sys.info()["sysname"] == "Linux" & grepl("grass7", alg)) {
   #   qgis_session_info(qgis_env)
   # }
-
+  
   # check if alg is qgis:vectorgrid
   if (alg == "qgis:vectorgrid") {
     stop("Please use qgis:creategrid instead of qgis:vectorgrid!")
   }
-
+  
   # check if alg belongs to the QGIS "select by.."-category
   if (grepl("^qgis\\:selectby", alg)) {
     stop(paste(
@@ -1040,12 +1035,12 @@ run_qgis <- function(alg = NULL, ..., params = NULL, load_output = FALSE,
       "Please use 'grass7:v.extract' instead."
     ))
   }
-
-
+  
+  
   # construct a parameter-argument list using get_args_man and user input
   params <- pass_args(alg, ..., params = params, NA_flag = NA_flag,
                       qgis_env = qgis_env)
-
+  
   # build the Python command
   # r_to_py(params) would also create a dictionary which would be a rather
   # elegant solution. But there are two problems: First, we did not get rid off
@@ -1055,26 +1050,18 @@ run_qgis <- function(alg = NULL, ..., params = NULL, load_output = FALSE,
   # be unquoted which can be only achieved in R by collapsing all arguments into
   # one long string. Maybe it would work even if we did not explicitly take care
   # of this. But to be on the safe side, we proceed as follows:
-
-  vals <- vapply(params, function(x) {
-    # get rid off 'strange' or incomplete shellQuotes
-    tmp <- unlist(strsplit(as.character(x), ""))
-    tmp <- tmp[tmp != "\""]
-    # paste the argument together again
-    tmp <- paste(tmp, collapse = "")
-    # shellQuote argument if is not True, False or None
-    ifelse(grepl("True|False|None", tmp), tmp, shQuote(tmp))
-  }, character(1))
-  # paste the function arguments together
-  args <- paste(vals, collapse = ", ")
-
+  
   # convert R parameter-argument list into a Python dictionary
-  py_run_string(paste("args = ", r_to_py(args)))
-  py_run_string(paste0("params = ", py_unicode(r_to_py(names(params)))))
+  py_run_string(paste0("args = ", convert_to_tuple(params)))  # argument tuple
+  # r_to_py(paste0("args = ", convert_to_tuple(params)))
+  # r_to_py(paste0("params = ", convert_to_tuple(names(params))))
+  py_run_string(paste0("params = ", convert_to_tuple(names(params))))  # name tuple
   py_run_string("params = dict((x, y) for x, y in zip(params, args))")
-
-  cmd <- paste(sprintf("res = processing.runalg('%s', params)", alg))
-
+  
+  cmd <- 
+    paste(sprintf(
+      "res = Processing.runAlgorithm(algOrName = '%s', parameters = params, feedback = QgsProcessingFeedback())", alg))
+  
   # run QGIS
   msg <- py_capture_output(py_run_string(cmd))
   # If QGIS produces an error message, stop and report it
@@ -1095,7 +1082,7 @@ run_qgis <- function(alg = NULL, ..., params = NULL, load_output = FALSE,
   py_run_string(
     "try:\n  del(res, args, params)\nexcept:\  pass"
   )
-
+  
   # load output
   if (load_output) {
     # just keep the output files
@@ -1119,7 +1106,7 @@ run_qgis <- function(alg = NULL, ..., params = NULL, load_output = FALSE,
       if (!file.exists(x)) {
         stop("Unfortunately, QGIS did not produce: ", x)
       }
-
+      
       # capture.output is necessary, since sf always reports (supposedly via
       # C++) if the data source cannot be opened
       capture.output({
