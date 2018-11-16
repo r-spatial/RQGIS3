@@ -1,4 +1,3 @@
-test
 open_app3 <- function(qgis_env = set_env()) {
   
   # check for server infrastructure
