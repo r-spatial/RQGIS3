@@ -343,7 +343,7 @@ qgis_session_info <- function(qgis_env = set_env()) {
   )
   
   if ((Sys.info()["sysname"] == "Linux" | Sys.info()["sysname"] == "FreeBSD") &&
-      (out$grass6 | out$grass7)) {
+      (out$grass7)) {
     # find out which GRASS version is available
     # inspired by link2GI::searchGRASSX
     # Problem: sometimes the batch command is interrupted or does not finish...
@@ -390,9 +390,6 @@ qgis_session_info <- function(qgis_env = set_env()) {
           collapse = ""
         )
       })
-      my_grass <- unlist(my_grass)
-      grass6 <- grep("6", my_grass, value = TRUE)
-      out$grass6 <- ifelse(length(grass6) == 0, out$grass6, grass6)
       grass7 <- grep("7", my_grass, value = TRUE)
       out$grass7 <- ifelse(length(grass7) == 0, out$grass7, grass7)
     }
