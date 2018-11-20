@@ -6,7 +6,7 @@ setup_linux()
 py_run_string("from pyvirtualdisplay import Display")
 py_run_string("display = Display(visible=False, size=(1024, 768), color_depth=24)")
 py_run_string("display.start()")
-# open_app3()
+open_app3()
 
 qgis_session_info()
 find_algorithms()
