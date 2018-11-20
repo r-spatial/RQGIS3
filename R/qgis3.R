@@ -1,5 +1,12 @@
 open_app3 = function(qgis_env = set_env()) {
   
+  # add virtual display if available (important for processing on the server)
+  
+  py_run_string("from pyvirtualdisplay import Display")
+  py_run_string("display = Display(visible=False, size=(1024, 768), color_depth=24)")
+  py_run_string("display.start()")
+  
+  
   # check for server infrastructure
   check_for_server()
   
