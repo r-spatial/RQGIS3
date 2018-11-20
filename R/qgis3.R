@@ -159,7 +159,7 @@ setup_win3 = function(qgis_env = set_env()) {
   Sys.setenv(
     QT_PLUGIN_PATH = paste(file.path(qgis_env$root, "apps/qt5/plugins"),
                            Sys.getenv("QT_PLUGIN_PATH"), sep = ";"))
-  # py3_env.bat
+  # py3_env.bat; make more generic, Arch is already using Python37
   Sys.setenv(PYTHONHOME = file.path(qgis_env$root,"apps/Python36"))
   Sys.setenv(PATH = paste(file.path(qgis_env$root, "apps/Python36"),
                           file.path(qgis_env$root, "apps/Python36/Scripts"),
