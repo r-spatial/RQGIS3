@@ -4,7 +4,7 @@
 NULL
 
 
-.RQGIS_cache <- new.env(FALSE, parent = globalenv())
+.RQGIS_cache = new.env(FALSE, parent = globalenv())
 
 # .onLoad = function(libname, pkgname) {
 #   assign("settings", Sys.getenv(), envir = .RQGIS_cache)
@@ -26,6 +26,6 @@ NULL
 #   }
 # }
 
-# .onUnload <- function(libname, pkgname) {
+# .onUnload = function(libname, pkgname) {
 #   do.call(Sys.setenv, as.list(get("settings", envir = .RQGIS_cache)))
 #   }

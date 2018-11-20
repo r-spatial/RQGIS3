@@ -15,41 +15,41 @@
 #' }
 #' @author Jannes Muenchow, Patrick Schratz
 
-check_apps <- function(root, ...) {
+check_apps = function(root, ...) {
   if (Sys.info()["sysname"] == "Windows") {
-    path_apps <- file.path(root, "apps")
-    my_qgis <- grep("qgis", dir(path_apps), value = TRUE)
+    path_apps = file.path(root, "apps")
+    my_qgis = grep("qgis", dir(path_apps), value = TRUE)
     # use the LTR (default), if available
-    dots <- list(...)
+    dots = list(...)
     if (length(dots) > 0 && !isTRUE(dots$dev)) {
-      my_qgis <- ifelse("qgis-ltr" %in% my_qgis, "qgis-ltr", my_qgis[1])
+      my_qgis = ifelse("qgis-ltr" %in% my_qgis, "qgis-ltr", my_qgis[1])
     } else {
       # use ../apps/qgis, i.e. most likely the most recent QGIS version
-      # my_qgis <- my_qgis[1]
+      # my_qgis = my_qgis[1]
       stop("Either you have set dev to TRUE (please set to FALSE) or we could ",  
            "not find a QGIS LTR (2.18) on your system. Please install!")
     }
-    apps <- c(
+    apps = c(
       file.path(path_apps, my_qgis),
       file.path(path_apps, my_qgis, "python/plugins")
     )
   } else if (Sys.info()["sysname"] == "Linux" | Sys.info()["sysname"] == "FreeBSD") {
     # paths to check
-    apps <- file.path(root, c("bin/qgis", "share/qgis/python/plugins"))
+    apps = file.path(root, c("bin/qgis", "share/qgis/python/plugins"))
   } else if (Sys.info()["sysname"] == "Darwin") {
     # paths to check
-    apps <- file.path(root, c("Contents", "Contents/Resources/python/plugins"))
+    apps = file.path(root, c("Contents", "Contents/Resources/python/plugins"))
   } else {
     stop("Sorry, you can use RQGIS only under Windows and UNIX-based
          operating systems.")
   }
 
-  out <-
+  out =
     lapply(apps, function(app) {
       if (file.exists(app)) {
         app
       } else {
-        path <- NULL
+        path = NULL
         # apps necessary to run the QGIS-API
         stop(
           "Folder ", dirname(app), " could not be found under ",
@@ -57,7 +57,7 @@ check_apps <- function(root, ...) {
         )
       }
     })
-  names(out) <- c("qgis_prefix_path", "python_plugins")
+  names(out) = c("qgis_prefix_path", "python_plugins")
   # return your result
   out
 }
@@ -73,34 +73,34 @@ check_apps <- function(root, ...) {
 #' open_grass_help("grass7:r.sunmask")
 #' }
 #' @author Jannes Muenchow
-open_grass_help <- function(alg) {
-  grass_name <- gsub(".*:", "", alg)
-  url <- ifelse(grepl(7, alg),
+open_grass_help = function(alg) {
+  grass_name = gsub(".*:", "", alg)
+  url = ifelse(grepl(7, alg),
     "http://grass.osgeo.org/grass75/manuals/",
     "http://grass.osgeo.org/grass64/manuals/"
   )
-  url_ind <- paste0(url, "full_index.html")
-  doc <- RCurl::getURL(url_ind)
-  doc2 <- XML::htmlParse(doc)
-  root <- XML::xmlRoot(doc2)
-  grass_funs <- XML::xpathSApply(root[["body"]], "//a/@href")
-  grass_funs <- gsub(".html", "", grass_funs)
-  # grass_funs <- grep(".*\\..*", grass_funs, value = TRUE)
-  # grass_funs <- grass_funs[!grepl("^http:", grass_funs)]
+  url_ind = paste0(url, "full_index.html")
+  doc = RCurl::getURL(url_ind)
+  doc2 = XML::htmlParse(doc)
+  root = XML::xmlRoot(doc2)
+  grass_funs = XML::xpathSApply(root[["body"]], "//a/@href")
+  grass_funs = gsub(".html", "", grass_funs)
+  # grass_funs = grep(".*\\..*", grass_funs, value = TRUE)
+  # grass_funs = grass_funs[!grepl("^http:", grass_funs)]
   # grep("^(d.|db.|g\\.|i.|m.|ps.|r.|r3.|t.|v.)", grass_funs, value = TRUE)
 
-  # ind <- paste0(c("d", "db", "g", "i", "m", "ps", "r", "r3", "t", "v"), "\\.")
-  # ind <- paste(ind, collapse = "|")
-  # ind <- paste0("^(", ind, ")")
-  # grass_funs <- grep(ind, grass_funs, value = TRUE)
+  # ind = paste0(c("d", "db", "g", "i", "m", "ps", "r", "r3", "t", "v"), "\\.")
+  # ind = paste(ind, collapse = "|")
+  # ind = paste0("^(", ind, ")")
+  # grass_funs = grep(ind, grass_funs, value = TRUE)
   if (!grass_name %in% grass_funs) {
-    grass_name <- gsub("(.*?*)\\..*", "\\1", grass_name)
+    grass_name = gsub("(.*?*)\\..*", "\\1", grass_name)
   }
   # if the name can still not be found, terminate
   if (!grass_name %in% grass_funs) {
     stop(gsub(".*:", "", alg), " could not be found in the online help!")
   }
-  url <- paste0(url, grass_name, ".html")
+  url = paste0(url, grass_name, ".html")
   utils::browseURL(url)
 }
 
@@ -117,13 +117,13 @@ open_grass_help <- function(alg) {
 #' setup_win()
 #' }
 
-setup_win <- function(qgis_env = set_env()) {
+setup_win = function(qgis_env = set_env()) {
   # call o4w_env.bat from within R
   # not really sure, if we need the next line (just in case)
   Sys.setenv(OSGEO4W_ROOT = qgis_env$root)
   # shell("ECHO %OSGEO4W_ROOT%")
   # REM start with clean path
-  # windir <- shell("ECHO %WINDIR%", intern = TRUE)
+  # windir = shell("ECHO %WINDIR%", intern = TRUE)
   # such error messages occurred:
   # [1]"'\\\\helix.klient.uib.no\\BioHome\\nboga'"
   # Jannes: this was the working directory apparently a server
@@ -133,14 +133,14 @@ setup_win <- function(qgis_env = set_env()) {
   # Therefore, pick the last element (not sure if this will always work, well,
   # we will find out). Another solution would be to hard-code "C:/Windows" but
   # I don't know if system32 can always be found there...
-  # windir <- windir[length(windir)]
+  # windir = windir[length(windir)]
 
   # maybe this is a more generic approach
-  cwd <- getwd()
+  cwd = getwd()
   on.exit(setwd(cwd))
   setwd("C:/")
-  windir <- shell("ECHO %WINDIR%", intern = TRUE)
-  windir <- normalizePath(windir, "/")
+  windir = shell("ECHO %WINDIR%", intern = TRUE)
+  windir = normalizePath(windir, "/")
 
   Sys.setenv(PATH = paste(
     file.path(qgis_env$root, "bin"),
@@ -153,7 +153,7 @@ setup_win <- function(qgis_env = set_env()) {
   run_ini(qgis_env = qgis_env)
 
   # we need to make sure that qgis-ltr can also be used...
-  my_qgis <- gsub(".*/", "", qgis_env$qgis_prefix_path)
+  my_qgis = gsub(".*/", "", qgis_env$qgis_prefix_path)
   # add the directories where the QGIS libraries reside to search path
   # of the dynamic linker
   Sys.setenv(PATH = paste(
@@ -163,10 +163,10 @@ setup_win <- function(qgis_env = set_env()) {
   ))
   # set the PYTHONPATH variable, so that QGIS knows where to search for
   # QGIS libraries and appropriate Python modules
-  python_path <- Sys.getenv("PYTHONPATH")
-  python_add <- file.path(qgis_env$root, "apps", my_qgis, "python")
+  python_path = Sys.getenv("PYTHONPATH")
+  python_add = file.path(qgis_env$root, "apps", my_qgis, "python")
   if (!grepl(python_add, python_path)) {
-    python_path <- paste(python_path, python_add, sep = ";")
+    python_path = paste(python_path, python_add, sep = ";")
     Sys.setenv(PYTHONPATH = python_path)
   }
 
@@ -182,7 +182,7 @@ setup_win <- function(qgis_env = set_env()) {
   # binary should be always found under  /usr/bin
 
   # compare py_config path with set_env path!!
-  a <- py_config()
+  a = py_config()
   # py_config() adds following paths to PATH:
   # "C:\\OSGeo4W64\\bin;C:\\OSGeo4W64\\bin\\Scripts;
   if (!grepl(qgis_env$root, normalizePath(a$python, "/"))) {
@@ -206,28 +206,28 @@ setup_win <- function(qgis_env = set_env()) {
 #' run_ini()
 #' }
 
-run_ini <- function(qgis_env = set_env()) {
-  files <- dir(file.path(qgis_env$root, "etc/ini"), full.names = TRUE)
-  files <- files[-grep("msvcrt|rbatchfiles", files)]
-  # root <- gsub("\\\\", "\\\\\\\\", qgis_env$root)
-  ls <- lapply(files, function(file) {
-    tmp <- read_file(file)
-    tmp <- gsub("%OSGEO4W_ROOT%", qgis_env$root, tmp)
-    tmp <- strsplit(tmp, split = "\r\n|\n")[[1]]
+run_ini = function(qgis_env = set_env()) {
+  files = dir(file.path(qgis_env$root, "etc/ini"), full.names = TRUE)
+  files = files[-grep("msvcrt|rbatchfiles", files)]
+  # root = gsub("\\\\", "\\\\\\\\", qgis_env$root)
+  ls = lapply(files, function(file) {
+    tmp = read_file(file)
+    tmp = gsub("%OSGEO4W_ROOT%", qgis_env$root, tmp)
+    tmp = strsplit(tmp, split = "\r\n|\n")[[1]]
     tmp
   })
-  cmds <- do.call(c, ls)
+  cmds = do.call(c, ls)
   # remove everything followed by a semi-colon but not if the colon is followed
   # by %PATH%
-  cmds <- gsub(";%([^PATH]).*", "", cmds)
-  cmds <- gsub(";%PYTHONPATH%", "", cmds) # well, not really elegant...
-  cmds <- gsub("\\\\", "/", cmds)
+  cmds = gsub(";%([^PATH]).*", "", cmds)
+  cmds = gsub(";%PYTHONPATH%", "", cmds) # well, not really elegant...
+  cmds = gsub("\\\\", "/", cmds)
   for (i in cmds) {
     if (grepl("^(SET|set)", i)) {
-      tmp <- gsub("^(SET|set) ", "", i)
-      tmp <- strsplit(tmp, "=")[[1]]
-      args <- list(tmp[2])
-      names(args) <- tmp[1]
+      tmp = gsub("^(SET|set) ", "", i)
+      tmp = strsplit(tmp, "=")[[1]]
+      args = list(tmp[2])
+      names(args) = tmp[1]
       # if the environment variable exists but does not contain our path, add it
       # to the already existing one
       if (Sys.getenv(names(args)) != "" &
@@ -235,7 +235,7 @@ run_ini <- function(qgis_env = set_env()) {
           gsub("\\\\", "\\\\\\\\", args[[1]]),
           Sys.getenv((names(args)))
         )) {
-        args[[1]] <- paste(args[[1]], Sys.getenv(names(args)), sep = ";")
+        args[[1]] = paste(args[[1]], Sys.getenv(names(args)), sep = ";")
       } else if (Sys.getenv(names(args)) != "" &
         grepl(
           gsub("\\\\", "\\\\\\\\", args[[1]]),
@@ -248,15 +248,15 @@ run_ini <- function(qgis_env = set_env()) {
       do.call(Sys.setenv, args)
     }
     if (grepl("^(path|PATH)", i)) {
-      tmp <- gsub("^(PATH|path) ", "", i)
-      path <- Sys.getenv("PATH")
-      path <- gsub("\\\\", "\\\\\\\\", path)
-      tmp <- gsub("%PATH%", path, tmp)
+      tmp = gsub("^(PATH|path) ", "", i)
+      path = Sys.getenv("PATH")
+      path = gsub("\\\\", "\\\\\\\\", path)
+      tmp = gsub("%PATH%", path, tmp)
       Sys.setenv(PATH = tmp)
     }
     if (grepl("^if not defined HOME", i)) {
       if (Sys.getenv("HOME") == "") {
-        use_prof <- shell("ECHO %USERPROFILE%", intern = TRUE)
+        use_prof = shell("ECHO %USERPROFILE%", intern = TRUE)
         Sys.setenv(HOME = use_prof)
       }
     }
@@ -269,25 +269,25 @@ run_ini <- function(qgis_env = set_env()) {
 #'   Windows-only function.
 #' @param settings A list as derived from `as.list(Sys.getenv())`.
 #' @author Jannes Muenchow
-reset_path <- function(settings) {
+reset_path = function(settings) {
   # PATH re-setting: not the most elegant solution...
 
   if (Sys.info()["sysname"] == "Windows") {
     # first delete any other Anaconda or Python installations from PATH
-    tmp <- grep(
+    tmp = grep(
       "Anaconda|Python", unlist(strsplit(settings$PATH, ";")),
       value = TRUE
     )
     # we don't want to delete any paths containing OSGEO (and Python)
     if (any(grepl("OSGeo", tmp))) {
-      tmp <- tmp[-grep("OSGeo", tmp)]
+      tmp = tmp[-grep("OSGeo", tmp)]
     }
     # replace \\ by \\\\ and collapse by |
-    tmp <- paste(gsub("\\\\", "\\\\\\\\", tmp), collapse = "|")
+    tmp = paste(gsub("\\\\", "\\\\\\\\", tmp), collapse = "|")
     # delete it from settings
-    repl <- gsub(tmp, "", settings$PATH)
+    repl = gsub(tmp, "", settings$PATH)
     # get rid off repeated semi-colons
-    settings$PATH <- gsub(";+", ";", repl)
+    settings$PATH = gsub(";+", ";", repl)
 
     # We need to make sure to not append over and over again the same paths
     # when running open_app several times
@@ -298,7 +298,7 @@ reset_path <- function(settings) {
     } else {
       # if the OSGeo stuff has not already been appended (as is the case when
       # running open_app for the first time), append it
-      paths <- paste(Sys.getenv("PATH"), settings$PATH, sep = ";")
+      paths = paste(Sys.getenv("PATH"), settings$PATH, sep = ";")
       Sys.setenv(PATH = paths)
     }
   }
@@ -316,30 +316,30 @@ reset_path <- function(settings) {
 #' setup_linux()
 #' }
 
-setup_linux <- function(qgis_env = set_env()) {
+setup_linux = function(qgis_env = set_env()) {
   # append PYTHONPATH to import qgis.core etc. packages
-  python_path <- Sys.getenv("PYTHONPATH")
-  qgis_python_path <- paste0(qgis_env$root, "/share/qgis/python")
-  reg_exp <- grepl(paste0(qgis_python_path, ":"), python_path) |
+  python_path = Sys.getenv("PYTHONPATH")
+  qgis_python_path = paste0(qgis_env$root, "/share/qgis/python")
+  reg_exp = grepl(paste0(qgis_python_path, ":"), python_path) |
     grepl(paste0(qgis_python_path, "$"), python_path)
   if (python_path != "" & reg_exp) {
-    qgis_python_path <- python_path
+    qgis_python_path = python_path
   } else if (python_path != "" & !reg_exp) {
-    qgis_python_path <- paste(
+    qgis_python_path = paste(
       qgis_python_path, Sys.getenv("PYTHONPATH"),
       sep = ":"
     )
   }
   Sys.setenv(PYTHONPATH = qgis_python_path)
   # append LD_LIBRARY_PATH
-  ld_lib_path <- Sys.getenv("LD_LIBRARY_PATH")
-  qgis_ld_path <- file.path(qgis_env$root, "lib")
-  reg_exp <- grepl(paste0(qgis_ld_path, ":"), ld_lib_path) |
+  ld_lib_path = Sys.getenv("LD_LIBRARY_PATH")
+  qgis_ld_path = file.path(qgis_env$root, "lib")
+  reg_exp = grepl(paste0(qgis_ld_path, ":"), ld_lib_path) |
     grepl(paste0(qgis_ld_path, "$"), ld_lib_path)
   if (ld_lib_path != "" & reg_exp) {
-    qgis_ld_path <- ld_lib_path
+    qgis_ld_path = ld_lib_path
   } else if (ld_lib_path != "" & !reg_exp) {
-    qgis_ld_path <- paste(
+    qgis_ld_path = paste(
       qgis_ld_path, Sys.getenv("LD_LIBRARY_PATH"),
       sep = ":"
     )
@@ -370,12 +370,12 @@ setup_linux <- function(qgis_env = set_env()) {
 #' setup_mac()
 #' }
 
-setup_mac <- function(qgis_env = set_env()) {
+setup_mac = function(qgis_env = set_env()) {
 
   # append PYTHONPATH to import qgis.core etc. packages
-  python_path <- Sys.getenv("PYTHONPATH")
+  python_path = Sys.getenv("PYTHONPATH")
 
-  qgis_python_path <-
+  qgis_python_path =
     paste0(qgis_env$root, paste(
       "/Contents/Resources/python/",
       "/usr/local/lib/qt-4/python2.7/site-packages",
@@ -383,7 +383,7 @@ setup_mac <- function(qgis_env = set_env()) {
       "$PYTHONPATH", sep = ":"
     ))
   if (python_path != "" & !grepl(qgis_python_path, python_path)) {
-    qgis_python_path <- paste(
+    qgis_python_path = paste(
       qgis_python_path, Sys.getenv("PYTHONPATH"),
       sep = ":"
     )
@@ -394,9 +394,9 @@ setup_mac <- function(qgis_env = set_env()) {
 
   # define path where QGIS libraries reside to search path of the
   # dynamic linker
-  ld_library <- Sys.getenv("LD_LIBRARY_PATH")
+  ld_library = Sys.getenv("LD_LIBRARY_PATH")
 
-  qgis_ld <- paste(paste0(
+  qgis_ld = paste(paste0(
     qgis_env$qgis_prefix_path,
     file.path(
       "/MacOS/lib/:/Applications/QGIS.app/",
@@ -404,7 +404,7 @@ setup_mac <- function(qgis_env = set_env()) {
     )
   )) # homebrew
   if (ld_library != "" & !grepl(paste0(qgis_ld, ":"), ld_library)) {
-    qgis_ld <- paste(
+    qgis_ld = paste(
       paste0(qgis_env$root, "/lib"),
       Sys.getenv("LD_LIBRARY_PATH"), sep = ":"
     )
@@ -431,27 +431,27 @@ setup_mac <- function(qgis_env = set_env()) {
 #' library("RQGIS")
 #' library("raster")
 #' library("reticulate")
-#' r <- raster(ncol = 100, nrow = 100)
-#' r1 <- crop(r, extent(-10, 11, -10, 11))
-#' r2 <- crop(r, extent(0, 20, 0, 20))
-#' r3 <- crop(r, extent(9, 30, 9, 30))
-#' r1[] <- 1:ncell(r1)
-#' r2[] <- 1:ncell(r2)
-#' r3[] <- 1:ncell(r3)
-#' alg <- "grass7:r.patch"
-#' out <- py_run_string(sprintf("out = RQGIS.get_args_man('%s')", alg))$out
-#' params <- get_args_man(alg)
-#' params$input <- list(r1, r2, r3)
-#' params[] <- save_spatial_objects(params = params,
+#' r = raster(ncol = 100, nrow = 100)
+#' r1 = crop(r, extent(-10, 11, -10, 11))
+#' r2 = crop(r, extent(0, 20, 0, 20))
+#' r3 = crop(r, extent(9, 30, 9, 30))
+#' r1[] = 1:ncell(r1)
+#' r2[] = 1:ncell(r2)
+#' r3[] = 1:ncell(r3)
+#' alg = "grass7:r.patch"
+#' out = py_run_string(sprintf("out = RQGIS.get_args_man('%s')", alg))$out
+#' params = get_args_man(alg)
+#' params$input = list(r1, r2, r3)
+#' params[] = save_spatial_objects(params = params,
 #'                                  type_name = out$type_name)
 #' }
 #' @author Jannes Muenchow
-save_spatial_objects <- function(params, type_name, NA_flag = -99999) {
+save_spatial_objects = function(params, type_name, NA_flag = -99999) {
   lapply(seq_along(params), function(i) {
-    tmp <- class(params[[i]])
+    tmp = class(params[[i]])
     if (tmp == "list" && type_name[i] == "multipleinput") {
-      names(params[[i]]) <- paste0("inp", 1:length(params[[i]]))
-      out <- save_spatial_objects(params = params[[i]], NA_flag = NA_flag)
+      names(params[[i]]) = paste0("inp", 1:length(params[[i]]))
+      out = save_spatial_objects(params = params[[i]], NA_flag = NA_flag)
       return(paste(unlist(out), collapse = ";"))
     }
 
@@ -464,27 +464,27 @@ save_spatial_objects <- function(params, type_name, NA_flag = -99999) {
       any(tmp %in% c("sf", "sfc", "sfg"))) {
       # if it is an sp-object convert it into sf, if it already is an attributed
       # sf-object, nothing happens
-      params[[i]] <- st_as_sf(params[[i]])
+      params[[i]] = st_as_sf(params[[i]])
       # write sf as a shapefile to a temporary location while overwriting any
       # previous versions.
       # This is a Windows-only problem (see also github-branch unlock)
-      fname <- tempfile(fileext = ".shp")
+      fname = tempfile(fileext = ".shp")
       write_sf(params[[i]], fname, quiet = TRUE)
       # if (inherits(test, "try-error")) {
       #   while (tolower(basename(fname)) %in% tolower(dir(tempdir()))) {
-      #     fname <- paste0(gsub(".shp", "", fname), 1, ".shp")
+      #     fname = paste0(gsub(".shp", "", fname), 1, ".shp")
       #   }
       #   write_sf(params[[i]], fname, quiet = TRUE)
       # }
       # return the result
       normalizePath(fname, winslash = "/")
     } else if (tmp == "RasterLayer") {
-      fname <- tempfile(fileext = ".tif")
+      fname = tempfile(fileext = ".tif")
       writeRaster(params[[i]], filename = fname, format = "GTiff",
                   prj = TRUE, overwrite = TRUE, NAflag = NA_flag)
       # if (inherits(test, "try-error")) {
       #   while (tolower(basename(fname)) %in% tolower(dir(tempdir()))) {
-      #     fname <- paste0(gsub(".tif", "", fname), 1, ".tif")
+      #     fname = paste0(gsub(".tif", "", fname), 1, ".tif")
       #   }
       #   writeRaster(
       #     params[[i]], filename = fname, format = "GTiff",
@@ -529,26 +529,26 @@ save_spatial_objects <- function(params, type_name, NA_flag = -99999) {
 #' library("RQGIS")
 #' library("raster")
 #' library("reticulate")
-#' r <- raster(ncol = 100, nrow = 100)
-#' r1 <- crop(r, extent(-10, 11, -10, 11))
-#' r2 <- crop(r, extent(0, 20, 0, 20))
-#' r3 <- crop(r, extent(9, 30, 9, 30))
-#' r1[] <- 1:ncell(r1)
-#' r2[] <- 1:ncell(r2)
-#' r3[] <- 1:ncell(r3)
-#' alg <- "grass7:r.patch"
-#' out <- py_run_string(sprintf("out = RQGIS.get_args_man('%s')", alg))$out
-#' params <- get_args_man(alg)
-#' params$input <- list(r1, r2, r3)
+#' r = raster(ncol = 100, nrow = 100)
+#' r1 = crop(r, extent(-10, 11, -10, 11))
+#' r2 = crop(r, extent(0, 20, 0, 20))
+#' r3 = crop(r, extent(9, 30, 9, 30))
+#' r1[] = 1:ncell(r1)
+#' r2[] = 1:ncell(r2)
+#' r3[] = 1:ncell(r3)
+#' alg = "grass7:r.patch"
+#' out = py_run_string(sprintf("out = RQGIS.get_args_man('%s')", alg))$out
+#' params = get_args_man(alg)
+#' params$input = list(r1, r2, r3)
 #' get_extent(params = params, type_name = out$type_name)
 #' # or if we save the input rasters in files stored on disk
-#' params[] <- save_spatial_objects(params = params,
+#' params[] = save_spatial_objects(params = params,
 #'                                  type_name = out$type_name)
 #' get_extent(params = params, type_name = out$type_name)
 #' }
 #' @author Jannes Muenchow
-get_extent <- function(params, type_name) {
-  ext <- mapply(function(x, y) {
+get_extent = function(params, type_name) {
+  ext = mapply(function(x, y) {
     if (y == "multipleinput") {
       # in the case of multiple input use recursion:
       # if the input is a list of rasters/shapefiles, unlist it, otherwise split
@@ -560,12 +560,12 @@ get_extent <- function(params, type_name) {
       }
     } else {
       # determine bbox in the case of a vector/raster layer residing in R
-      tmp <- try(expr = extent(x), silent = TRUE)
+      tmp = try(expr = extent(x), silent = TRUE)
       # determine bbox in the case of a raster stored on disk
       if (!inherits(tmp, "try-error")) {
         tmp 
       } else {
-        tmp <- try(
+        tmp = try(
           expr = {
             ext = GDALinfo(x, returnStats = FALSE)
             # xmin, xmax, ymin, ymax
@@ -585,13 +585,13 @@ get_extent <- function(params, type_name) {
         # "",basename(x))) if the filename itself also contains dots, e.g.,
         # gis.osm_roads_free_1.shp
         # We could use regexp to cut off the file extension
-        # my_layer <- stringr::str_extract(basename(x), "[A-z].+[^\\.[A-z]]")
+        # my_layer = stringr::str_extract(basename(x), "[A-z].+[^\\.[A-z]]")
         # but let's use an already existing function
         tmp = try(
           # [c(1, 3, 2, 4)] (xmin, ymin, xmax, ymax...) -> check if this is the
           # case for all vector formats (hopefully)
-          expr <- {
-            my_layer <- file_path_sans_ext(basename(as.character(x)))
+          expr = {
+            my_layer = file_path_sans_ext(basename(as.character(x)))
             extent(ogrInfo(dsn = dirname(as.character(x)), 
                            layer = my_layer)$extent[c(1, 3, 2, 4)])
           }, silent = TRUE) 
@@ -606,8 +606,8 @@ get_extent <- function(params, type_name) {
     }
   }, x = params, y = type_name, SIMPLIFY = FALSE)
   # now that we have possibly several extents, union them
-  ext <- ext[!is.na(ext)]
-  ext <- Reduce(raster::merge, ext)
+  ext = ext[!is.na(ext)]
+  ext = Reduce(raster::merge, ext)
   if (is.null(ext)) {
     stop(
       "Either you forgot to specify an input shapefile/raster or the",
@@ -615,7 +615,7 @@ get_extent <- function(params, type_name) {
     )
   }
   # sometimes the extent is given back with dec = ","; you need to change that
-  ext <- gsub(",", ".", ext[1:4])
+  ext = gsub(",", ".", ext[1:4])
   ext
 }
 
@@ -625,11 +625,11 @@ get_extent <- function(params, type_name) {
 #' @keywords internal
 #' @author Patrick Schratz
 #' @export
-check_for_server <- function() {
+check_for_server = function() {
 
   # try to get an output of 'lsb_release -a'
   if (detectCores() > 10 && .Platform$OS.type == "unix") {
-    test <- try(
+    test = try(
       suppressWarnings(system2(
         "lsb_release", "-a", stdout = TRUE,
         stderr = TRUE
@@ -637,8 +637,8 @@ check_for_server <- function() {
       silent = TRUE
     )
     if (!inherits(test, "try-error")) {
-      get_regex <- grep("Distributor ID:", test, value = TRUE)
-      platform <- gsub("Distributor ID:\t", "", get_regex)
+      get_regex = grep("Distributor ID:", test, value = TRUE)
+      platform = gsub("Distributor ID:\t", "", get_regex)
 
       # check for Debian | Ubuntu
       if (platform == "Debian") {

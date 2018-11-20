@@ -1,10 +1,10 @@
-open_app3 <- function(qgis_env = set_env()) {
+open_app3 = function(qgis_env = set_env()) {
   
   # check for server infrastructure
   check_for_server()
   
   # be a good citizen and restore the PATH
-  settings <- as.list(Sys.getenv())
+  settings = as.list(Sys.getenv())
   # since we are adding quite a few new environment variables these will remain
   # (PYTHONPATH, QT_PLUGIN_PATH, etc.). We could unset these before exiting the
   # function but I am not sure if this is necessary
@@ -42,7 +42,7 @@ open_app3 <- function(qgis_env = set_env()) {
   # reticulate would use another Python interpreter (e.g, Anaconda Python
   # instead of the Python interpreter delivered with QGIS) when running open_app
   # for the first time
-  tmp <- try(
+  tmp = try(
     expr = py_run_string("app")$app,
     silent = TRUE
   )
@@ -60,7 +60,7 @@ open_app3 <- function(qgis_env = set_env()) {
   py_run_string("from qgis.analysis import (QgsNativeAlgorithms)")
   # interestingly, under Linux the app would start also without running the next
   # two lines
-  set_prefix <- paste0(
+  set_prefix = paste0(
     "QgsApplication.setPrefixPath(r'",
     qgis_env$qgis_prefix_path, "', True)"
   )
@@ -111,20 +111,20 @@ open_app3 <- function(qgis_env = set_env()) {
   
   # attach further modules, our RQGIS class (needed for alglist, algoptions,
   # alghelp)
-  py_file <- system.file("python", "python3_funs.py", package = "RQGIS3")
+  py_file = system.file("python", "python3_funs.py", package = "RQGIS3")
   py_run_file(py_file)
   # instantiate/initialize RQGIS class
   py_run_string("RQGIS = RQGIS()")
 }
 
 
-setup_win3 <- function(qgis_env = set_env()) {
+setup_win3 = function(qgis_env = set_env()) {
   # call o4w_env.bat from within R
   # not really sure, if we need the next line (just in case)
   Sys.setenv(OSGEO4W_ROOT = qgis_env$root)
   # shell("ECHO %OSGEO4W_ROOT%")
   # REM start with clean path
-  # windir <- shell("ECHO %WINDIR%", intern = TRUE)
+  # windir = shell("ECHO %WINDIR%", intern = TRUE)
   # such error messages occurred:
   # [1]"'\\\\helix.klient.uib.no\\BioHome\\nboga'"
   # Jannes: this was the working directory apparently a server
@@ -134,14 +134,14 @@ setup_win3 <- function(qgis_env = set_env()) {
   # Therefore, pick the last element (not sure if this will always work, well,
   # we will find out). Another solution would be to hard-code "C:/Windows" but
   # I don't know if system32 can always be found there...
-  # windir <- windir[length(windir)]
+  # windir = windir[length(windir)]
   
   # maybe this is a more generic approach
-  cwd <- getwd()
+  cwd = getwd()
   on.exit(setwd(cwd))
   setwd("C:/")
-  windir <- shell("ECHO %WINDIR%", intern = TRUE)
-  windir <- normalizePath(windir, "/")
+  windir = shell("ECHO %WINDIR%", intern = TRUE)
+  windir = normalizePath(windir, "/")
   
   # start with a fresh PATH
   Sys.setenv(PATH = paste(
@@ -166,7 +166,7 @@ setup_win3 <- function(qgis_env = set_env()) {
                           Sys.getenv("PATH"), sep = ";"))
   
   # we need to make sure that qgis-ltr can also be used...
-  my_qgis <- gsub(".*/", "", qgis_env$qgis_prefix_path)
+  my_qgis = gsub(".*/", "", qgis_env$qgis_prefix_path)
   # add the directories where the QGIS libraries reside to search path
   # of the dynamic linker
   Sys.setenv(PATH = paste(
@@ -180,12 +180,12 @@ setup_win3 <- function(qgis_env = set_env()) {
   # Sys.setenv(GDAL_FILENAME_IS_UTF8 = "YES")
   # set the PYTHONPATH variable, so that QGIS knows where to search for
   # QGIS libraries and appropriate Python modules
-  python_path <- Sys.getenv("PYTHONPATH")
-  python_add <- file.path(qgis_env$root, "apps", my_qgis, "python")
+  python_path = Sys.getenv("PYTHONPATH")
+  python_add = file.path(qgis_env$root, "apps", my_qgis, "python")
   if (!grepl(python_add, python_path)) {
-    python_path <- paste(python_path, python_add, sep = ";")
+    python_path = paste(python_path, python_add, sep = ";")
     # if PYTHONPATH = "", this results in ';C:/OSGeo4W64/apps/qgis/python'
-    python_path <- gsub("^;", "", python_path)
+    python_path = gsub("^;", "", python_path)
     Sys.setenv(PYTHONPATH = python_path)
   }
   
@@ -205,22 +205,22 @@ setup_win3 <- function(qgis_env = set_env()) {
   # binary should be always found under  /usr/bin
   
   # compare py_config path with set_env path!!
-  a <- py_config()
+  a = py_config()
   # py_config() adds following paths to PATH:
   # "C:\\OSGeo4W64\\bin;C:\\OSGeo4W64\\bin\\Scripts;
-  py_path <- gsub("/bin.*", "", normalizePath(a$python, "/"))
+  py_path = gsub("/bin.*", "", normalizePath(a$python, "/"))
   if (!identical(py_path, qgis_env$root)) {
     stop("Wrong Python binary. Restart R and check again!")
   }
 }
 
-convert_to_tuple <- function(x) {
-  vals <- vapply(x, function(i) {
+convert_to_tuple = function(x) {
+  vals = vapply(x, function(i) {
     # get rid off 'strange' or incomplete shellQuotes
-    tmp <- unlist(strsplit(as.character(i), ""))
-    tmp <- tmp[tmp != "\""]
+    tmp = unlist(strsplit(as.character(i), ""))
+    tmp = tmp[tmp != "\""]
     # paste the argument together again
-    tmp <- paste(tmp, collapse = "")
+    tmp = paste(tmp, collapse = "")
     # shellQuote argument if is not True, False or None
     ifelse(grepl("True|False|None", tmp), tmp, shQuote(tmp))
   }, character(1))
