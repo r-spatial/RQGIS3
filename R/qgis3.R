@@ -73,34 +73,35 @@ open_app3 = function(qgis_env = set_env()) {
   # WARNING: Auth db query exec() FAILED
   py_run_string("QgsApplication.showSettings()")
   
-  # not running the next two lines leads to a Qt problem when running 
-  # QgsApplication([], True)
-  # browseURL("http://wiki.qt.io/Deploy_an_Application_on_Windows")
-  py_run_string("from qgis.PyQt.QtCore import QCoreApplication")
-  # the strange thing is shell.exec(python3) works without it because here 
-  # all Qt paths are available as needed as set in SET QT_PLUGIN_PATH
-  # but these are not available when running Python3 via reticulate
-  # py_run_string("a = QCoreApplication.libraryPaths()")$a  # empty list
-  # so, we need to set them again 
-  # I have looked them up in the QGIS 3 GUI using QCoreApplication.libraryPaths()
-  # py_run_string("QCoreApplication.setLibraryPaths(['C:/OSGEO4~1/apps/qgis/plugins', 'C:/OSGEO4~1/apps/qgis/qtplugins', 'C:/OSGEO4~1/apps/qt5/plugins', 'C:/OSGeo4W64/apps/qt4/plugins', 'C:/OSGeo4W64/bin'])")
-  py_run_string(
-    sprintf("QCoreApplication.setLibraryPaths(['%s', '%s', '%s', '%s', '%s'])",
-            file.path(qgis_env$root, "apps/qgis/plugins"),
-            file.path(qgis_env$root, "apps/qgis/qtplugins"),
-            file.path(qgis_env$root, "apps/qt5/plugins"),
-            file.path(qgis_env$root, "apps/qt4/plugins"),
-            file.path(qgis_env$root, "bin"))
-  )
-  # py_run_string("a = QCoreApplication.libraryPaths()")$a
+  if (Sys.info()["sysname"] == "Windows") {
+    # not running the next two lines leads to a Qt problem when running 
+    # QgsApplication([], True)
+    # browseURL("http://wiki.qt.io/Deploy_an_Application_on_Windows")
+    py_run_string("from qgis.PyQt.QtCore import QCoreApplication")
+    # the strange thing is shell.exec(python3) works without it because here 
+    # all Qt paths are available as needed as set in SET QT_PLUGIN_PATH
+    # but these are not available when running Python3 via reticulate
+    # py_run_string("a = QCoreApplication.libraryPaths()")$a  # empty list
+    # so, we need to set them again 
+    # I have looked them up in the QGIS 3 GUI using QCoreApplication.libraryPaths()
+    # py_run_string("QCoreApplication.setLibraryPaths(['C:/OSGEO4~1/apps/qgis/plugins', 'C:/OSGEO4~1/apps/qgis/qtplugins', 'C:/OSGEO4~1/apps/qt5/plugins', 'C:/OSGeo4W64/apps/qt4/plugins', 'C:/OSGeo4W64/bin'])")
+    py_run_string(
+      sprintf("QCoreApplication.setLibraryPaths(['%s', '%s', '%s', '%s', '%s'])",
+              file.path(qgis_env$root, "apps/qgis/plugins"),
+              file.path(qgis_env$root, "apps/qgis/qtplugins"),
+              file.path(qgis_env$root, "apps/qt5/plugins"),
+              file.path(qgis_env$root, "apps/qt4/plugins"),
+              file.path(qgis_env$root, "bin"))
+    )
+    # py_run_string("a = QCoreApplication.libraryPaths()")$a
+  }
+  
   py_run_string("app = QgsApplication([], True)")
   py_run_string("QgsApplication.initQgis()")
   py_run_string(paste0("sys.path.append(r'", qgis_env$python_plugins, "')"))
   # add native geoalgorithms
   py_run_string("QgsApplication.processingRegistry().addProvider(QgsNativeAlgorithms())")
   py_run_string("from processing.core.Processing import Processing")
-  # try:
-  #py_run_string("from processing.core.Processing import *")
   py_run_string("Processing.initialize()")
   py_run_string("import processing")
   
