@@ -1,6 +1,8 @@
 open_app3 = function(qgis_env = set_env()) {
   
   # add virtual display if available (important for processing on the server)
+  # only possible if pyvirtualdisplay and xvfb are installed, see dockerfile of
+  # github.com/jannes-m/docker-rqgis/rqgis3/dockerfile
   py_cmd = paste0("try:\n  from pyvirtualdisplay import Display\n", 
          "  display = Display(visible=False, size=(1024, 768), color_depth=24)\n",
          "  display.start()\n",
