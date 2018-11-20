@@ -330,10 +330,10 @@ qgis_session_info = function(qgis_env = set_env()) {
   tmp = try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
   
   # retrieve the output
-  suppressWarnings(
+  suppressWarnings({
     out =
       py_run_string("my_session_info = RQGIS.qgis_session_info()")$my_session_info
-  )
+    })
   # clean up after yourself!!
   py_run_string(
     "try:\n  del(my_session_info)\nexcept:\  pass"
@@ -739,8 +739,9 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
   # message we have to check if the user has specified some optional parameters
   # via ... or if he left optional parameters unspecified in a
   # parameter-argument list(see a bit below)
-  suppressMessages(
+  suppressMessages({
     params_all = get_args_man(alg, options = TRUE)
+    }
   )
   
   # check if there are too few/many function arguments
