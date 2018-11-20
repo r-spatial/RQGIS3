@@ -111,7 +111,7 @@ open_app3 <- function(qgis_env = set_env()) {
   
   # attach further modules, our RQGIS class (needed for alglist, algoptions,
   # alghelp)
-  py_file <- system.file("python", "python3_funs.py", package = "RQGIS")
+  py_file <- system.file("python", "python3_funs.py", package = "RQGIS3")
   py_run_file(py_file)
   # instantiate/initialize RQGIS class
   py_run_string("RQGIS = RQGIS()")
