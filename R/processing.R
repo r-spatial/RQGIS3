@@ -316,13 +316,10 @@ open_app = function(qgis_env = set_env()) {
 #'   API. For more information, refer to [set_env()].
 #' @return The function returns a list with following elements:
 #' \enumerate{
-#'  \item{qgis_version: Name and version of QGIS used by RQGIS.}
-#'  \item{grass6: GRASS 6 version number, if installed to use with QGIS.}
+#'  \item{gdal: Name and version of GDAL used by RQGIS.}
 #'  \item{grass7: GRASS 7 version number, if installed to use with QGIS.}
+#'  \item{qgis_version: Name and version of QGIS used by RQGIS.}
 #'  \item{saga: The installed SAGA version used by QGIS.}
-#'  \item{supported_saga_versions: character vector representing the SAGA
-#'  versions supported by the QGIS installation.}
-#' }
 #' @author Jannes Muenchow, Victor Olaya, QGIS core team
 #' @export
 #' @examples
@@ -366,25 +363,14 @@ qgis_session_info = function(qgis_env = set_env()) {
       })
     }
     
-    
-    
-    # QGIS developer team took care of this issue, so we can eventually delete
-    # it
-    # if (grepl("72", my_grass)) {
-    #   warning(paste0("QGIS might be still pointing to grass70. In this case ",
-    #                  "you might want to consider using a softlink by running: ",
-    #                  "'sudo ln -s /usr/bin/grass72 /usr/bin/grass70' on the ",
-    #                  "commandline. See also ",
-    #                  "'https://lists.osgeo.org/pipermail/qgis-user/2017-",
-    #                  "January/038907.html'. Then restart R again."))
-    # }
-    
     if (length(my_grass) > 0) {
       my_grass = lapply(seq(length(my_grass)), function(i) {
+        # now read out the GRASS version
         version = grep(
           readLines(my_grass), pattern = "grass_version = \"",
           value = TRUE
         )
+        # just keep the version number
         version = paste(
           unlist(stringr::str_extract_all(version, "\\d(\\.)?")),
           collapse = ""
@@ -394,7 +380,6 @@ qgis_session_info = function(qgis_env = set_env()) {
       out$grass7 = ifelse(length(grass7) == 0, out$grass7, grass7)
     }
   }
-  
   # sort it again since Python dictionary sorting is random
   out[sort(names(out))]
 }
