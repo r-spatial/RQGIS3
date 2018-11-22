@@ -677,52 +677,6 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
     )
   }
   
-  
-  # retrieve the options for a specific parameter
-  opts = py_run_string(sprintf("opts = RQGIS.get_options('%s')", alg))$opts
-  # add number notation in Python lingo, i.e. count from 0 to the length of the
-  # vector minus 1
-  opts = lapply(opts, function(x) {
-    data.frame(name = x, number = 0:(length(x) - 1), stringsAsFactors = FALSE)
-  })
-  
-  int = intersect(names(params), names(opts))
-  ls_1 = lapply(int, function(x) {
-    # if the user specified a named notation replace it by number notation if
-    # the option does not appear in the dictionary due to a typo (e.g., area2
-    # instead of area), Python will inform the user that area2 is a wrong
-    # parameter value
-    if (grepl("saga:", alg)) {
-      saga_test = gsub("\\[\\d\\] ", "", opts[[x]]$name)
-    } else {
-      # otherwise just duplicate the possible argument values
-      saga_test = opts[[x]]$name
-    }
-    # replace verbal notation by number notation
-    if (params[[x]] %in% c(opts[[x]]$name, saga_test)) {
-      opts[[x]][
-        opts[[x]]$name == params[[x]] | saga_test == params[[x]],
-        "number"
-        ]
-    } else {
-      # otherwise return the user input but check if the number is ok given the
-      # user has specified a number
-      test = suppressWarnings(try(as.numeric(params[[x]]), silent = TRUE))
-      if (!is.na(test)) {
-        if (!test %in% opts[[x]]$number) {
-          stop(
-            x, " only accepts these values: ",
-            paste(opts[[x]]$number, collapse = ", "),
-            "\nYou specified: ", test
-          )
-        }
-      }
-      params[[x]]
-    }
-  })
-  # replace the named input by number input in the parameter-argument list
-  params[int] = ls_1
-  
   # Save Spatial-Objects (sp, sf and raster)
   # here, we would like to retrieve the type type of the argument (which is list
   # element 4)
