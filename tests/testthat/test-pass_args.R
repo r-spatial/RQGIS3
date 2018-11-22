@@ -6,11 +6,11 @@ context("pass_args")
 test_that("Test, if pass_args works correctly?", {
   testthat::skip_on_cran()
   
-  alg <- "grass7:r.slope.aspect"
-  params <- pass_args(alg, elevation = dem, format = "degrees")
+  alg = "grass7:r.slope.aspect"
+  params = pass_args(alg, elevation = dem, format = "degrees")
   # overall checks
   expect_type(params, "list")
-  expect_length(params, 17)
+  expect_length(params, 19)
   # check if input raster was saved to a elevation
   expect_true(file.exists(params$elevation))
   # check if GRASS_REGION_PARAMETER was constructed from input dem
