@@ -362,7 +362,7 @@ setup_mac = function(qgis_env = set_env()) {
 save_spatial_objects = function(params, type_name, NA_flag = -99999) {
   lapply(seq_along(params), function(i) {
     tmp = class(params[[i]])
-    if (tmp == "list" && type_name[i] == "multipleinput") {
+    if (tmp == "list" && type_name[i] == "multilayer") {
       names(params[[i]]) = paste0("inp", 1:length(params[[i]]))
       out = save_spatial_objects(params = params[[i]], NA_flag = NA_flag)
       return(paste(unlist(out), collapse = ";"))
@@ -462,7 +462,7 @@ save_spatial_objects = function(params, type_name, NA_flag = -99999) {
 #' @author Jannes Muenchow
 get_extent = function(params, type_name) {
   ext = mapply(function(x, y) {
-    if (y == "multipleinput") {
+    if (y == "multilayer") {
       # in the case of multiple input use recursion:
       # if the input is a list of rasters/shapefiles, unlist it, otherwise split
       # the strings by ; which separates multiple file store locations on disk
