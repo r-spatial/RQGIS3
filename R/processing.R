@@ -200,6 +200,158 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
   qgis_env
 }
 
+
+#' @title Open a QGIS application
+#' @description `open_app()` first sets all necessary paths to successfully call
+#'   the QGIS Python binary, and secondly opens a QGIS application while
+#'   importing the most common Python modules.
+#' @note Please note that the function changes your environment settings via
+#'   [base::Sys.getenv()] which is necessary to run the QGIS Python API.
+#' @param qgis_env Environment settings containing all the paths to run the QGIS
+#'   API. For more information, refer to [set_env()]. Basically, the function
+#'   defines a few new environment variables which should not interfere with
+#'   other settings.
+#' @return The function enables a 'tunnel' to the Python QGIS API.
+#' @author Jannes Muenchow
+#' @examples
+#' \dontrun{
+#' open_app()
+#' }
+#' @export
+
+open_app = function(qgis_env = set_env()) {
+  
+  # check for server infrastructure
+  check_for_server()
+  
+  # be a good citizen and restore the PATH
+  settings = as.list(Sys.getenv())
+  # since we are adding quite a few new environment variables these will remain
+  # (PYTHONPATH, QT_PLUGIN_PATH, etc.). We could unset these before exiting the
+  # function but I am not sure if this is necessary
+  
+  # Well, well, not sure if we should change it back or if we at least have to
+  # get rid off Anaconda Python or other Python binaries - yes, we do, otherwise
+  # reticulate might run into problems when loading modules because it might try
+  # to load them first from the other binaries indicated in PATH
+  
+  # on.exit(do.call(Sys.setenv, settings))
+  
+  # resetting system settings on exit causes that SAGA algorithms cannot be
+  # processed anymore, find out why this is!!!
+  
+  if (Sys.info()["sysname"] == "Windows") {
+    # run Windows setup
+    setup_win(qgis_env = qgis_env)
+    
+    # Ok, basically, we added a few new paths (especially under Windows) but
+    # that's about it, we don't have to change that back. Only under Windows we
+    # start with a clean, i.e. empty PATH, and delete everything what was in
+    # there before, so we should at least add the old PATH to our newly created
+    # one
+    reset_path(settings)
+  } else if (Sys.info()["sysname"] == "Linux" | Sys.info()["sysname"] == "FreeBSD") {
+    setup_linux(qgis_env = qgis_env)
+  } else if (Sys.info()["sysname"] == "Darwin") {
+    setup_mac(qgis_env = qgis_env)
+  }
+  
+  
+  # make sure that QGIS is not already running (this would crash R) app =
+  # QgsApplication([], True)  # see below
+  # We can only run the test after we have set all the paths. Otherwise
+  # reticulate would use another Python interpreter (e.g, Anaconda Python
+  # instead of the Python interpreter delivered with QGIS) when running open_app
+  # for the first time
+  tmp = try(
+    expr = py_run_string("app")$app,
+    silent = TRUE
+  )
+  if (!inherits(tmp, "try-error")) {
+    stop("Python QGIS application is already running.")
+  }
+  
+  # add virtual display if available (important for processing on the server)
+  # only possible if pyvirtualdisplay and xvfb are installed, see dockerfile of
+  # github.com/jannes-m/docker-rqgis/rqgis3/dockerfile
+  py_cmd = 
+    paste0(
+      "try:\n  from pyvirtualdisplay import Display\n", 
+      "  display = Display(visible=False, size=(1024, 768), color_depth=24)\n",
+      "  display.start()\n",
+      "except:\n  pass")
+  # cat(py_cmd)
+  py_run_string(py_cmd)
+  # next attach all required modules
+  py_run_string("import os, sys")
+  py_run_string("from qgis.core import *")
+  py_run_string("from osgeo import ogr")
+  py_run_string("from PyQt5.QtCore import *")
+  py_run_string("from PyQt5.QtGui import *")
+  py_run_string("from qgis.gui import *")
+  # native geoalgorithms
+  py_run_string("from qgis.analysis import (QgsNativeAlgorithms)")
+  # interestingly, under Linux the app would start also without running the next
+  # two lines
+  set_prefix = paste0(
+    "QgsApplication.setPrefixPath(r'",
+    qgis_env$qgis_prefix_path, "', True)"
+  )
+  py_run_string(set_prefix)
+  # not running the next line will produce following error message under Linux
+  # QSqlDatabase: QSQLITE driver not loaded
+  # QSqlDatabase: available drivers:
+  # ERROR: Opening of authentication db FAILED
+  # QSqlQuery::prepare: database not open
+  # WARNING: Auth db query exec() FAILED
+  py_run_string("QgsApplication.showSettings()")
+  
+  if (Sys.info()["sysname"] == "Windows") {
+    # not running the next two lines leads to a Qt problem when running 
+    # QgsApplication([], True)
+    # browseURL("http://wiki.qt.io/Deploy_an_Application_on_Windows")
+    py_run_string("from qgis.PyQt.QtCore import QCoreApplication")
+    # the strange thing is shell.exec(python3) works without it because here 
+    # all Qt paths are available as needed as set in SET QT_PLUGIN_PATH
+    # but these are not available when running Python3 via reticulate
+    # py_run_string("a = QCoreApplication.libraryPaths()")$a  # empty list
+    # so, we need to set them again 
+    # I have looked them up in the QGIS 3 GUI using QCoreApplication.libraryPaths()
+    # py_run_string("QCoreApplication.setLibraryPaths(['C:/OSGEO4~1/apps/qgis/plugins', 'C:/OSGEO4~1/apps/qgis/qtplugins', 'C:/OSGEO4~1/apps/qt5/plugins', 'C:/OSGeo4W64/apps/qt4/plugins', 'C:/OSGeo4W64/bin'])")
+    py_run_string(
+      sprintf("QCoreApplication.setLibraryPaths(['%s', '%s', '%s', '%s', '%s'])",
+              file.path(qgis_env$root, "apps/qgis/plugins"),
+              file.path(qgis_env$root, "apps/qgis/qtplugins"),
+              file.path(qgis_env$root, "apps/qt5/plugins"),
+              file.path(qgis_env$root, "apps/qt4/plugins"),
+              file.path(qgis_env$root, "bin"))
+    )
+    # py_run_string("a = QCoreApplication.libraryPaths()")$a
+  }
+  
+  py_run_string("app = QgsApplication([], True)")
+  py_run_string("QgsApplication.initQgis()")
+  py_run_string(paste0("sys.path.append(r'", qgis_env$python_plugins, "')"))
+  # add native geoalgorithms
+  py_run_string("QgsApplication.processingRegistry().addProvider(QgsNativeAlgorithms())")
+  py_run_string("from processing.core.Processing import Processing")
+  py_run_string("Processing.initialize()")
+  py_run_string("import processing")
+  
+  # starting from 2.14.17 and 2.18.11, QgsApplication.setPrefixPath changes the
+  # decimal separator, I don't know why...
+  # the next line should turn off locale-specific separators
+  Sys.setlocale("LC_NUMERIC", "C")
+  
+  # attach further modules, our RQGIS class (needed for alglist, algoptions,
+  # alghelp)
+  py_file = system.file("python", "python3_funs.py", package = "RQGIS3")
+  py_run_file(py_file)
+  # instantiate/initialize RQGIS class
+  py_run_string("RQGIS = RQGIS()")
+}
+
+
 #' @title QGIS session info
 #' @description `qgis_session_info` reports the version of QGIS and
 #'   installed third-party providers (so far GRASS 6, GRASS 7, and SAGA).
