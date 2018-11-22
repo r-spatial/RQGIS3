@@ -21,7 +21,7 @@ open_app = function(qgis_env = set_env()) {
   
   if (Sys.info()["sysname"] == "Windows") {
     # run Windows setup
-    setup_win3(qgis_env = qgis_env)
+    setup_win(qgis_env = qgis_env)
     
     # Ok, basically, we added a few new paths (especially under Windows) but
     # that's about it, we don't have to change that back. Only under Windows we
@@ -131,7 +131,7 @@ open_app = function(qgis_env = set_env()) {
 }
 
 
-setup_win3 = function(qgis_env = set_env()) {
+setup_win = function(qgis_env = set_env()) {
   # call o4w_env.bat from within R
   # not really sure, if we need the next line (just in case)
   Sys.setenv(OSGEO4W_ROOT = qgis_env$root)
@@ -214,15 +214,12 @@ setup_win3 = function(qgis_env = set_env()) {
     file.path(qgis_env$root, "bin/python3.exe"),
     required = TRUE
   )
-  # We do not need the subsequent test for Linux & Mac since the Python
-  # binary should be always found under  /usr/bin
-  
+
   # compare py_config path with set_env path!!
   a = py_config()
   # py_config() adds following paths to PATH:
   # "C:\\OSGeo4W64\\bin;C:\\OSGeo4W64\\bin\\Scripts;
-  py_path = gsub("/bin.*", "", normalizePath(a$python, "/"))
-  if (!identical(py_path, qgis_env$root)) {
+  if (!grepl(qgis_env$root, normalizePath(a$python, "/"))) {
     stop("Wrong Python binary. Restart R and check again!")
   }
 }
