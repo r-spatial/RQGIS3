@@ -12,7 +12,7 @@ test_that("qgis_session_info yields a list as output", {
   info_r = version
   info_qgis = qgis_session_info()
   info = c(platform = info_r$platform, R = info_r$version.string, info_qgis)
-  expect_gt(length(info), 6)
+  expect_gt(length(info), 5)
 })
 
 test_that("find_algorithms finds curvature algorithms", {
@@ -29,7 +29,7 @@ test_that("get_usage finds grass7:r.slope.aspect", {
   skip_on_cran()
   
   use = get_usage(alg = "grass7:r.slope.aspect", intern = TRUE)
-  expect_match(use, "ALGORITHM: r.slope.aspect")
+  expect_match(use, "^r.slope.aspect")
 })
 
 test_that(paste(
@@ -39,7 +39,7 @@ test_that(paste(
   skip_on_cran()
   
   params = get_args_man(alg = "grass7:r.slope.aspect")
-  expect_length(params, 17)
+  expect_length(params, 19)
   # Calculate curvatures
   params$elevation = dem
   params$pcurvature = file.path(tempdir(), "pcurv.tif")
@@ -58,28 +58,30 @@ test_that(paste(
   run_qgis(
     "saga:sinkremoval",
     DEM = dem,
-    METHOD = "[1] Fill Sinks",
-    DEM_PREPROC = file.path(tempdir(), "sdem.tif"),
+    METHOD = 1,
+    DEM_PREPROC = file.path(tempdir(), "sdem.sdat"),
     show_output_paths = FALSE
   )
-  expect_true(file.exists(file.path(tempdir(), "sdem.tif")))
+  expect_true(file.exists(file.path(tempdir(), "sdem.sdat")))
   
   # Compute wetness index
   run_qgis(
     "saga:sagawetnessindex",
-    DEM = file.path(tempdir(), "sdem.tif"),
-    AREA = file.path(tempdir(), "carea.tif"),
-    SLOPE = file.path(tempdir(), "cslope.tif"),
+    DEM = file.path(tempdir(), "sdem.sdat"),
+    AREA = file.path(tempdir(), "carea.sdat"),
+    AREA_MOD = file.path(tempdir(), "area_mod.sdat"),
+    SLOPE = file.path(tempdir(), "cslope.sdat"),
+    TWI = file.path(tempdir(), "twi.sdat"),
     SLOPE_TYPE = 1,
     show_output_paths = FALSE
   )
-  expect_true(file.exists(file.path(tempdir(), "cslope.tif")))
-  expect_true(file.exists(file.path(tempdir(), "carea.tif")))
+  expect_true(file.exists(file.path(tempdir(), "cslope.sdat")))
+  expect_true(file.exists(file.path(tempdir(), "carea.sdat")))
   
   # transform
-  cslope = raster(file.path(tempdir(), "cslope.tif"))
+  cslope = raster(file.path(tempdir(), "cslope.sdat"))
   cslope = cslope * 180 / pi
-  carea = raster(file.path(tempdir(), "carea.tif"))
+  carea = raster(file.path(tempdir(), "carea.sdat"))
   log_carea = log(carea / 1e+06)
   data("dem", package = "RQGIS")
   dem = dem / 1000
@@ -144,11 +146,11 @@ test_that("Test that we can call the PYQGIS API directly", {
   expect_gt(length(met), 5)
   
   py_cmd =
-    "opts = RQGIS.get_options('qgis:randompointsinsidepolygonsvariable')"
-  opts = py_run_string(py_cmd)$opts
-  expect_is(opts, "list")
-  py_cmd = "processing.alghelp('qgis:randompointsinsidepolygonsvariable')"
+    "opts = RQGIS.get_options('grass7:r.slope.aspect')"
+  opts = py_capture_output(py_run_string(py_cmd)$opts)
+  expect_is(opts, "character")
+  py_cmd = "processing.algorithmHelp('grass7:r.slope.aspect')"
   alghelp = py_capture_output(py_run_string(py_cmd)) %>%
-    substring(., 1, 40)
-  expect_match(alghelp, "ALGORITHM: Random points inside polygons")
+    substring(., 1, 38)
+  expect_match(alghelp, "r\\.slope\\.aspect \\(grass7:r\\.slope\\.aspect)")
 })
