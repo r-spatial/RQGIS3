@@ -1,3 +1,21 @@
+#' @title Open a QGIS application
+#' @description `open_app()` first sets all necessary paths to successfully call
+#'   the QGIS Python binary, and secondly opens a QGIS application while
+#'   importing the most common Python modules.
+#' @note Please note that the function changes your environment settings via
+#'   [base::Sys.getenv()] which is necessary to run the QGIS Python API.
+#' @param qgis_env Environment settings containing all the paths to run the QGIS
+#'   API. For more information, refer to [set_env()]. Basically, the function
+#'   defines a few new environment variables which should not interfere with
+#'   other settings.
+#' @return The function enables a 'tunnel' to the Python QGIS API.
+#' @author Jannes Muenchow
+#' @examples
+#' \dontrun{
+#' open_app()
+#' }
+#' @export
+
 open_app = function(qgis_env = set_env()) {
   
   # check for server infrastructure
@@ -130,6 +148,18 @@ open_app = function(qgis_env = set_env()) {
   py_run_string("RQGIS = RQGIS()")
 }
 
+#' @title Set all Windows paths necessary to start the QGIS application
+#' @description Windows helper function to start the QGIS application by setting
+#'   all necessary path especially through running [run_ini()].
+#' @param qgis_env Environment settings containing all the paths to run the QGIS
+#'   API. For more information, refer to [set_env()].
+#' @return The function changes the system settings using [base::Sys.setenv()].
+#' @keywords internal
+#' @author Jannes Muenchow
+#' @examples
+#' \dontrun{
+#' setup_win()
+#' }
 
 setup_win = function(qgis_env = set_env()) {
   # call o4w_env.bat from within R
