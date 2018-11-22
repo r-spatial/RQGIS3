@@ -21,14 +21,8 @@ test_that("Test, if pass_args works correctly?", {
       "8935384.32460253"
     )
   )
-  # check verbal input conversion
-  expect_identical(as.character(params$format), "0")
-  
   # check if a parameter was wrongly specified
   params <- try(pass_args(alg, elev = dem), silent = TRUE)
-  expect_s3_class(params, "try-error")
-  # check what happens if an argument was wrongly specified
-  params <- try(pass_args(alg, elevation = dem, format = 122), silent = TRUE)
   expect_s3_class(params, "try-error")
 })
 
@@ -58,9 +52,9 @@ test_that("Test, if multiple input works with pass_args?", {
   # alg <- "saga:resampling"
   # params <- pass_args(alg, INPUT = dem)
   # expect_identical(
-  #   params$OUTPUT_EXTENT, 
+  #   params$OUTPUT_EXTENT,
   #   "794599.107614635,798208.557614635,8931774.87460253,8935384.32460253")
-  
+
   # also write a test for shapefiles -> find a function that takes multiple
   # shapefiles as input (ParameterMultipleInput), e.g., grass7:v.patch
   

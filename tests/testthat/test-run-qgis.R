@@ -9,25 +9,25 @@ context("run_qgis")
 test_that("Test, if QGIS-algorithms are working?", {
   testthat::skip_on_cran()
   
-  coords_1 <- matrix(
+  coords_1 = matrix(
     data = c(0, 0, 1, 0, 1, 1, 0, 1, 0, 0),
     ncol = 2, byrow = TRUE
   )
-  coords_2 <- coords_1 + 2
+  coords_2 = coords_1 + 2
   # convert the coordinates into polygons
-  polys <- list(
+  polys = list(
     Polygons(list(Polygon(coords_1)), 1),
     Polygons(list(Polygon(coords_2)), 2)
   )
-  polys <- as(SpatialPolygons(polys), "SpatialPolygonsDataFrame")
+  polys = as(SpatialPolygons(polys), "SpatialPolygonsDataFrame")
   
   # Retrieve the function arguments in such a way that they can be easily
   # specified and serve as input for run_qgis
-  alg <- "qgis:polygoncentroids"
+  alg = "native:centroids"
   # finally, let QGIS do the work!!
-  vec_1 <- run_qgis(
-    alg, INPUT_LAYER = polys,
-    OUTPUT_LAYER = file.path(tempdir(), "coords.shp"),
+  vec_1 = run_qgis(
+    alg, INPUT = polys,
+    OUTPUT = file.path(tempdir(), "coords.shp"),
     show_output_paths = FALSE,
     # let's load the QGIS output directly into R!
     load_output = TRUE
@@ -36,27 +36,30 @@ test_that("Test, if QGIS-algorithms are working?", {
   # check if the output is an spatial object
   expect_is(vec_1, "sf")
   # now use ...-notation and sf as input
-  vec_2 <- run_qgis(
-    alg = "qgis:polygoncentroids",
-    INPUT_LAYER = st_as_sf(polys),
-    OUTPUT_LAYER = file.path(tempdir(), "coords.shp"),
+  vec_2 = run_qgis(
+    alg = "native:centroids",
+    INPUT = st_as_sf(polys),
+    OUTPUT = file.path(tempdir(), "coords.shp"),
     show_output_paths = FALSE, load_output = TRUE
   )
   # check if the output is spatial object
   expect_is(vec_2, "sf")
   
   # check geojson and gpkg
-  vec_3 <- run_qgis(
-    alg, INPUT_LAYER = polys,
-    OUTPUT_LAYER = file.path(tempdir(), "coords.geojson"),
+  vec_3 = run_qgis(
+    alg, 
+    INPUT = polys,
+    OUTPUT = file.path(tempdir(), "coords.geojson"),
     show_output_paths = FALSE,
     # let's load the QGIS output directly into R!
     load_output = TRUE
   )
   expect_is(vec_3, "sf")
-  vec_4 <- run_qgis(
-    alg, INPUT_LAYER = polys,
-    OUTPUT_LAYER = file.path(tempdir(), "coords.gpkg"),
+  
+  vec_4 = run_qgis(
+    alg, 
+    INPUT = polys,
+    OUTPUT = file.path(tempdir(), "coords.gpkg"),
     show_output_paths = FALSE,
     # let's load the QGIS output directly into R!
     load_output = TRUE
@@ -72,24 +75,30 @@ test_that("Test, if SAGA-algorithms are working?", {
   
   # attach data
   data("dem")
-  params <- get_args_man(alg = "saga:sagawetnessindex", options = TRUE)
-  params$DEM <- dem
-  params$TWI <- file.path(tempdir(), "twi.tif")
-  saga_out_1 <- run_qgis(
+  params = get_args_man(alg = "saga:sagawetnessindex", options = TRUE)
+  params$DEM = dem
+  params$AREA = file.path(tempdir(), "area.sdat")
+  params$SLOPE = file.path(tempdir(), "slope.sdat")
+  params$AREA_MOD = file.path(tempdir(), "area_mod.sdat")
+  params$TWI = file.path(tempdir(), "twi.sdat")
+  saga_out_1 = run_qgis(
     "saga:sagawetnessindex", params = params,
     show_output_paths = FALSE, load_output = TRUE
   )
   # check if the output is a raster
-  expect_is(saga_out_1, "RasterLayer")
+  expect_is(stack(saga_out_1), "RasterStack")
   # now use ...-notation
-  saga_out_2 <- run_qgis(
+  saga_out_2 = run_qgis(
     "saga:sagawetnessindex",
     DEM = dem,
-    TWI = file.path(tempdir(), "twi.tif"),
+    AREA = file.path(tempdir(), "area.sdat"),
+    SLOPE = file.path(tempdir(), "slope.sdat"),
+    AREA_MOD = file.path(tempdir(), "area_mod.sdat"),
+    TWI = file.path(tempdir(), "twi.sdat"),
     show_output_paths = FALSE, load_output = TRUE
   )
   # check if the output is a raster
-  expect_is(saga_out_2, "RasterLayer")
+  expect_is(stack(saga_out_2), "RasterStack")
 })
 
 
@@ -100,11 +109,11 @@ test_that("Test, if GRASS7-algorithms are working?", {
   
   # attach data
   data("dem")
-  params <- get_args_man(alg = "grass7:r.slope.aspect", options = TRUE)
-  params$elevation <- dem
-  params$slope <- file.path(tempdir(), "slope.tif")
-  params$aspect <- file.path(tempdir(), "aspect.tif")
-  grass_out_1 <- run_qgis(
+  params = get_args_man(alg = "grass7:r.slope.aspect", options = TRUE)
+  params$elevation = dem
+  params$slope = file.path(tempdir(), "slope.tif")
+  params$aspect = file.path(tempdir(), "aspect.tif")
+  grass_out_1 = run_qgis(
     "grass7:r.slope.aspect", params = params,
     show_output_paths = FALSE, load_output = TRUE
   )
@@ -113,7 +122,7 @@ test_that("Test, if GRASS7-algorithms are working?", {
   expect_is(grass_out_1[[2]], "RasterLayer")
   
   # now use ...-notation
-  grass_out_2 <- run_qgis(
+  grass_out_2 = run_qgis(
     "grass7:r.slope.aspect",
     elevation = dem,
     slope = file.path(tempdir(), "slope.tif"),
