@@ -778,30 +778,12 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
   
   # make sure function again arguments are in the correct order is not srictly
   # necessary any longer since we use a Python dictionary to pass our arguments.
-  # However, otherwise, the user might become confused... and for
-  # RQGIS.check_args the correct order is important as well! Doing the check
-  # here has also the advantage that the function tells the user all missing
-  # function arguments, QGIS returns only one at a time
+  # However, otherwise, the user might become confused... 
   params = params[names(params_all)]
-  
-  # RQGIS.check_args() only available for QGIS 2
-  check = py_run_string(sprintf(
-    "check = RQGIS.check_args('%s', %s)", alg,
-    paste0("[", convert_to_tuple(params), "]")))$check
-  # stop the function if wrong arguments were supplied, e.g.,
-  # 'grass7:r.slope.aspect":
-  # format must be an integer, so you cannot supply "hallo", the same goes for
-  # the precision and the the GRASS_REGION_PARAMETER
-  if (length(check) > 0) {
-    stop(sprintf(
-      "Invalid argument value '%s' for parameter '%s'\n",
-      check, names(check)
-    ))
-  }  
   
   # # clean up after yourself!!
   py_run_string(
-    "try:\n  del(out, opts, check)\nexcept:\  pass"
+    "try:\n  del(out, opts)\nexcept:\  pass"
   )
   # return your result
   params
