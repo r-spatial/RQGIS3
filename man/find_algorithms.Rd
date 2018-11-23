@@ -35,7 +35,7 @@ Python.
 \examples{
 \dontrun{
 # list all available QGIS algorithms on your system
-algs <- find_algorithms()
+algs = find_algorithms()
 algs[1:15]
 # find a function which adds coordinates
 find_algorithms(search_term = "add")

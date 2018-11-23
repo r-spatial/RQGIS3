@@ -10,17 +10,6 @@ qgis_session_info(qgis_env = set_env())
 \item{qgis_env}{Environment settings containing all the paths to run the QGIS
 API. For more information, refer to \code{\link[=set_env]{set_env()}}.}
 }
-\value{
-The function returns a list with following elements:
-\enumerate{
-\item{qgis_version: Name and version of QGIS used by RQGIS.}
-\item{grass6: GRASS 6 version number, if installed to use with QGIS.}
-\item{grass7: GRASS 7 version number, if installed to use with QGIS.}
-\item{saga: The installed SAGA version used by QGIS.}
-\item{supported_saga_versions: character vector representing the SAGA
-versions supported by the QGIS installation.}
-}
-}
 \description{
 \code{qgis_session_info} reports the version of QGIS and
 installed third-party providers (so far GRASS 6, GRASS 7, and SAGA).

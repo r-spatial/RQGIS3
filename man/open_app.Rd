@@ -16,9 +16,9 @@ other settings.}
 The function enables a 'tunnel' to the Python QGIS API.
 }
 \description{
-\code{open_app} first sets all the correct paths to the QGIS Python
-binary, and secondly opens a QGIS application while importing the most
-common Python modules.
+\code{open_app()} first sets all necessary paths to successfully call
+the QGIS Python binary, and secondly opens a QGIS application while
+importing the most common Python modules.
 }
 \note{
 Please note that the function changes your environment settings via

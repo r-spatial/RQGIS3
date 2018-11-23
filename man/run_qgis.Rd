@@ -45,7 +45,7 @@ folder (created by QGIS). Optionally, function parameter \code{load_output} load
 spatial QGIS output (vector and raster data) into R.
 }
 \description{
-\code{run_qgis} calls QGIS algorithms from within R while passing the
+\code{run_qgis()} calls QGIS algorithms from within R while passing the
 corresponding function arguments.
 }
 \details{
@@ -76,16 +76,16 @@ data(dem, package = "RQGIS")
 # find out the name of a GRASS function with which to calculate the slope
 find_algorithms(search_term = "grass7.*slope")
 # find out how to use the function
-alg <- "grass7:r.slope.aspect"
+alg = "grass7:r.slope.aspect"
 get_usage(alg)
 # 1. run QGIS using R named arguments, and load the QGIS output back into R
-slope <- run_qgis(alg, elevation = dem, slope = "slope.asc",
+slope = run_qgis(alg, elevation = dem, slope = "slope.asc",
                   load_output = TRUE)
 # 2. doing the same with a parameter-argument list
-params <- list(elevation = dem, slope = "slope.asc")
-slope <- run_qgis(alg, params = params, load_output = TRUE)
+params = list(elevation = dem, slope = "slope.asc")
+slope = run_qgis(alg, params = params, load_output = TRUE)
 # 3. calculate the slope, the aspect and the pcurvature.
-terrain <- run_qgis(alg, elevation = dem, slope = "slope.asc",
+terrain = run_qgis(alg, elevation = dem, slope = "slope.asc",
                     aspect = "aspect.asc", pcurvature = "pcurv.asc",
                     load_output = TRUE)
 # the three output rasters are returned in a list of length 3

@@ -28,20 +28,20 @@ Still there are geoalgorithms which require an extent object.
 library("RQGIS")
 library("raster")
 library("reticulate")
-r <- raster(ncol = 100, nrow = 100)
-r1 <- crop(r, extent(-10, 11, -10, 11))
-r2 <- crop(r, extent(0, 20, 0, 20))
-r3 <- crop(r, extent(9, 30, 9, 30))
-r1[] <- 1:ncell(r1)
-r2[] <- 1:ncell(r2)
-r3[] <- 1:ncell(r3)
-alg <- "grass7:r.patch"
-out <- py_run_string(sprintf("out = RQGIS.get_args_man('\%s')", alg))$out
-params <- get_args_man(alg)
-params$input <- list(r1, r2, r3)
+r = raster(ncol = 100, nrow = 100)
+r1 = crop(r, extent(-10, 11, -10, 11))
+r2 = crop(r, extent(0, 20, 0, 20))
+r3 = crop(r, extent(9, 30, 9, 30))
+r1[] = 1:ncell(r1)
+r2[] = 1:ncell(r2)
+r3[] = 1:ncell(r3)
+alg = "grass7:r.patch"
+out = py_run_string(sprintf("out = RQGIS.get_args_man('\%s')", alg))$out
+params = get_args_man(alg)
+params$input = list(r1, r2, r3)
 get_extent(params = params, type_name = out$type_name)
 # or if we save the input rasters in files stored on disk
-params[] <- save_spatial_objects(params = params,
+params[] = save_spatial_objects(params = params,
                                  type_name = out$type_name)
 get_extent(params = params, type_name = out$type_name)
 }

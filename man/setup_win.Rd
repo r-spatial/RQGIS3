@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_funs.R
 \name{setup_win}
 \alias{setup_win}
-\title{Set all Windows paths necessary to start QGIS}
+\title{Set all Windows paths necessary to start the QGIS application}
 \usage{
 setup_win(qgis_env = set_env())
 }
@@ -14,8 +14,8 @@ API. For more information, refer to \code{\link[=set_env]{set_env()}}.}
 The function changes the system settings using \code{\link[base:Sys.setenv]{base::Sys.setenv()}}.
 }
 \description{
-Windows helper function to start QGIS application by setting all
-necessary path especially through running \code{\link[=run_ini]{run_ini()}}.
+Windows helper function to start the QGIS application by setting
+all necessary path especially through running \code{\link[=run_ini]{run_ini()}}.
 }
 \examples{
 \dontrun{
