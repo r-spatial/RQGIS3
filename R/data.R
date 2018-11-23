@@ -1,5 +1,4 @@
 #' @title Random points.
-#'
 #' @name random_points
 #' @description An [sf] (EPSG:32717) object
 #'   with 100 randomly sampled points (stratified by altitude). For more
