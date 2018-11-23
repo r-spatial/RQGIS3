@@ -409,10 +409,10 @@ qgis_session_info = function(qgis_env = set_env()) {
     }
     
     if (length(my_grass) > 0) {
-      my_grass = lapply(seq(length(my_grass)), function(i) {
+      my_grass = lapply(my_grass, function(x) {
         # now read out the GRASS version
         version = grep(
-          readLines(my_grass), pattern = "grass_version = \"",
+          readLines(x), pattern = "grass_version = \"",
           value = TRUE
         )
         # just keep the version number
