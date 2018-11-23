@@ -38,7 +38,7 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
   if ("qgis_env" %in% ls(.RQGIS_cache) && new == FALSE) {
     return(get("qgis_env", envir = .RQGIS_cache))
   }
-  
+
   if (Sys.info()["sysname"] == "Windows") {
     if (is.null(root)) {
       # raw command
@@ -47,7 +47,7 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
       # /s include all subfolders
       # findstr allows you to use regular expressions
       # raw = "C: & dir /s /b | findstr"
-      
+
       # ok, it's better to just set the working directory and change it back
       # to the directory when exiting the function
       cwd = getwd()
@@ -69,7 +69,7 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
       raw = "dir /s /b | %SystemRoot%\\System32\\findstr /r"
       cmd = paste(raw, shQuote("bin\\\\qgis.bat$ | bin\\\\qgis-ltr.bat$"))
       root = shell(cmd, intern = TRUE)
-      
+
       if (length(root) == 0) {
         stop(
           "Sorry, we could not find QGIS on your C: drive. ",
@@ -97,7 +97,7 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
     # make sure that the root path does not end with some sort of slash
     root = gsub("/{1,}$", "", root)
   }
-  
+
   if (Sys.info()["sysname"] == "Darwin") {
     if (is.null(root)) {
       message("Checking for homebrew osgeo4mac installation on your system. \n")
@@ -108,9 +108,9 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
           stdout = TRUE, stderr = TRUE
         )
       )
-      
+
       no_homebrew = str_detect(path, "find: /usr/local")
-      
+
       if (is.na(no_homebrew[1])) {
         message(paste0(
           "Found no QGIS homebrew installation. ",
@@ -121,10 +121,10 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
         root = path
         message("Found QGIS osgeo4mac installation. Setting environment...")
       }
-      
+
       # check for multiple homebrew installations
       if (length(path) >= 2) {
-        
+
         # extract version out of root path
         path1 =
           as.numeric(regmatches(path[1], gregexpr("[0-9]+", path[1]))[[1]][3])
@@ -134,7 +134,7 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
           path3 =
             as.numeric(regmatches(path[3], gregexpr("[0-9]+", path[3]))[[1]][3])
         }
-        
+
         # account for 'dev' arg installations are not constant within path ->
         # depend on which version was installed first/last hence we have to
         # catch all possibilites
@@ -152,7 +152,7 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
           message("Found QGIS osgeo4mac LTR installation. Setting environment...")
         }
       }
-      
+
       # check for Kyngchaos installation
       if (is.null(root)) {
         path = system("find /Applications -name 'QGIS.app'", intern = TRUE)
@@ -163,7 +163,7 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
       }
     }
   }
-  
+
   if (Sys.info()["sysname"] == "Linux") {
     if (is.null(root)) {
       message("Assuming that your root path is '/usr'!")
@@ -179,8 +179,8 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
   qgis_env = list(root = root)
   qgis_env = c(qgis_env, check_apps(root = root, dev = dev))
   assign("qgis_env", qgis_env, envir = .RQGIS_cache)
-  
-  
+
+
   # write warning if Kyngchaos QGIS for Mac is installed
   if (any(grepl("/Applications", qgis_env))) {
     warning(
@@ -195,7 +195,7 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
       )
     )
   }
-  
+
   # return your result
   qgis_env
 }
@@ -220,30 +220,30 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
 #' @export
 
 open_app = function(qgis_env = set_env()) {
-  
+
   # check for server infrastructure
   check_for_server()
-  
+
   # be a good citizen and restore the PATH
   settings = as.list(Sys.getenv())
   # since we are adding quite a few new environment variables these will remain
   # (PYTHONPATH, QT_PLUGIN_PATH, etc.). We could unset these before exiting the
   # function but I am not sure if this is necessary
-  
+
   # Well, well, not sure if we should change it back or if we at least have to
   # get rid off Anaconda Python or other Python binaries - yes, we do, otherwise
   # reticulate might run into problems when loading modules because it might try
   # to load them first from the other binaries indicated in PATH
-  
+
   # on.exit(do.call(Sys.setenv, settings))
-  
+
   # resetting system settings on exit causes that SAGA algorithms cannot be
   # processed anymore, find out why this is!!!
-  
+
   if (Sys.info()["sysname"] == "Windows") {
     # run Windows setup
     setup_win(qgis_env = qgis_env)
-    
+
     # Ok, basically, we added a few new paths (especially under Windows) but
     # that's about it, we don't have to change that back. Only under Windows we
     # start with a clean, i.e. empty PATH, and delete everything what was in
@@ -255,8 +255,8 @@ open_app = function(qgis_env = set_env()) {
   } else if (Sys.info()["sysname"] == "Darwin") {
     setup_mac(qgis_env = qgis_env)
   }
-  
-  
+
+
   # make sure that QGIS is not already running (this would crash R) app =
   # QgsApplication([], True)  # see below
   # We can only run the test after we have set all the paths. Otherwise
@@ -270,13 +270,13 @@ open_app = function(qgis_env = set_env()) {
   if (!inherits(tmp, "try-error")) {
     stop("Python QGIS application is already running.")
   }
-  
+
   # add virtual display if available (important for processing on the server)
   # only possible if pyvirtualdisplay and xvfb are installed, see dockerfile of
   # github.com/jannes-m/docker-rqgis/rqgis3/dockerfile
-  py_cmd = 
+  py_cmd =
     paste0(
-      "try:\n  from pyvirtualdisplay import Display\n", 
+      "try:\n  from pyvirtualdisplay import Display\n",
       "  display = Display(visible=False, size=(1024, 768), color_depth=24)\n",
       "  display.start()\n",
       "except:\n  pass")
@@ -305,17 +305,17 @@ open_app = function(qgis_env = set_env()) {
   # QSqlQuery::prepare: database not open
   # WARNING: Auth db query exec() FAILED
   py_run_string("QgsApplication.showSettings()")
-  
+
   if (Sys.info()["sysname"] == "Windows") {
-    # not running the next two lines leads to a Qt problem when running 
+    # not running the next two lines leads to a Qt problem when running
     # QgsApplication([], True)
     # browseURL("http://wiki.qt.io/Deploy_an_Application_on_Windows")
     py_run_string("from qgis.PyQt.QtCore import QCoreApplication")
-    # the strange thing is shell.exec(python3) works without it because here 
+    # the strange thing is shell.exec(python3) works without it because here
     # all Qt paths are available as needed as set in SET QT_PLUGIN_PATH
     # but these are not available when running Python3 via reticulate
     # py_run_string("a = QCoreApplication.libraryPaths()")$a  # empty list
-    # so, we need to set them again 
+    # so, we need to set them again
     # I have looked them up in the QGIS 3 GUI using QCoreApplication.libraryPaths()
     # py_run_string("QCoreApplication.setLibraryPaths(['C:/OSGEO4~1/apps/qgis/plugins', 'C:/OSGEO4~1/apps/qgis/qtplugins', 'C:/OSGEO4~1/apps/qt5/plugins', 'C:/OSGeo4W64/apps/qt4/plugins', 'C:/OSGeo4W64/bin'])")
     py_run_string(
@@ -328,7 +328,7 @@ open_app = function(qgis_env = set_env()) {
     )
     # py_run_string("a = QCoreApplication.libraryPaths()")$a
   }
-  
+
   py_run_string("app = QgsApplication([], True)")
   py_run_string("QgsApplication.initQgis()")
   py_run_string(paste0("sys.path.append(r'", qgis_env$python_plugins, "')"))
@@ -337,12 +337,12 @@ open_app = function(qgis_env = set_env()) {
   py_run_string("from processing.core.Processing import Processing")
   py_run_string("Processing.initialize()")
   py_run_string("import processing")
-  
+
   # starting from 2.14.17 and 2.18.11, QgsApplication.setPrefixPath changes the
   # decimal separator, I don't know why...
   # the next line should turn off locale-specific separators
   Sys.setlocale("LC_NUMERIC", "C")
-  
+
   # attach further modules, our RQGIS class (needed for alglist, algoptions,
   # alghelp)
   py_file = system.file("python", "python3_funs.py", package = "RQGIS3")
@@ -373,7 +373,7 @@ open_app = function(qgis_env = set_env()) {
 #' }
 qgis_session_info = function(qgis_env = set_env()) {
   tmp = try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
-  
+
   # retrieve the output
   suppressWarnings({
     out =
@@ -383,14 +383,14 @@ qgis_session_info = function(qgis_env = set_env()) {
   py_run_string(
     "try:\n  del(my_session_info)\nexcept:\  pass"
   )
-  
+
   if ((Sys.info()["sysname"] == "Linux" | Sys.info()["sysname"] == "FreeBSD") &&
       (out$grass7)) {
     # find out which GRASS version is available
     # inspired by link2GI::searchGRASSX
     # Problem: sometimes the batch command is interrupted or does not finish...
     # my_grass = searchGRASSX()
-    
+
     # Problem: sometimes the shell command is interrupted, therefore run it
     # 15 times to make sure to retrieve a result (not the most elegant solution)
     cmd = paste0(
@@ -407,7 +407,7 @@ qgis_session_info = function(qgis_env = set_env()) {
           try(system(cmd, intern = TRUE, ignore.stderr = TRUE), silent = TRUE)
       })
     }
-    
+
     if (length(my_grass) > 0) {
       my_grass = lapply(my_grass, function(x) {
         # now read out the GRASS version
@@ -464,7 +464,7 @@ find_algorithms = function(search_term = NULL, name_only = FALSE,
                             qgis_env = set_env()) {
   # check if the QGIS application has already been started
   tmp = try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
-  
+
   # Advantage of this approach: we are using directly alglist and do not have to
   # save it in inst
   # Disadvantage: more processing
@@ -473,7 +473,7 @@ find_algorithms = function(search_term = NULL, name_only = FALSE,
   algs = unlist(strsplit(algs, "', |, '"))
   algs = unlist(strsplit(algs, '", '))
   algs = gsub("\\['|'\\]|'", "", algs)
-  
+
   # quick-and-dirty, maybe there is a more elegant approach...
   if (Sys.info()["sysname"] == "Windows") {
     algs = gsub('\\\\|"', "", shQuote(algs))
@@ -481,12 +481,12 @@ find_algorithms = function(search_term = NULL, name_only = FALSE,
     algs = gsub('\\\\|"', "", algs)
   }
   algs = algs[algs != ""]
-  
+
   # use regular expressions to query all available algorithms
   if (!is.null(search_term)) {
     algs = grep(search_term, algs, value = TRUE)
   }
-  
+
   if (name_only) {
     algs = gsub(".*>", "", algs)
   }
@@ -519,7 +519,7 @@ find_algorithms = function(search_term = NULL, name_only = FALSE,
 get_usage = function(alg = NULL, intern = FALSE,
                       qgis_env = set_env()) {
   tmp = try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
-  
+
   out =
     py_capture_output(py_run_string(sprintf("RQGIS.alghelp('%s')", alg)))
   out = gsub("^\\[|\\]$|'", "", out)
@@ -591,15 +591,15 @@ get_options = function(alg = "", intern = FALSE,
 #' open_help(alg = "grass:v.overlay")
 #' }
 open_help = function(alg = "", qgis_env = set_env()) {
-  
+
   # check if the QGIS application has already been started
   tmp = try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
-  
+
   algs = find_algorithms(name_only = TRUE, qgis_env = qgis_env)
   if (!alg %in% algs) {
     stop("The specified algorithm ", alg, " does not exist.")
   }
-  
+
   if (grepl("grass", alg)) {
     # open GRASS online help
     open_grass_help(alg)
@@ -647,19 +647,19 @@ get_args_man = function(alg = "", options = TRUE,
                          qgis_env = set_env()) {
   # check if the QGIS application has already been started
   tmp = try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
-  
+
   algs = find_algorithms(name_only = TRUE, qgis_env = qgis_env)
   if (!alg %in% algs) {
     stop("The specified algorithm ", alg, " does not exist.")
   }
-  
+
   args = py_run_string(
     sprintf(
       "algorithm_params = RQGIS.get_args_man('%s')",
       alg
     )
   )$algorithm_params
-  
+
   # If desired, select the first option if a function argument has several
   # options to choose from
   if (options && length(args$vals[args$opts]) > 0) {
@@ -757,7 +757,7 @@ get_args_man = function(alg = "", options = TRUE,
 #' pass_args(alg, elevation = dem, format = "degrees")
 #' }
 
-pass_args = function(alg, ..., params = NULL, NA_flag = -99999, 
+pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
                       qgis_env = set_env()) {
   dots = list(...)
   if (!is.null(params) && (length(dots) > 0)) {
@@ -769,7 +769,7 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
   if (length(dots) > 0) {
     params = dots
   }
-  
+
   dups = duplicated(names(params))
   if (any(dups)) {
     stop(
@@ -777,7 +777,7 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
       paste(names(params)[dups], collapse = ", ")
     )
   }
-  
+
   # collect all the function arguments and respective default values for the
   # specified geoalgorithm we need to suppress the message here, otherwise
   # default values will be printed to the console. Before printing such a
@@ -788,7 +788,7 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
     params_all = get_args_man(alg, options = TRUE)
     }
   )
-  
+
   # check if there are too few/many function arguments
   ind = setdiff(names(params), names(params_all))
   if (length(ind) > 0) {
@@ -799,7 +799,7 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
       paste(sprintf("'%s'", names(params_all)), collapse = ", ")
     )
   }
-  
+
   # if function arguments are missing, QGIS will use the default since we submit
   # our parameter-arguments as a Python-dictionary (see Processing.runAlgorithm)
   # nevertheless, we will indicate them already here since we have already
@@ -810,7 +810,7 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
   params_2[names(params)] = params
   params = params_2
   rm(params_2)
-  
+
   # print a message if default values have been automatically chosen. This will
   # happen if the user has specified not all arguments via ... or if he used a
   # parameter-argument list without indicating an optional parameter.
@@ -828,7 +828,7 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
       "See get_options('", alg, "') for all available options."
     )
   }
-  
+
   # Save Spatial-Objects (sp, sf and raster)
   # here, we would like to retrieve the type type of the argument (which is list
   # element 4)
@@ -840,7 +840,7 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
     type_name = out$type_name,
     NA_flag = NA_flag
   )
-  
+
   # if the user has only specified an output filename without a directory path,
   # make sure that the output will be saved to the current directory (R default)
   # if the user has not specified any output files, the QGIS temporary folder
@@ -864,10 +864,10 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
       x
     }
   })
-  
+
   # provide automatically extent objects in case the user has not specified them
   # (most often needed for the GRASS_REGION_PARAMETER)
-  
+
   ind = out$type_name == "extent" & (params == "\"None\"" | params == "None")
   if (any(ind)) {
     # run through the arguments and check if we can extract a bbox. While doing
@@ -880,13 +880,13 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
     )
     # final bounding box in the QGIS/GRASS notation
     params[ind] = paste(ext, collapse = ",")
-  }    
-  
+  }
+
   # make sure function again arguments are in the correct order is not srictly
   # necessary any longer since we use a Python dictionary to pass our arguments.
-  # However, otherwise, the user might become confused... 
+  # However, otherwise, the user might become confused...
   params = params[names(params_all)]
-  
+
   # # clean up after yourself!!
   py_run_string(
     "try:\n  del(out, opts)\nexcept:\  pass"
@@ -895,39 +895,40 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
   params
 }
 
-#'@title Interface to QGIS commands
-#'@description `run_qgis` calls QGIS algorithms from within R while passing the
+#' @title Interface to QGIS commands
+#' @name run_qgis
+#' @description `run_qgis()` calls QGIS algorithms from within R while passing the
 #'  corresponding function arguments.
-#'@param alg Name of the GIS function to be used (see [find_algorithms()]).
-#'@param ... Triple dots can be used to specify QGIS geoalgorithm arguments as R
+#' @param alg Name of the GIS function to be used (see [find_algorithms()]).
+#' @param ... Triple dots can be used to specify QGIS geoalgorithm arguments as R
 #'  named arguments. For more details, please refer to [pass_args()].
-#'@param params Parameter-argument list for a specific geoalgorithm. Please note
+#' @param params Parameter-argument list for a specific geoalgorithm. Please note
 #'  that you can either specify R named arguments directly via the triple dots
 #'  (see above) or via a parameter-argument list. However, you may not mix the
 #'  two methods. See the example section, [pass_args()] and [get_args_man()] for
 #'  more details.
-#'@param load_output If `TRUE`, all QGIS output files ([sf::sf()]-object in the
+#' @param load_output If `TRUE`, all QGIS output files ([sf::sf()]-object in the
 #'  case of vector data and [raster::raster()]-object in the case of a raster)
 #'  specified by the user (i.e. the user has to indicate output files) will be
 #'  loaded into R. A list will be returned if there is more than one output file
 #'  (e.g., `grass7:r.slope.aspect`). See the example section for more details.
-#'@param show_output_paths Logical. QGIS computes all possible output files for
+#' @param show_output_paths Logical. QGIS computes all possible output files for
 #'  a given geoalgorithm, and saves them to a temporary location in case the
 #'  user has not specified explicitly another output location. Setting
 #'  `show_output` to `TRUE` (the default) will print all output paths to the
 #'  console after the successful geoprocessing.
-#'@param NA_flag Value used for NAs when exporting raster objects through
+#' @param NA_flag Value used for NAs when exporting raster objects through
 #'  [pass_args()] and [save_spatial_objects()] (default: -99999).
-#'@param qgis_env Environment containing all the paths to run the QGIS API. For
+#' @param qgis_env Environment containing all the paths to run the QGIS API. For
 #'  more information, refer to [set_env()].
-#'@details This workhorse function calls the QGIS Python API, and specifically
+#' @details This workhorse function calls the QGIS Python API, and specifically
 #'  `processing.runalg`.
-#'@return The function prints a list (named according to the output parameters)
+#' @return The function prints a list (named according to the output parameters)
 #'  containing the paths to the files created by QGIS. If not otherwise
 #'  specified, the function saves the QGIS generated output files to a temporary
 #'  folder (created by QGIS). Optionally, function parameter `load_output` loads
 #'  spatial QGIS output (vector and raster data) into R.
-#'@note Please note that one can also pass spatial R objects as input parameters
+#' @note Please note that one can also pass spatial R objects as input parameters
 #'  where suitable (e.g., input layer, input raster). Supported formats are
 #'  [sp::SpatialPointsDataFrame()]-, [sp::SpatialLinesDataFrame()]-,
 #'  [sp::SpatialPolygonsDataFrame()]-, [sf::sf()]- (of class `sf`, `sfc` as well
@@ -943,10 +944,10 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
 #'   i.e., use a character string and separate the coordinates with a comma:
 #'  "xmin, xmax, ymin, ymax".
 #'
-#'@author Jannes Muenchow, Victor Olaya, QGIS core team
-#'@export
-#'@importFrom sf read_sf
-#'@importFrom raster raster
+#' @author Jannes Muenchow, Victor Olaya, QGIS core team
+#' @export
+#' @importFrom sf read_sf
+#' @importFrom raster raster
 #' @examples
 #' \dontrun{
 #' # calculate the slope of a DEM
@@ -974,24 +975,24 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
 run_qgis = function(alg = NULL, ..., params = NULL, load_output = FALSE,
                      show_output_paths = TRUE, NA_flag = -99999,
                      qgis_env = set_env()) {
-  
+
   # check if the QGIS application has already been started
   tmp = try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
-  
+
   # check under Linux which GRASS version is in use. If its GRASS72 the user
   # might have to add a softlink due to as QGIS bug
   # QGIS developer core team took care of this issue (at least since QGIS
   # 2.14.13), so we can eventually delete this
-  
+
   # if (Sys.info()["sysname"] == "Linux" & grepl("grass7", alg)) {
   #   qgis_session_info(qgis_env)
   # }
-  
+
   # check if alg is qgis:vectorgrid
   if (alg == "qgis:vectorgrid") {
     stop("Please use qgis:creategrid instead of qgis:vectorgrid!")
   }
-  
+
   # check if alg belongs to the QGIS "select by.."-category
   if (grepl("^qgis\\:selectby", alg)) {
     stop(paste(
@@ -999,12 +1000,12 @@ run_qgis = function(alg = NULL, ..., params = NULL, load_output = FALSE,
       "Please use 'grass7:v.extract' instead."
     ))
   }
-  
-  
+
+
   # construct a parameter-argument list using get_args_man and user input
   params = pass_args(alg, ..., params = params, NA_flag = NA_flag,
                       qgis_env = qgis_env)
-  
+
   # build the Python command
   # r_to_py(params) would also create a dictionary which would be a rather
   # elegant solution. But there are two problems: First, we did not get rid off
@@ -1014,18 +1015,18 @@ run_qgis = function(alg = NULL, ..., params = NULL, load_output = FALSE,
   # be unquoted which can be only achieved in R by collapsing all arguments into
   # one long string. Maybe it would work even if we did not explicitly take care
   # of this. But to be on the safe side, we proceed as follows:
-  
+
   # convert R parameter-argument list into a Python dictionary
   py_run_string(paste0("args = ", convert_to_tuple(params)))  # argument tuple
   # r_to_py(paste0("args = ", convert_to_tuple(params)))
   # r_to_py(paste0("params = ", convert_to_tuple(names(params))))
   py_run_string(paste0("params = ", convert_to_tuple(names(params))))  # name tuple
   py_run_string("params = dict((x, y) for x, y in zip(params, args))")
-  
-  cmd = 
+
+  cmd =
     paste(sprintf(
       "res = Processing.runAlgorithm(algOrName = '%s', parameters = params, feedback = QgsProcessingFeedback())", alg))
-  
+
   # run QGIS
   msg = py_capture_output(py_run_string(cmd))
   # If QGIS produces an error message, stop and report it
@@ -1046,7 +1047,7 @@ run_qgis = function(alg = NULL, ..., params = NULL, load_output = FALSE,
   py_run_string(
     "try:\n  del(res, args, params)\nexcept:\  pass"
   )
-  
+
   # load output
   if (load_output) {
     # just keep the output files
@@ -1070,7 +1071,7 @@ run_qgis = function(alg = NULL, ..., params = NULL, load_output = FALSE,
       if (!file.exists(x)) {
         stop("Unfortunately, QGIS did not produce: ", x)
       }
-      
+
       # capture.output is necessary, since sf always reports (supposedly via
       # C++) if the data source cannot be opened
       capture.output({
