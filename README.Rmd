@@ -21,6 +21,7 @@ knitr::opts_chunk$set(
 rvers = "3.2.0"
 ```
 
+<!--
 #### General
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
@@ -34,9 +35,10 @@ rvers = "3.2.0"
 
 #### CRAN
 
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/RQGIS)](http://cran.r-project.org/package=RQGIS)
-[![Downloads](http://cranlogs.r-pkg.org/badges/RQGIS?color=brightgreen)](http://www.r-pkg.org/pkg/RQGIS)
-![](http://cranlogs.r-pkg.org/badges/grand-total/RQGIS)
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/RQGIS3)](http://cran.r-project.org/package=RQGIS3)
+[![Downloads](http://cranlogs.r-pkg.org/badges/RQGIS?color=brightgreen)](http://www.r-pkg.org/pkg/RQGIS3)
+![](http://cranlogs.r-pkg.org/badges/grand-total/RQGIS3)
+-->
 
 <!-- C:\OSGeo4W64\bin\python-qgis -> opens Python!!
 /usr/share/qgis/python/plugins/processing-->

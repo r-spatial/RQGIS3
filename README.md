@@ -1,15 +1,23 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+<!--
 #### General
 
-[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active) [![minimal R version](https://img.shields.io/badge/R%3E%3D-3.2.0-6666ff.svg)](https://cran.r-project.org/) [![Last-changedate](https://img.shields.io/badge/last%20change-2018--11--23-yellowgreen.svg)](/commits/master)
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
+[![minimal R version](https://img.shields.io/badge/R%3E%3D-3.2.0-6666ff.svg)](https://cran.r-project.org/)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2018--11--27-yellowgreen.svg)](/commits/master)  
 
-[![linux=true Status](https://badges.herokuapp.com/travis/jannes-m/RQGIS?branch=master&env=linux=true&label=Linux)](https://travis-ci.org/jannes-m/RQGIS) [![mac=true Status](https://badges.herokuapp.com/travis/jannes-m/RQGIS?branch=master&env=mac=true&label=macOS)](https://travis-ci.org/jannes-m/RQGIS) [![Build status](https://ci.appveyor.com/api/projects/status/ftk03jo1933vm3we/branch/master?svg=true)](https://ci.appveyor.com/project/jannes-m/rqgis/branch/master) <a href="https://codecov.io/gh/jannes-m/RQGIS"><img src="https://codecov.io/gh/jannes-m/RQGIS/branch/master/graph/badge.svg" alt="Coverage Status"/></a>
+[![linux=true Status](https://badges.herokuapp.com/travis/jannes-m/RQGIS?branch=master&env=linux=true&label=Linux)](https://travis-ci.org/jannes-m/RQGIS) 
+[![mac=true Status](https://badges.herokuapp.com/travis/jannes-m/RQGIS?branch=master&env=mac=true&label=macOS)](https://travis-ci.org/jannes-m/RQGIS) 
+[![Build status](https://ci.appveyor.com/api/projects/status/ftk03jo1933vm3we/branch/master?svg=true)](https://ci.appveyor.com/project/jannes-m/rqgis/branch/master)
+<a href="https://codecov.io/gh/jannes-m/RQGIS"><img src="https://codecov.io/gh/jannes-m/RQGIS/branch/master/graph/badge.svg" alt="Coverage Status"/></a>  
 
 #### CRAN
 
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/RQGIS)](http://cran.r-project.org/package=RQGIS) [![Downloads](http://cranlogs.r-pkg.org/badges/RQGIS?color=brightgreen)](http://www.r-pkg.org/pkg/RQGIS) ![](http://cranlogs.r-pkg.org/badges/grand-total/RQGIS)
-
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/RQGIS3)](http://cran.r-project.org/package=RQGIS3)
+[![Downloads](http://cranlogs.r-pkg.org/badges/RQGIS?color=brightgreen)](http://www.r-pkg.org/pkg/RQGIS3)
+![](http://cranlogs.r-pkg.org/badges/grand-total/RQGIS3)
+-->
 <!-- C:\OSGeo4W64\bin\python-qgis -> opens Python!!
 /usr/share/qgis/python/plugins/processing-->
 **RQGIS3** establishes an interface between R and QGIS3, i.e. it allows the user to access QGIS3 functionalities from within R. It achieves this by establishing a tunnel to the Python QGIS3 API via the [reticulate-package](https://github.com/rstudio/reticulate). This provides the user with an extensive suite of GIS functions, since QGIS3 allows you to call native as well as third-party algorithms via its processing framework (see also <https://docs.qgis.org/testing/en/docs/user_manual/processing/index.html>). Third-party providers include among others GDAL, GRASS GIS, and SAGA GIS. **RQGIS3** brings you this incredibly powerful geoprocessing environment to the R console.
