@@ -61,7 +61,7 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
       # ("C:/OSGEO~1")
       # search LTR and DEV QGIS version in the C: or C:/OSGeo4W drive
       wd = ifelse(length(osgeo) > 0, osgeo[1], "C:/")
-      message(sprintf("Trying to find QGIS LTR in %s", wd))
+      message(sprintf("Trying to find QGIS in %s", wd))
       setwd(wd)
       # raw = "dir /s /b | findstr"
       # make it more general, since C:/WINDOWS/System32 might not be part of
