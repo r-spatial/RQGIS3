@@ -25,10 +25,8 @@ check_apps = function(root, ...) {
       my_qgis = ifelse("qgis-ltr" %in% my_qgis, "qgis-ltr", my_qgis[1])
     } else {
       # use ../apps/qgis, i.e. most likely the most recent QGIS version
-      # my_qgis = my_qgis[1]
-      stop("Either you have set dev to TRUE (please set to FALSE) or we could ",  
-           "not find a QGIS LTR (2.18) on your system. Please install!")
-    }
+      my_qgis = my_qgis[1]
+      }
     apps = c(
       file.path(path_apps, my_qgis),
       file.path(path_apps, my_qgis, "python/plugins")
@@ -272,9 +270,9 @@ setup_win = function(qgis_env = set_env()) {
     QT_PLUGIN_PATH = paste(file.path(qgis_env$root, "apps/qt5/plugins"),
                            Sys.getenv("QT_PLUGIN_PATH"), sep = ";"))
   # py3_env.bat; make more generic, Arch is already using Python37
-  Sys.setenv(PYTHONHOME = file.path(qgis_env$root,"apps/Python36"))
-  Sys.setenv(PATH = paste(file.path(qgis_env$root, "apps/Python36"),
-                          file.path(qgis_env$root, "apps/Python36/Scripts"),
+  Sys.setenv(PYTHONHOME = file.path(qgis_env$root,"apps/Python37"))
+  Sys.setenv(PATH = paste(file.path(qgis_env$root, "apps/Python37"),
+                          file.path(qgis_env$root, "apps/Python37/Scripts"),
                           Sys.getenv("PATH"), sep = ";"))
   
   # we need to make sure that qgis-ltr can also be used...
