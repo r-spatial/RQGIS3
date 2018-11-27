@@ -146,12 +146,12 @@ Note that `search_term` also accepts regular expressions.
 
 ```{r, warning=FALSE, error=FALSE}
 library("RQGIS")
-find_algorithms(search_term = "centroid")
+find_algorithms(search_term = "centroid", name_only = TRUE)
 
-#> [1] "Centroids-------------------------------------------->native:centroids"
-#> [2] "Generate points (pixel centroids) along line--------->qgis:generatepointspixelcentroidsalongline"  
-#> [3] "Generate points (pixel centroids) inside polygons---->qgis:generatepointspixelcentroidsinsidepolygons"
-#> [4] "Polygon centroids------------------------------------>saga:polygoncentroids"```
+#>[1] "native:centroids"
+#>[2] "qgis:generatepointspixelcentroidsalongline"     
+#>[3] "qgis:generatepointspixelcentroidsinsidepolygons"
+#>[4] "saga:polygoncentroids"  
 ```
 
 This returns four functions we could use.
