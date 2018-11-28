@@ -250,7 +250,8 @@ open_app = function(qgis_env = set_env()) {
     # there before, so we should at least add the old PATH to our newly created
     # one
     reset_path(settings)
-  } else if (Sys.info()["sysname"] == "Linux" | Sys.info()["sysname"] == "FreeBSD") {
+  } else if (Sys.info()["sysname"] == "Linux" | 
+             Sys.info()["sysname"] == "FreeBSD") {
     setup_linux(qgis_env = qgis_env)
   } else if (Sys.info()["sysname"] == "Darwin") {
     setup_mac(qgis_env = qgis_env)
