@@ -1,17 +1,17 @@
 #' @title Retrieve the environment settings to run QGIS from within R
-#' @description `set_env` tries to find all the paths necessary to run QGIS from
+#' @description `set_env()` tries to find all the paths necessary to run QGIS from
 #'   within R.
 #' @importFrom stringr str_detect
 #' @param root Root path to the QGIS-installation. If left empty, the function
 #'   looks for `qgis.bat` first in the most likely locations (C:/OSGEO4~1,
 #'   C:/OSGEO4~2), and secondly on the C: drive under Windows. On a Mac, it
 #'   looks for `QGIS.app` under "Applications" and "/usr/local/Cellar/". On
-#'   Linux, `set_env` assumes that the root path is "/usr".
-#' @param new When called for the first time in an R session, `set_env` caches
-#'   its output. Setting `new` to `TRUE` resets the cache when calling `set_env`
-#'   again. Otherwise, the cached output will be loaded back into R even if you
-#'   used new values for function arguments `root` and/or `dev`.
-#' @param dev If set to `TRUE`, `set_env` will use the development version of
+#'   Linux, `set_env()` assumes that the root path is "/usr".
+#' @param new When called for the first time in an R session, `set_env()` caches
+#'   its output. Setting `new` to `TRUE` resets the cache when calling
+#'   `set_env()` again. Otherwise, the cached output will be loaded back into R
+#'   even if you used new values for function arguments `root` and/or `dev`.
+#' @param dev If set to `TRUE`, `set_env()` will use the development version of
 #'   QGIS (if available). Since RQGIS so far does not support QGIS 3 (developer
 #'   version), setting `dev` to TRUE will result in an error message under
 #'   Windows.
@@ -353,7 +353,7 @@ open_app = function(qgis_env = set_env()) {
 
 
 #' @title QGIS session info
-#' @description `qgis_session_info` reports the version of QGIS and
+#' @description `qgis_session_info()` reports the version of QGIS and
 #'   installed third-party providers (so far GRASS 6, GRASS 7, and SAGA).
 #'   Additionally, it figures out with which SAGA versions the QGIS installation
 #'   is compatible.
@@ -430,7 +430,7 @@ qgis_session_info = function(qgis_env = set_env()) {
 }
 
 #' @title Find and list available QGIS algorithms
-#' @description `find_algorithms` lists or queries all QGIS algorithms which can
+#' @description `find_algorithms()` lists or queries all QGIS algorithms which can
 #'   be accessed via the QGIS Python API.
 #' @param search_term If (`NULL`), the default, all available functions will be
 #'   returned. If `search_term` is a character, all available functions will be
@@ -441,7 +441,7 @@ qgis_session_info = function(qgis_env = set_env()) {
 #'   as well (default).
 #' @param qgis_env Environment settings containing all the paths to run the QGIS
 #'   API. For more information, refer to [set_env()].
-#' @details Function `find_algorithms` simply calls `processing.alglist` using
+#' @details Function `find_algorithms()` simply calls `processing.alglist()` using
 #'   Python.
 #' @return The function returns QGIS function names and short descriptions as an
 #'   R character vector.
@@ -496,7 +496,7 @@ find_algorithms = function(search_term = NULL, name_only = FALSE,
 
 
 #' @title Get usage of a specific QGIS geoalgorithm
-#' @description `get_usage` lists all function parameters of a specific
+#' @description `get_usage()` lists all function parameters of a specific
 #'   QGIS geoalgorithm.
 #' @param alg Name of the function whose parameters are being searched for.
 #' @param intern Logical, if `TRUE` the function captures the command line
@@ -504,8 +504,8 @@ find_algorithms = function(search_term = NULL, name_only = FALSE,
 #'   printed to the console in a pretty way.
 #' @param qgis_env Environment containing all the paths to run the QGIS API. For
 #'   more information, refer to [set_env()].
-#' @details Function `get_usage` simply calls
-#'   `processing.alghelp` of the QGIS Python API.
+#' @details Function `get_usage()` simply calls
+#'   `processing.alghelp()` of the QGIS Python API.
 #' @author Jannes Muenchow, Victor Olaya, QGIS core team
 #' @export
 #' @examples
@@ -533,7 +533,7 @@ get_usage = function(alg = NULL, intern = FALSE,
 }
 
 #' @title Get options of parameters for a specific GIS option
-#' @description `get_options` lists all available parameter options for the
+#' @description `get_options()` lists all available parameter options for the
 #'   required GIS function.
 #' @param alg Name of the GIS function for which options should be returned.
 #' @param intern Logical, if `TRUE` the function captures the command line
@@ -541,7 +541,7 @@ get_usage = function(alg = NULL, intern = FALSE,
 #'   printed to the console in a pretty way.
 #' @param qgis_env Environment containing all the paths to run the QGIS API. For
 #'   more information, refer to [set_env()].
-#' @details Function `get_options` simply calls `processing.algoptions` of the
+#' @details Function `get_options()` simply calls `processing.algoptions()` of the
 #'   QGIS Python API.
 #' @author Jannes Muenchow, Victor Olaya, QGIS core team
 #' @examples
@@ -566,7 +566,7 @@ get_options = function(alg = "", intern = FALSE,
 }
 
 #' @title Access the QGIS/GRASS online help for a specific (Q)GIS geoalgorithm
-#' @description `open_help` opens the online help for a specific (Q)GIS
+#' @description `open_help()` opens the online help for a specific (Q)GIS
 #'   geoalgorithm. This is the online help one also encounters in the QGIS GUI.
 #'   In the case of GRASS algorithms this is actually the GRASS online
 #'   documentation.
@@ -574,12 +574,12 @@ get_options = function(alg = "", intern = FALSE,
 #'   arguments and default values.
 #' @param qgis_env Environment containing all the paths to run the QGIS API. For
 #'   more information, refer to [set_env()].
-#' @details Bar a few exceptions `open_help` works for all QGIS, GRASS and
+#' @details Bar a few exceptions `open_help()` works for all QGIS, GRASS and
 #'   SAGA geoalgorithms. The online help of other third-party providers,
 #'   however, has not been tested so far.
 #' @return The function opens the default web browser, and displays the help for
 #'   the specified algorithm.
-#' @note Please note that `open_help` requires a \strong{working Internet
+#' @note Please note that `open_help()` requires a \strong{working Internet
 #'   connection}.
 #' @author Jannes Muenchow, Victor Olaya, QGIS core team
 #' @export
@@ -611,7 +611,7 @@ open_help = function(alg = "", qgis_env = set_env()) {
 }
 
 #' @title Get GIS arguments and respective default values
-#' @description`get_args_man` retrieves automatically function arguments and
+#' @description `get_args_man()` retrieves automatically function arguments and
 #' respective default values for a given QGIS geoalgorithm.
 #' @param alg The name of the algorithm for which one wishes to retrieve
 #'   arguments and default values.
@@ -621,7 +621,7 @@ open_help = function(alg = "", qgis_env = set_env()) {
 #'   behavior).
 #' @param qgis_env Environment containing all the paths to run the QGIS API. For
 #'   more information, refer to [set_env()].
-#' @details `get_args_man` basically mimics the behavior of the QGIS GUI. That
+#' @details `get_args_man()` basically mimics the behavior of the QGIS GUI. That
 #'   means, for a given GIS algorithm, it captures automatically all arguments
 #'   and default values. In the case that a function argument has several
 #'   options, one can indicate to use the first option (see also
@@ -630,7 +630,7 @@ open_help = function(alg = "", qgis_env = set_env()) {
 #'   arguments one needs to specify. The list elements correspond to the
 #'   argument specifications. The specified function arguments can serve as
 #'   input for [run_qgis()]'s params argument. Please note that although
-#'   `get_args_man` tries to retrieve default values, one still needs to specify
+#'   `get_args_man()` tries to retrieve default values, one still needs to specify
 #'   some function arguments manually such as the input and the output layer.
 #' @note Please note that some default values can only be set after the user's
 #'   input. For instance, the GRASS region extent will be determined
@@ -726,7 +726,7 @@ get_args_man = function(alg = "", options = TRUE,
 #'   function replaces verbal input by the corresponding number (required by the
 #'   QGIS Python API). Please refer to the example section for more details, and
 #'   to [get_options()] for valid options for a given geoalgorithm.
-#'  \item If `GRASS_REGION_PARAMETER` is "None" (the QGIS default), `run_qgis`
+#'  \item If `GRASS_REGION_PARAMETER` is "None" (the QGIS default), `run_qgis()`
 #'   will automatically determine the region extent based on the user-specified
 #'   input layers. If you do want to specify the `GRASS_REGION_PARAMETER`
 #'   yourself, please do it in accordance with the [QGIS
@@ -922,7 +922,7 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
 #' @param qgis_env Environment containing all the paths to run the QGIS API. For
 #'  more information, refer to [set_env()].
 #' @details This workhorse function calls the QGIS Python API, and specifically
-#'  `processing.runalg`.
+#'  `processing.runalg()`.
 #' @return The function prints a list (named according to the output parameters)
 #'  containing the paths to the files created by QGIS. If not otherwise
 #'  specified, the function saves the QGIS generated output files to a temporary
@@ -937,7 +937,7 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
 #'
 #'  GRASS users do not have to specify manually the GRASS region extent
 #'  (function argument GRASS_REGION_PARAMETER). If "None" (the QGIS default),
-#'  `run_qgis` (see [pass_args()] for more details) will automatically determine
+#'  `run_qgis()` (see [pass_args()] for more details) will automatically determine
 #'  the region extent based on the user-specified input layers. If you do want
 #'  to specify it yourself, please do it in accordance with the [QGIS
 #'  documentation](https://docs.qgis.org/2.8/en/docs/user_manual/processing/console.html),

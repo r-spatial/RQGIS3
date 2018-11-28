@@ -1,11 +1,11 @@
 #' @title Checking paths to QGIS applications
-#' @description `check_apps` checks if software applications necessary to
+#' @description `check_apps()` checks if software applications necessary to
 #'   run QGIS (QGIS and Python plugins) are installed in the correct
 #'   locations.
 #' @param root Path to the root directory. Usually, this is 'C:/OSGEO4~1',
 #'   '/usr' and '/Applications/QGIS.app/' for the different platforms.
-#' @param ... Optional arguments used in `check_apps`. Under Windows,
-#'   `set_env` passes function argument `dev` to `check_apps`.
+#' @param ... Optional arguments used in `check_apps()`. Under Windows,
+#'   `set_env()` passes function argument `dev` to `check_apps()`.
 #' @return The function returns a list with the paths to all the necessary
 #'   QGIS-applications.
 #' @keywords internal
@@ -63,7 +63,7 @@ check_apps = function(root, ...) {
 }
 
 #' @title Open the GRASS online help
-#' @description `open_grass_help` opens the GRASS online help for a specific
+#' @description `open_grass_help()` opens the GRASS online help for a specific
 #'   GRASS geoalgorithm.
 #' @param alg The name of the GRASS geoalgorithm for which one wishes to open
 #'   the online help.
@@ -541,7 +541,7 @@ save_spatial_objects = function(params, type_name, NA_flag = -99999) {
 #'   extent should be retrieved.
 #' @param type_name A character string containing the QGIS parameter type for
 #'   each parameter (boolean, multipleinput, extent, number, etc.) of `params`.
-#'   The Python method `RQGIS.get_args_man` returns a Python dictionary with one
+#'   The Python method `RQGIS.get_args_man()` returns a Python dictionary with one
 #'   of its elements corresponding to the type_name (see also the example
 #'   section).
 #' @keywords internal
