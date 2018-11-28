@@ -11,7 +11,7 @@ open_grass_help(alg)
 the online help.}
 }
 \description{
-\code{open_grass_help} opens the GRASS online help for a specific
+\code{open_grass_help()} opens the GRASS online help for a specific
 GRASS geoalgorithm.
 }
 \examples{

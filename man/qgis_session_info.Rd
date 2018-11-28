@@ -11,7 +11,7 @@ qgis_session_info(qgis_env = set_env())
 API. For more information, refer to \code{\link[=set_env]{set_env()}}.}
 }
 \description{
-\code{qgis_session_info} reports the version of QGIS and
+\code{qgis_session_info()} reports the version of QGIS and
 installed third-party providers (so far GRASS 6, GRASS 7, and SAGA).
 Additionally, it figures out with which SAGA versions the QGIS installation
 is compatible.

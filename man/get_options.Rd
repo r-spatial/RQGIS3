@@ -17,11 +17,11 @@ printed to the console in a pretty way.}
 more information, refer to \code{\link[=set_env]{set_env()}}.}
 }
 \description{
-\code{get_options} lists all available parameter options for the
+\code{get_options()} lists all available parameter options for the
 required GIS function.
 }
 \details{
-Function \code{get_options} simply calls \code{processing.algoptions} of the
+Function \code{get_options()} simply calls \code{processing.algoptions()} of the
 QGIS Python API.
 }
 \examples{

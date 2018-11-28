@@ -50,7 +50,7 @@ corresponding function arguments.
 }
 \details{
 This workhorse function calls the QGIS Python API, and specifically
-\code{processing.runalg}.
+\code{processing.runalg()}.
 }
 \note{
 Please note that one can also pass spatial R objects as input parameters
@@ -62,7 +62,7 @@ details.
 
 GRASS users do not have to specify manually the GRASS region extent
 (function argument GRASS_REGION_PARAMETER). If "None" (the QGIS default),
-\code{run_qgis} (see \code{\link[=pass_args]{pass_args()}} for more details) will automatically determine
+\code{run_qgis()} (see \code{\link[=pass_args]{pass_args()}} for more details) will automatically determine
 the region extent based on the user-specified input layers. If you do want
 to specify it yourself, please do it in accordance with the \href{https://docs.qgis.org/2.8/en/docs/user_manual/processing/console.html}{QGIS documentation},
 i.e., use a character string and separate the coordinates with a comma:

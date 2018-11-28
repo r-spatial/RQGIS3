@@ -18,18 +18,18 @@ The function opens the default web browser, and displays the help for
 the specified algorithm.
 }
 \description{
-\code{open_help} opens the online help for a specific (Q)GIS
+\code{open_help()} opens the online help for a specific (Q)GIS
 geoalgorithm. This is the online help one also encounters in the QGIS GUI.
 In the case of GRASS algorithms this is actually the GRASS online
 documentation.
 }
 \details{
-Bar a few exceptions \code{open_help} works for all QGIS, GRASS and
+Bar a few exceptions \code{open_help()} works for all QGIS, GRASS and
 SAGA geoalgorithms. The online help of other third-party providers,
 however, has not been tested so far.
 }
 \note{
-Please note that \code{open_help} requires a \strong{working Internet
+Please note that \code{open_help()} requires a \strong{working Internet
 connection}.
 }
 \examples{

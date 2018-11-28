@@ -4,21 +4,21 @@
 \alias{set_env}
 \title{Retrieve the environment settings to run QGIS from within R}
 \usage{
-set_env(root = NULL, new = FALSE, dev = FALSE, ...)
+set_env(root = NULL, new = FALSE, dev = TRUE, ...)
 }
 \arguments{
 \item{root}{Root path to the QGIS-installation. If left empty, the function
 looks for \code{qgis.bat} first in the most likely locations (C:/OSGEO4~1,
 C:/OSGEO4~2), and secondly on the C: drive under Windows. On a Mac, it
 looks for \code{QGIS.app} under "Applications" and "/usr/local/Cellar/". On
-Linux, \code{set_env} assumes that the root path is "/usr".}
+Linux, \code{set_env()} assumes that the root path is "/usr".}
 
-\item{new}{When called for the first time in an R session, \code{set_env} caches
-its output. Setting \code{new} to \code{TRUE} resets the cache when calling \code{set_env}
-again. Otherwise, the cached output will be loaded back into R even if you
-used new values for function arguments \code{root} and/or \code{dev}.}
+\item{new}{When called for the first time in an R session, \code{set_env()} caches
+its output. Setting \code{new} to \code{TRUE} resets the cache when calling
+\code{set_env()} again. Otherwise, the cached output will be loaded back into R
+even if you used new values for function arguments \code{root} and/or \code{dev}.}
 
-\item{dev}{If set to \code{TRUE}, \code{set_env} will use the development version of
+\item{dev}{If set to \code{TRUE}, \code{set_env()} will use the development version of
 QGIS (if available). Since RQGIS so far does not support QGIS 3 (developer
 version), setting \code{dev} to TRUE will result in an error message under
 Windows.}
@@ -31,7 +31,7 @@ QGIS from within R. This is the root path, the QGIS prefix path and the
 path to the Python plugins.
 }
 \description{
-\code{set_env} tries to find all the paths necessary to run QGIS from
+\code{set_env()} tries to find all the paths necessary to run QGIS from
 within R.
 }
 \examples{

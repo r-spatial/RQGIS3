@@ -25,11 +25,11 @@ The function returns QGIS function names and short descriptions as an
 R character vector.
 }
 \description{
-\code{find_algorithms} lists or queries all QGIS algorithms which can
+\code{find_algorithms()} lists or queries all QGIS algorithms which can
 be accessed via the QGIS Python API.
 }
 \details{
-Function \code{find_algorithms} simply calls \code{processing.alglist} using
+Function \code{find_algorithms()} simply calls \code{processing.alglist()} using
 Python.
 }
 \examples{
