@@ -223,6 +223,8 @@ reset_path = function(settings) {
 #' @param qgis_env Environment settings containing all the paths to run the QGIS
 #'   API. For more information, refer to [set_env()].
 #' @return The function changes the system settings using [base::Sys.setenv()].
+#' @importFrom readr read_file
+#' @importFrom stringr str_extract
 #' @keywords internal
 #' @author Jannes Muenchow
 #' @examples
@@ -273,10 +275,12 @@ setup_win = function(qgis_env = set_env()) {
                            Sys.getenv("QT_PLUGIN_PATH"), sep = ";"))
   # py3_env.bat; make more generic, Arch is already using Python37
   # make it generic by reading out what kind of Python is stated in py3_env.bat:
-  # readr::read_file("file.path(qgis_env$root", "/bin/py3_env.bat"))
-  Sys.setenv(PYTHONHOME = file.path(qgis_env$root,"apps/Python37"))
-  Sys.setenv(PATH = paste(file.path(qgis_env$root, "apps/Python37"),
-                          file.path(qgis_env$root, "apps/Python37/Scripts"),
+  py3 = read_file(file.path(qgis_env$root, "/bin/py3_env.bat"))
+  # extract Python3 version
+  py3 = str_extract(py3, "Python3\\d")
+  Sys.setenv(PYTHONHOME = file.path(qgis_env$root,"apps", py3))
+  Sys.setenv(PATH = paste(file.path(qgis_env$root, "apps", py3),
+                          file.path(qgis_env$root, "apps", py3, "Scripts"),
                           Sys.getenv("PATH"), sep = ";"))
   
   # we need to make sure that qgis-ltr can also be used...
