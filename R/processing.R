@@ -111,7 +111,7 @@ set_env = function(root = NULL, new = FALSE, dev = TRUE, ...) {
 
       no_homebrew = str_detect(path, "find: /usr/local")
 
-      if (is.na(no_homebrew[1])) {
+      if (length(no_homebrew) == 0L) {
         message(paste0(
           "Found no QGIS homebrew installation. ",
           "Checking for QGIS Kyngchaos version now."
@@ -153,7 +153,7 @@ set_env = function(root = NULL, new = FALSE, dev = TRUE, ...) {
 
       # check for Kyngchaos installation
       if (is.null(root)) {
-        path = system("find /Applications -name 'QGIS.app'", intern = TRUE)
+        path = system("find /Applications -name 'QGIS3.app'", intern = TRUE)
         if (length(path) > 0) {
           root = path
           message("Found QGIS Kyngchaos installation. Setting environment...")
@@ -183,13 +183,10 @@ set_env = function(root = NULL, new = FALSE, dev = TRUE, ...) {
   if (any(grepl("/Applications", qgis_env))) {
     warning(
       paste0(
-        "We recognized that you are using the Kyngchaos QGIS binary.\n",
+        "We recognized that you are using the QGIS binary.\n",
         "Please consider installing QGIS from homebrew:",
         "'https://github.com/OSGeo/homebrew-osgeo4mac'.",
-        " Run 'vignette(install_guide)' for installation instructions.\n",
-        "The Kyngchaos installation throws some warnings during ",
-        "processing. However, usage/outcome is not affected and you can ",
-        "continue using the Kyngchaos installation."
+        " Run 'vignette(install_guide)' for installation instructions.\n"
       )
     )
   }
