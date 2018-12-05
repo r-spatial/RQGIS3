@@ -403,8 +403,8 @@ setup_mac = function(qgis_env = set_env()) {
   qgis_python_path =
     paste0(qgis_env$root, paste(
       "/Contents/Resources/python/",
-      "/usr/local/lib/qt-4/python2.7/site-packages",
-      "/usr/local/lib/python2.7/site-packages",
+      #"/usr/local/lib/qt-4/python3.6/site-packages",
+      "/usr/local/lib/python3.6/site-packages",
       "$PYTHONPATH", sep = ":"
     ))
   if (python_path != "" & !grepl(qgis_python_path, python_path)) {
@@ -424,7 +424,7 @@ setup_mac = function(qgis_env = set_env()) {
   qgis_ld = paste(paste0(
     qgis_env$qgis_prefix_path,
     file.path(
-      "/MacOS/lib/:/Applications/QGIS.app/",
+      "/MacOS/lib/:/Applications/QGIS3.app/",
       "Contents/Frameworks/"
     )
   )) # homebrew
@@ -438,6 +438,14 @@ setup_mac = function(qgis_env = set_env()) {
 
   # suppress verbose QGIS output for homebrew
   Sys.setenv(QGIS_DEBUG = -1)
+  
+  # make sure to use Python3
+  # in QGIS Python console run
+  # import sys
+  # sys.version  # which python version is used
+  # sys.exectutable  # and where to find the executable
+  # use_python("/usr/bin/python2.7", required = TRUE)
+  use_python("/usr/local/bin/python3.6", required = TRUE)
 }
 
 #' @title Save spatial objects
