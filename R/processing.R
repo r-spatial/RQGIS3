@@ -175,7 +175,7 @@ set_env = function(root = NULL, new = FALSE, dev = TRUE, ...) {
     }
   }
   qgis_env = list(root = root)
-  qgis_env = c(qgis_env, check_apps(root = root, dev = dev))
+  qgis_env = c(qgis_env, check_apps(root = root))
   assign("qgis_env", qgis_env, envir = .RQGIS_cache)
 
 
