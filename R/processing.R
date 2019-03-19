@@ -250,7 +250,7 @@ open_app = function(qgis_env = set_env()) {
     # there before, so we should at least add the old PATH to our newly created
     # one
     reset_path(settings)
-  } else if (Sys.info()["sysname"] == "Linux" | 
+  } else if (Sys.info()["sysname"] == "Linux" |
              Sys.info()["sysname"] == "FreeBSD") {
     setup_linux(qgis_env = qgis_env)
   } else if (Sys.info()["sysname"] == "Darwin") {
@@ -330,6 +330,8 @@ open_app = function(qgis_env = set_env()) {
     # py_run_string("a = QCoreApplication.libraryPaths()")$a
   }
 
+  # on Arch you might have to run
+  # py_run_string("app = QgsApplication([b''], True)")
   py_run_string("app = QgsApplication([], True)")
   py_run_string("QgsApplication.initQgis()")
   py_run_string(paste0("sys.path.append(r'", qgis_env$python_plugins, "')"))
