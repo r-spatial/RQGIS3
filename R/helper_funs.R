@@ -474,10 +474,14 @@ setup_mac = function(qgis_env = set_env()) {
 save_spatial_objects = function(params, type_name, NA_flag = -99999) {
   lapply(seq_along(params), function(i) {
     tmp = class(params[[i]])
-    if (tmp == "list" && type_name[i] == "multilayer") {
+    if (tmp == "list" && type_name[i] == "multilayer" && 
+        # if the class of params[[i]][[1]] is a character (and not a spatial
+        # object), then it is (hopefully) a list containing file paths to
+        # spatial objects
+        class(params[[i]][[1]]) != "character") {
       names(params[[i]]) = paste0("inp", 1:length(params[[i]]))
       out = save_spatial_objects(params = params[[i]], NA_flag = NA_flag)
-      return(paste(unlist(out), collapse = ";"))
+      return(out)
     }
 
     # GEOMETRY and GEOMETRYCOLLECTION not supported
