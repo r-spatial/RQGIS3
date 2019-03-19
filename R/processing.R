@@ -1033,41 +1033,32 @@ run_qgis = function(alg = NULL, ..., params = NULL, load_output = FALSE,
   # msg = py_capture_output(py_run_string(cmd))
   
   # run QGIS
-  msg = py_capture_output(
-    py$processing$run(algOrName = alg, parameters = params, 
-                      feedback = py$QgsProcessingFeedback()))
+  msg = py_capture_output(expr = {
+    res = 
+      py$processing$run(algOrName = alg, parameters = params, 
+                        feedback = py$QgsProcessingFeedback())
+  })
   # If QGIS produces an error message, stop and report it
   if (grepl("Unable to execute algorithm|Error", msg)) {
     stop(msg)
   }
   # res contains all the output paths of the files created by QGIS
-  # res = py$res
-  # show the output files to the user
-  #if (show_output_paths) {
-   # print(res)
-  #}
+  
+  # print the created output files to the console
+  if (show_output_paths) {
+    print(res)
+  }
   # if there is a message, show it
   if (msg != "") {
     message(msg)
   }
-  # clean up after yourself!!
-  py_run_string(
-    "try:\n  del(res, args, params)\nexcept:\  pass"
-  )
 
   # load output
   if (load_output) {
     # just keep the output files
     # Find out what the output names are
-    out_names =
-      py_run_string(
-        sprintf("out_names = RQGIS.get_args_man('%s')", alg)
-      )$out_names
+    out_names = py$RQGIS$get_args_man(alg)
     out_names = out_names$params[out_names$output]
-    # clean up after yourself!!
-    py_run_string(
-      "try:\n  del(out_names)\nexcept:\  pass"
-    )
     # convert Python dictionary back into an R list
     params = py_to_r(params)
     params_out = params[out_names]
