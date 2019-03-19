@@ -131,3 +131,30 @@ test_that("Test, if GRASS7-algorithms are working?", {
   # check if the output is a raster
   expect_is(grass_out_2, "RasterLayer")
 })
+
+# multipleparameter input----------------------------------
+
+test_that("Test, if multipleparameter input works?", {
+  testthat::skip_on_cran()
+  
+  # attach data
+  data("random_points")
+  pt_1 = random_points[1:10, ]
+  pt_2 = random_points[91:100, ]
+  alg = "native:mergevectorlayers"
+  params = get_args_man(alg = alg)
+  params$LAYERS = list(pt_1, pt_2)
+  params$OUTPUT = file.path(tempdir(), "out.shp")
+  out = run_qgis(alg = alg, params = params, load_output = TRUE)
+  # test if the two shps were joined, i.e., now have 20 rows
+  expect_equal(nrow(out), 20)
+  
+  # check if it works using a list containing file names
+  file_1 = file.path(tempdir(), "file1.shp")
+  file_2 = file.path(tempdir(), "file2.shp")
+  st_write(pt_1, file_1, delete_layer = TRUE)
+  st_write(pt_2, file_2, delete_layer = TRUE)
+  params$LAYERS = list(file_1, file_2)
+  out_2 = run_qgis(alg = alg, params = params, load_output = TRUE)
+  expect_equal(nrow(out_2), 20)
+})
