@@ -1,5 +1,6 @@
-^.*\.Rproj$
+^RQGIS3\.Rproj$
 ^\.Rproj\.user$
+^.*\.Rproj$
 README.*
 check_package.R
 GADM_.*
