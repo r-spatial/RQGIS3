@@ -40,7 +40,7 @@ check_apps = function(root, ...) {
     # paths to check
     apps = file.path(root, c("Contents", "Contents/Resources/python/plugins"))
   } else {
-    stop("Sorry, you can use RQGIS only under Windows and UNIX-based
+    stop("Sorry, you can use RQGIS3 only under Windows and UNIX-based
          operating systems.")
   }
 
@@ -446,14 +446,14 @@ setup_mac = function(qgis_env = set_env()) {
 #' @param params A parameter-argument list as returned by [pass_args()].
 #' @param type_name A character string containing the QGIS parameter type for
 #'   each parameter (boolean, multipleinput, extent, number, etc.) of `params`.
-#'   The Python method `RQGIS.get_args_man()` returns a Python dictionary with
+#'   The Python method `RQGIS3.get_args_man()` returns a Python dictionary with
 #'   one of its elements corresponding to the type_name (see also the example
 #'   section).
 #' @param NA_flag Value used for NAs when exporting raster objects.
 #' @keywords internal
 #' @examples
 #' \dontrun{
-#' library("RQGIS")
+#' library("RQGIS3")
 #' library("raster")
 #' library("reticulate")
 #' r = raster(ncol = 100, nrow = 100)
@@ -464,11 +464,11 @@ setup_mac = function(qgis_env = set_env()) {
 #' r2[] = 1:ncell(r2)
 #' r3[] = 1:ncell(r3)
 #' alg = "grass7:r.patch"
-#' out = py_run_string(sprintf("out = RQGIS.get_args_man('%s')", alg))$out
+#' out = py$RQGIS3$get_args_man(alg)
 #' params = get_args_man(alg)
 #' params$input = list(r1, r2, r3)
 #' params[] = save_spatial_objects(params = params,
-#'                                  type_name = out$type_name)
+#'                                 type_name = out$type_name)
 #' }
 #' @author Jannes Muenchow
 save_spatial_objects = function(params, type_name, NA_flag = -99999) {
@@ -482,7 +482,7 @@ save_spatial_objects = function(params, type_name, NA_flag = -99999) {
 
     # GEOMETRY and GEOMETRYCOLLECTION not supported
     if (any(tmp %in% c("sfc_GEOMETRY", "sfc_GEOMETRYCOLLECTION"))) {
-      stop("RQGIS does not support GEOMETRY or GEOMETRYCOLLECTION classes")
+      stop("RQGIS3 does not support GEOMETRY or GEOMETRYCOLLECTION classes")
     }
     # check if the function argument is a SpatialObject
     if (any(grepl("^Spatial(Points|Lines|Polygons)DataFrame$", tmp)) |
@@ -545,13 +545,13 @@ save_spatial_objects = function(params, type_name, NA_flag = -99999) {
 #'   extent should be retrieved.
 #' @param type_name A character string containing the QGIS parameter type for
 #'   each parameter (boolean, multipleinput, extent, number, etc.) of `params`.
-#'   The Python method `RQGIS.get_args_man()` returns a Python dictionary with one
+#'   The Python method `RQGIS3.get_args_man()` returns a Python dictionary with one
 #'   of its elements corresponding to the type_name (see also the example
 #'   section).
 #' @keywords internal
 #' @examples
 #' \dontrun{
-#' library("RQGIS")
+#' library("RQGIS3")
 #' library("raster")
 #' library("reticulate")
 #' r = raster(ncol = 100, nrow = 100)
@@ -562,7 +562,7 @@ save_spatial_objects = function(params, type_name, NA_flag = -99999) {
 #' r2[] = 1:ncell(r2)
 #' r3[] = 1:ncell(r3)
 #' alg = "grass7:r.patch"
-#' out = py_run_string(sprintf("out = RQGIS.get_args_man('%s')", alg))$out
+#' out = py$RQGIS3$get_args_man()
 #' params = get_args_man(alg)
 #' params$input = list(r1, r2, r3)
 #' get_extent(params = params, type_name = out$type_name)
@@ -644,7 +644,7 @@ get_extent = function(params, type_name) {
   ext
 }
 
-#' @title Check if RQGIS is loaded on a server
+#' @title Check if RQGIS3 is loaded on a server
 #' @description Performs cross-platform (Unix, Windows) and OS (Debian/Ubuntu) checks for a server infrastructure
 #' @importFrom parallel detectCores
 #' @keywords internal
@@ -668,7 +668,7 @@ check_for_server = function() {
       # check for Debian | Ubuntu
       if (platform == "Debian") {
         warning(paste0(
-          "Hey there! According to our internal checks, you are trying to run RQGIS on a server.\n",
+          "Hey there! According to our internal checks, you are trying to run RQGIS3 on a server.\n",
           "Please note that this is only possible if you imitate a x-display.\n",
           "QGIS needs this in the background to be able to execute its processing modules.\n",
           "Since we detected you are running a Debian server, the following R command should solve the problem:\n",
@@ -680,7 +680,7 @@ check_for_server = function() {
       }
       if (platform == "Ubuntu") {
         warning(paste0(
-          "Hey there! According to our internal checks, you are trying to run RQGIS on a server.\n",
+          "Hey there! According to our internal checks, you are trying to run RQGIS3 on a server.\n",
           "Please note that this is only possible if you imitate a x-display.\n",
           "QGIS needs this in the background to be able to execute its processing modules.\n",
           "Since we detected you are running a Debian server, the following R command should solve the problem:\n",
@@ -694,7 +694,7 @@ check_for_server = function() {
   }
   if (detectCores() > 10 && Sys.info()["sysname"] == "Windows") {
     warning(paste0(
-      "Hey there! According to our internal checks, you are trying to run RQGIS on a Windows server.\n",
+      "Hey there! According to our internal checks, you are trying to run RQGIS3 on a Windows server.\n",
       "Please note that this is only possible if you imitate a x-display.\n",
       "QGIS needs this in the background to be able to execute its processing modules.\n",
       "Note that you need to start the x-display with admin rights", collapse = "\n"

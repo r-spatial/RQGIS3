@@ -142,11 +142,11 @@ test_that(paste(
 test_that("Test that we can call the PYQGIS API directly", {
   skip_on_cran()
   
-  met = py_run_string("methods = dir(RQGIS)")$methods
+  met = py_run_string("methods = dir(RQGIS3)")$methods
   expect_gt(length(met), 5)
   
   py_cmd =
-    "opts = RQGIS.get_options('grass7:r.slope.aspect')"
+    "opts = RQGIS3.get_options('grass7:r.slope.aspect')"
   opts = py_capture_output(py_run_string(py_cmd)$opts)
   expect_is(opts, "character")
   py_cmd = "processing.algorithmHelp('grass7:r.slope.aspect')"
