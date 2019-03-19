@@ -806,12 +806,7 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
   # print a message if default values have been automatically chosen. This will
   # happen if the user has specified not all arguments via ... or if he used a
   # parameter-argument list without indicating an optional parameter.
-  args = py_run_string(
-    sprintf(
-      "algorithm_params = RQGIS3.get_args_man('%s')",
-      alg
-    )
-  )$algorithm_params
+  args = py$RQGIS3$get_args_man(alg)
   ind_2 = args$params[args$opts] %in% ind
   if (any(ind_2)) {
     msg = paste(paste0(args$params[args$opts][ind_2], ": 0"), collapse = "\n")
@@ -822,14 +817,11 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
   }
 
   # Save Spatial-Objects (sp, sf and raster)
-  # here, we would like to retrieve the type type of the argument (which is list
-  # element 4)
-  out = py_run_string(sprintf("out = RQGIS3.get_args_man('%s')", alg))$out
-  # just run through list elements which might be an input file (i.e. which are
+  # just run through list elements which might be an input file (i.e., which are
   # certainly not an output file)
-  params[!out$output] = save_spatial_objects(
-    params = params[!out$output],
-    type_name = out$type_name,
+  params[!args$output] = save_spatial_objects(
+    params = params[!args$output],
+    type_name = args$type_name[!args$output],
     NA_flag = NA_flag
   )
 
@@ -837,7 +829,7 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
   # make sure that the output will be saved to the current directory (R default)
   # if the user has not specified any output files, the QGIS temporary folder
   # will be used (if None is specified which is the QGIS default)
-  params[out$output] = lapply(params[out$output], function(x) {
+  params[args$output] = lapply(params[args$output], function(x) {
     if (basename(x) != "None" && dirname(x) == ".") {
       tmp = normalizePath(getwd(), winslash = "/")
       # if a network folder is given, normalizePath will convert //, \\, \\\\
@@ -860,15 +852,15 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
   # provide automatically extent objects in case the user has not specified them
   # (most often needed for the GRASS_REGION_PARAMETER)
 
-  ind = out$type_name == "extent" & (params == "\"None\"" | params == "None")
+  ind = args$type_name == "extent" & (params == "\"None\"" | params == "None")
   if (any(ind)) {
     # run through the arguments and check if we can extract a bbox. While doing
     # so, dismiss the output arguments. Not doing so could cause R to crash
     # since the output-file might already exist. For instance, the already
     # existing output might have another CRS.
     ext = get_extent(
-      params = params[!out$output],
-      type_name = out$type_name[!out$output]
+      params = params[!args$output],
+      type_name = args$type_name[!args$output]
     )
     # final bounding box in the QGIS/GRASS notation
     params[ind] = paste(ext, collapse = ",")
@@ -879,10 +871,6 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
   # However, otherwise, the user might become confused...
   params = params[names(params_all)]
 
-  # # clean up after yourself!!
-  py_run_string(
-    "try:\n  del(out, opts)\nexcept:\  pass"
-  )
   # return your result
   params
 }
