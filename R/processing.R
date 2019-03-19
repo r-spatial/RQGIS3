@@ -377,14 +377,9 @@ qgis_session_info = function(qgis_env = set_env()) {
 
   # retrieve the output
   suppressWarnings({
-    out =
-      py_run_string("my_session_info = RQGIS.qgis_session_info()")$my_session_info
-    })
-  # clean up after yourself!!
-  py_run_string(
-    "try:\n  del(my_session_info)\nexcept:\  pass"
-  )
-
+    out = py$RQGIS$qgis_session_info()
+  })
+  
   if ((Sys.info()["sysname"] == "Linux" | Sys.info()["sysname"] == "FreeBSD") &&
       (out$grass7)) {
     # find out which GRASS version is available
