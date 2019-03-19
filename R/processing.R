@@ -464,7 +464,7 @@ find_algorithms = function(search_term = NULL, name_only = FALSE,
   # Advantage of this approach: we are using directly alglist and do not have to
   # save it in inst
   # Disadvantage: more processing
-  algs = py_capture_output(py_run_string("RQGIS.alglist()"))
+  algs = py_capture_output(py$RQGIS$alglist())
   algs = gsub("\n", "', '", algs)
   algs = unlist(strsplit(algs, "', |, '"))
   algs = unlist(strsplit(algs, '", '))
