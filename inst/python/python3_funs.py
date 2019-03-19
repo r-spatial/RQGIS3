@@ -56,7 +56,7 @@ from processing.tools.system import isWindows, isMac
 # classes will inherit from the object class, like so:
 # class RQGIS(object):
 # Do we need object-power, I guess not:
-class RQGIS:
+class RQGIS3:
   def __init__(self):
     # well, you need to specify something here, e.g.,
     # self.x = ""
