@@ -754,7 +754,7 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
   dots = list(...)
   if (!is.null(params) && (length(dots) > 0)) {
     stop(paste(
-      "Use either QGIS parameters as R arguments,",
+      "Use either QGIS3 parameters as R arguments,",
       "or as a parameter argument list object, but not both"
     ))
   }
@@ -988,7 +988,7 @@ run_qgis = function(alg = NULL, ..., params = NULL, load_output = FALSE,
 
   # build the Python command
   # make sure to use the unquoted version of None, True and False
-  params = lapply(params, function(x) {
+  convert = function(x) {
     if (x == "None") {
       x = r_to_py(NULL)
     }
@@ -999,6 +999,16 @@ run_qgis = function(alg = NULL, ..., params = NULL, load_output = FALSE,
       x = r_to_py(FALSE)
     }
     x
+  }
+  params[] = lapply(seq_along(params), function(i) {
+    # if-clause necessary in case we have specified a list containing file paths
+    # to spatial objects
+    if (class(params[[i]]) == "list") {
+      out = lapply(params[[i]], function(x) convert(x))
+    } else {
+      out = convert(params[[i]])  
+    }
+    return(out)
   })
   
   # convert R parameter-argument list into a Python dictionary
