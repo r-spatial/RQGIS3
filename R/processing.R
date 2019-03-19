@@ -516,8 +516,7 @@ get_usage = function(alg = NULL, intern = FALSE,
                       qgis_env = set_env()) {
   tmp = try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
 
-  out =
-    py_capture_output(py_run_string(sprintf("RQGIS.alghelp('%s')", alg)))
+  out = py_capture_output(py$RQGIS$alghelp(alg))
   out = gsub("^\\[|\\]$|'", "", out)
   # some refining needed here, e.g., in case of qgis:distancematrix
   out = gsub(", ", "\n", out)
