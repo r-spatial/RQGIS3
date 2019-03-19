@@ -1023,7 +1023,7 @@ run_qgis = function(alg = NULL, ..., params = NULL, load_output = FALSE,
   })
   
   # convert R parameter-argument list into a Python dictionary
-  # params = r_to_py(params)
+  params = r_to_py(params)
   # cmd =
   #   sprintf(
   #     "res = processing.run(algOrName = '%s', parameters = %s, feedback = QgsProcessingFeedback())",
@@ -1041,11 +1041,11 @@ run_qgis = function(alg = NULL, ..., params = NULL, load_output = FALSE,
     stop(msg)
   }
   # res contains all the output paths of the files created by QGIS
-  res = py$res
+  # res = py$res
   # show the output files to the user
-  if (show_output_paths) {
-    print(res)
-  }
+  #if (show_output_paths) {
+   # print(res)
+  #}
   # if there is a message, show it
   if (msg != "") {
     message(msg)
