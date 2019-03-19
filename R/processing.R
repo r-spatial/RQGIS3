@@ -381,7 +381,7 @@ qgis_session_info = function(qgis_env = set_env()) {
   suppressWarnings({
     out = py$RQGIS3$qgis_session_info()
   })
-  
+
   if ((Sys.info()["sysname"] == "Linux" | Sys.info()["sysname"] == "FreeBSD") &&
       (out$grass7)) {
     # find out which GRASS version is available
@@ -1008,17 +1008,17 @@ run_qgis = function(alg = NULL, ..., params = NULL, load_output = FALSE,
     if (class(params[[i]]) == "list") {
       out = lapply(params[[i]], function(x) convert(x))
     } else {
-      out = convert(params[[i]])  
+      out = convert(params[[i]])
     }
     return(out)
   })
-  
+
   # convert R parameter-argument list into a Python dictionary
   params = r_to_py(params)
   # run QGIS
   msg = py_capture_output(expr = {
-    res = 
-      py$processing$run(algOrName = alg, parameters = params, 
+    res =
+      py$processing$run(algOrName = alg, parameters = params,
                         feedback = py$QgsProcessingFeedback())
   })
   # If QGIS produces an error message, stop and report it
@@ -1026,7 +1026,7 @@ run_qgis = function(alg = NULL, ..., params = NULL, load_output = FALSE,
     stop(msg)
   }
   # res contains all the output paths of the files created by QGIS
-  
+
   # print the created output files to the console
   if (show_output_paths) {
     print(res)
@@ -1038,15 +1038,12 @@ run_qgis = function(alg = NULL, ..., params = NULL, load_output = FALSE,
 
   # load output
   if (load_output) {
-    # just keep the output files
-    # Find out what the output names are
-    out_names = py$RQGIS3$get_args_man(alg)
-    out_names = out_names$params[out_names$output]
     # convert Python dictionary back into an R list
     params = py_to_r(params)
-    params_out = params[out_names]
+    params_out = params[names(res)]
     # just keep the files which were actually specified by the user
-    out_files = params_out[params_out != "None"]
+    out_files = params_out[vapply(params_out, length,
+                                  FUN.VALUE = numeric(1)) > 0]
     ls_1 = lapply(out_files, function(x) {
       # even if the user only specified an output name without an output
       # directory, we have made sure above that the output is written to the
