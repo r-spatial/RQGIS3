@@ -1022,16 +1022,20 @@ run_qgis = function(alg = NULL, ..., params = NULL, load_output = FALSE,
     x
   })
   
-
   # convert R parameter-argument list into a Python dictionary
-  params = r_to_py(params)
-  cmd =
-    sprintf(
-      "res = processing.run(algOrName = '%s', parameters = %s, feedback = QgsProcessingFeedback())",
-      alg, params)
-
+  # params = r_to_py(params)
+  # cmd =
+  #   sprintf(
+  #     "res = processing.run(algOrName = '%s', parameters = %s, feedback = QgsProcessingFeedback())",
+  #     alg, params)
+  # 
+  # # run QGIS
+  # msg = py_capture_output(py_run_string(cmd))
+  
   # run QGIS
-  msg = py_capture_output(py_run_string(cmd))
+  msg = py_capture_output(
+    py$processing$run(algOrName = alg, parameters = params, 
+                      feedback = py$QgsProcessingFeedback()))
   # If QGIS produces an error message, stop and report it
   if (grepl("Unable to execute algorithm|Error", msg)) {
     stop(msg)
@@ -1064,6 +1068,8 @@ run_qgis = function(alg = NULL, ..., params = NULL, load_output = FALSE,
     py_run_string(
       "try:\n  del(out_names)\nexcept:\  pass"
     )
+    # convert Python dictionary back into an R list
+    params = py_to_r(params)
     params_out = params[out_names]
     # just keep the files which were actually specified by the user
     out_files = params_out[params_out != "None"]
