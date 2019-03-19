@@ -31,7 +31,7 @@
 #'
 #' @export
 #' @author Jannes Muenchow, Patrick Schratz
-set_env = function(root = NULL, new = FALSE, dev = TRUE, ...) {
+set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
   # ok, let's try to find QGIS first in the most likely place!
   dots = list(...)
   # load cached qgis_env if possible
@@ -1008,25 +1008,27 @@ run_qgis = function(alg = NULL, ..., params = NULL, load_output = FALSE,
                       qgis_env = qgis_env)
 
   # build the Python command
-  # r_to_py(params) would also create a dictionary which would be a rather
-  # elegant solution. But there are two problems: First, we did not get rid off
-  # strange/incomplete shell quotes (though that might not be an issue here,
-  # since we are going to use Python via the tunnel and the strange/incomplete
-  # shellquotes were returned by Python). Secondly, True, False and None should
-  # be unquoted which can be only achieved in R by collapsing all arguments into
-  # one long string. Maybe it would work even if we did not explicitly take care
-  # of this. But to be on the safe side, we proceed as follows:
+  # make sure to use the unquoted version of None, True and False
+  params = lapply(params, function(x) {
+    if (x == "None") {
+      x = r_to_py(NULL)
+    }
+    if (x == "True") {
+      x = r_to_py(TRUE)
+    }
+    if (x == "False") {
+      x = r_to_py(FALSE)
+    }
+    x
+  })
+  
 
   # convert R parameter-argument list into a Python dictionary
-  py_run_string(paste0("args = ", convert_to_tuple(params)))  # argument tuple
-  # r_to_py(paste0("args = ", convert_to_tuple(params)))
-  # r_to_py(paste0("params = ", convert_to_tuple(names(params))))
-  py_run_string(paste0("params = ", convert_to_tuple(names(params))))  # name tuple
-  py_run_string("params = dict((x, y) for x, y in zip(params, args))")
-
+  params = r_to_py(params)
   cmd =
-    paste(sprintf(
-      "res = Processing.runAlgorithm(algOrName = '%s', parameters = params, feedback = QgsProcessingFeedback())", alg))
+    sprintf(
+      "res = processing.run(algOrName = '%s', parameters = %s, feedback = QgsProcessingFeedback())",
+      alg, params)
 
   # run QGIS
   msg = py_capture_output(py_run_string(cmd))
@@ -1035,7 +1037,7 @@ run_qgis = function(alg = NULL, ..., params = NULL, load_output = FALSE,
     stop(msg)
   }
   # res contains all the output paths of the files created by QGIS
-  res = py_run_string("res")$res
+  res = py$res
   # show the output files to the user
   if (show_output_paths) {
     print(res)

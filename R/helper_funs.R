@@ -22,9 +22,9 @@ check_apps = function(root, ...) {
     # use the LTR (default), if available
     dots = list(...)
     if (length(dots) > 0 && !isTRUE(dots$dev)) {
-      # my_qgis = ifelse("qgis-ltr" %in% my_qgis, "qgis-ltr", my_qgis[1])
-      stop("When using QGIS3, you have to use the developer version, so please", 
-           " use dev = TRUE and make sure that you have installed QGIS3.")
+      my_qgis = ifelse("qgis-ltr" %in% my_qgis, "qgis-ltr", my_qgis[1])
+      # stop("When using QGIS3, you have to use the developer version, so please", 
+      #      " use dev = TRUE and make sure that you have installed QGIS3.")
     } else {
       # use ../apps/qgis, i.e. most likely the most recent QGIS version
       my_qgis = my_qgis[1]
