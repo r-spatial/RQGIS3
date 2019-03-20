@@ -145,7 +145,8 @@ test_that("Test, if multipleparameter input works?", {
   params = get_args_man(alg = alg)
   params$LAYERS = list(pt_1, pt_2)
   params$OUTPUT = file.path(tempdir(), "out.shp")
-  out = run_qgis(alg = alg, params = params, load_output = TRUE)
+  out = run_qgis(alg = alg, params = params, load_output = TRUE, 
+                 show_output_paths = FALSE)
   # test if the two shps were joined, i.e., now have 20 rows
   expect_equal(nrow(out), 20)
 
@@ -155,6 +156,7 @@ test_that("Test, if multipleparameter input works?", {
   write_sf(pt_1, file_1)
   write_sf(pt_2, file_2)
   params$LAYERS = list(file_1, file_2)
-  out_2 = run_qgis(alg = alg, params = params, load_output = TRUE)
+  out_2 = run_qgis(alg = alg, params = params, load_output = TRUE,
+                   show_output_paths = FALSE)
   expect_equal(nrow(out_2), 20)
 })
