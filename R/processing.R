@@ -990,8 +990,10 @@ run_qgis = function(alg = NULL, ..., params = NULL, load_output = FALSE,
 
   # build the Python command
   # first convert NULL, TRUE, FALSE to Python equivalents None, True, False
-
-  params[] = convert_ntf(params)
+  # only apply convert_ntf to characters ("None", "True", "False"), applying it
+  # to a spatial object, for example, would fail
+  ind = vapply(params, class, character(1)) == "character"
+  params[ind] = convert_ntf(params[ind])
 
   # convert R parameter-argument list into a Python dictionary
   params = r_to_py(params)

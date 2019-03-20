@@ -730,14 +730,17 @@ convert_ntf = function(x) {
       convert_ntf(y)
     } else {
       if (y == "None") {
-        r_to_py(NULL)
+        y = r_to_py(NULL)
       }
       if (y == "True") {
-        r_to_py(TRUE)
+        y = r_to_py(TRUE)
       }
       if (y == "False") {
-        r_to_py(FALSE)
+        y = r_to_py(FALSE)
       }
     }
+    # return your result
+    y
   })
 }
+
