@@ -708,16 +708,36 @@ check_for_server = function() {
   }
 }
 
-convert_to_tuple = function(x) {
-  vals = vapply(x, function(i) {
-    # get rid off 'strange' or incomplete shellQuotes
-    tmp = unlist(strsplit(as.character(i), ""))
-    tmp = tmp[tmp != "\""]
-    # paste the argument together again
-    tmp = paste(tmp, collapse = "")
-    # shellQuote argument if is not True, False or None
-    ifelse(grepl("True|False|None", tmp), tmp, shQuote(tmp))
-  }, character(1))
-  # paste the function arguments together
-  paste(vals, collapse = ", ")
+
+#' @title convert recursively NULL, TRUE, FALSE to Python equivalents None,
+#'   True, False
+#' @param params A parameter-argument list as returned by [get_args_man()] or
+#'   [pass_args()].
+#' @keywords internal
+#' @author Jannes Muenchow
+#' @examples
+#' \dontrun{
+#' library("RQGIS3")
+#' params = get_args_man("native:centroids")
+#' convert_ntf(params)
+#' # and just to show that it also works recursively
+#' params$INPUT = list("None", "None")
+#' convert_ntf(params)
+#' }
+convert_ntf = function(x) {
+  lapply(x, function(y) {
+    if (class(y) == "list") {
+      convert_ntf(y)
+    } else {
+      if (y == "None") {
+        r_to_py(NULL)
+      }
+      if (y == "True") {
+        r_to_py(TRUE)
+      }
+      if (y == "False") {
+        r_to_py(FALSE)
+      }
+    }
+  })
 }

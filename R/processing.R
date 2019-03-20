@@ -989,29 +989,9 @@ run_qgis = function(alg = NULL, ..., params = NULL, load_output = FALSE,
                       qgis_env = qgis_env)
 
   # build the Python command
-  # make sure to use the unquoted version of None, True and False
-  convert = function(x) {
-    if (x == "None") {
-      x = r_to_py(NULL)
-    }
-    if (x == "True") {
-      x = r_to_py(TRUE)
-    }
-    if (x == "False") {
-      x = r_to_py(FALSE)
-    }
-    x
-  }
-  params[] = lapply(seq_along(params), function(i) {
-    # if-clause necessary in case we have specified a list containing file paths
-    # to spatial objects
-    if (class(params[[i]]) == "list") {
-      out = lapply(params[[i]], function(x) convert(x))
-    } else {
-      out = convert(params[[i]])
-    }
-    return(out)
-  })
+  # first convert NULL, TRUE, FALSE to Python equivalents None, True, False
+
+  params[] = convert_ntf(params)
 
   # convert R parameter-argument list into a Python dictionary
   params = r_to_py(params)
