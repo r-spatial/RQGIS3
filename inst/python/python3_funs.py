@@ -80,7 +80,7 @@ class RQGIS3:
     g7 = Grass7Utils.isGrassInstalled
     if g7 is True and isWindows():
       g7 = Grass7Utils.grassPath()
-      g7 = re.findall('grass-(.*)',  g7)
+      g7 = re.findall('grass-?(.*)',  g7)
     if g7 is True and isMac():
       g7 = Grass7Utils.grassPath()[0:21]
       g7 = os.listdir(g7)
