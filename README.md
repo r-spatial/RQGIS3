@@ -74,7 +74,7 @@ ger = getData(name = "GADM", country = "DEU", level = 1)
 # ger is of class "SpatialPolygonsDataFrame"
 ```
 
-Now that we have a spatial object, we can move on to using **RQGIS3**. First of all, we need to specify all the paths necessary to run the QGIS-API. Fortunately, `set_env()` does this for us (assuming that QGIS and all necessary dependencies were installed correctly). The only thing we need to do is: specify the root path to the QGIS-installation. If you do not specify a path, `set_env()` tries to find the OSGeo4W-installation first in the 'C:/OSGeo4W'-folders. If this is unsuccessful, it will search your C: drive though this might take a while. If you are running **RQGIS3** under Linux or on a Mac, `set_env()` assumes that your root path is `/usr` and `/applications/QGIS.app/Contents`, respectively. Please note, that most of the **RQGIS3** functions, you are likely to work with (such as `find_algorithms()`, `get_args_man()` and `run_qgis()`), require the output list (as returned by `set_env()`) containing the paths to the various installations necessary to run QGIS from within R. This is why, `set_env()` caches its result in a temporary folder, and loads it back into R when called again (to overwrite an existing cache, set parameter `new` to `TRUE`).
+Now that we have a spatial object, we can move on to using **RQGIS3**. First of all, we need to specify all the paths necessary to run the QGIS-API. Fortunately, `set_env()` does this for us (assuming that QGIS and all necessary dependencies were installed correctly). The only thing we need to do is: specify the root path to the QGIS-installation. If you do not specify a path, `set_env()` tries to find the OSGeo4W-installation first in the ``C:/OSGeo4W``-folders. If this is unsuccessful, it will search your C: drive though this might take a while. If you are running **RQGIS3** under Linux or on a Mac, `set_env()` assumes that your root path is `/usr` and `/applications/QGIS.app/Contents`, respectively. Please note, that most of the **RQGIS3** functions, you are likely to work with (such as `find_algorithms()`, `get_args_man()` and `run_qgis()`), require the output list (as returned by `set_env()`) containing the paths to the various installations necessary to run QGIS from within R. This is why, `set_env()` caches its result in a temporary folder, and loads it back into R when called again (to overwrite an existing cache, set parameter `new` to `TRUE`).
 
 ``` r
 # attach RQGIS3
@@ -220,6 +220,7 @@ plot(out$geometry, pch = 21, add = TRUE, bg = "lightblue", col = "black")
 <p align="center">
 <img src="https://raw.githubusercontent.com/jannes-m/RQGIS/master/https://raw.githubusercontent.com/jannes-m/RQGIS/master/figures/10_plot_ger.png" width="60%"/>
 </p>
+
 Of course, this is a very simple example. We could have achieved the same using `sf::st_as_sf(ger) %>% sf::st_centroid()`. For a more detailed introduction to **RQGIS** and more complex examples have a look at our paper:
 
 <a href = "https://rjournal.github.io/archive/2017/RJ-2017-067/RJ-2017-067.pdf">https://rjournal.github.io/archive/2017/RJ-2017-067/RJ-2017-067.pdf</a>
