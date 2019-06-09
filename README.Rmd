@@ -253,7 +253,7 @@ out = run_qgis(alg = "native:centroids",
 ... or we can use R named arguments in `run_qgis()`
 
 ```{r, eval = FALSE}
-out = run_qgis(alg = "qgis:polygoncentroids",
+out = run_qgis(alg = "native:centroids",
                INPUT = ger,
                OUTPUT = file.path(tempdir(), "ger_coords.shp"),
                load_output = TRUE)
