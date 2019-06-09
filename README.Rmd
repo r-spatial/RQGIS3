@@ -52,7 +52,7 @@ If Linux and MacOSX users would like to use **RQGIS3** in conjunction with RStud
 
 ## RQGIS3
 
-**RQGIS3** establishes an interface between R and QGIS3, i.e. it allows the user to access QGIS3 functionalities from within R. 
+**RQGIS3** establishes an interface between R and QGIS3, i.e., it allows the user to access QGIS3 functionalities from within R. 
 It achieves this by establishing a tunnel to the Python QGIS3 API via the [reticulate-package](https://github.com/rstudio/reticulate).
 This provides the user with an extensive suite of GIS functions, since QGIS3 allows you to call native as well as third-party algorithms via its processing framework (see
 also [https://docs.qgis.org/testing/en/docs/user_manual/processing/index.html](https://docs.qgis.org/testing/en/docs/user_manual/processing/index.html)).
@@ -261,7 +261,7 @@ out = run_qgis(alg = "native:centroids",
 
 ... or we can use R named arguments in `run_qgis()`
 
-```{r, eval = FALSE}
+```{r, eval=FALSE}
 out = run_qgis(alg = "native:centroids",
                INPUT = ger,
                OUTPUT = file.path(tempdir(), "ger_coords.shp"),
