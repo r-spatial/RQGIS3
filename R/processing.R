@@ -283,6 +283,10 @@ open_app = function(qgis_env = set_env()) {
       "except:\n  pass")
   # cat(py_cmd)
   py_run_string(py_cmd)
+  
+  # instead of using pyvirtualdisplay, one could also use Xvfb directly:
+  # system('export DISPLAY=:99 && xdpyinfo -display $DISPLAY > /dev/null || sudo Xvfb $DISPLAY -screen 99 1024x768x16 &')
+  
   # next attach all required modules
   py_run_string("import os, sys")
   py_run_string("from qgis.core import *")
