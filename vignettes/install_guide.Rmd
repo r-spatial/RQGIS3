@@ -281,14 +281,14 @@ We recommend to use the bottle installation from `homebrew`:
 
 ```sh
 # brew tap osgeo4mac
-brew install saga-gis-lts
-brew link saga-gis-lts --force
+brew install osgeo-saga-gis-lts
+brew link --force osgeo-saga-gis-lts
 ```
 
 If you do not link SAGA with force, QGIS will not be able to detect SAGA.
 
 Alternatively, you can compile SAGA from source from the [SAGA website](https://sourceforge.net/projects/saga-gis/files/). 
-However, this is tedious and QGIS2 only supports the SAGA LTS version.
+However, this is tedious and QGIS only supports the SAGA LTS version.
 
 ## GRASS
 
@@ -296,7 +296,7 @@ You can install GRASS7 via `homebrew`:
 
 ```sh
 # brew tap osgeo4mac
-brew install grass7
+brew install osgeo-grass7
 ```
 
 The binary GRASS installation can be found [here](https://grass.osgeo.org/download/software/mac-osx/). 
@@ -313,28 +313,19 @@ Two options exist installing QGIS on macOS
 1. Using `homebrew` (**recommended**)
 
 ```
-# brew tap osgeo4mac
-brew install qgis2
+# brew tap osgeo/osgeo4mac
+brew install osgeo-qgis-ltr
 ```
 
-Check `brew info qgis2` for more available options. 
+Check `brew info osgeo-qgis` for more available options. 
 However, if you use them, QGIS will be compiled from source which may take > 30 min (depending on your system).
 Otherwise, pre-built bottles (= binaries) will be used which speeds up the installation process a lot.
 
 **Note:** Make sure to install SAGA and GRASS before QGIS so that QGIS finds the correct paths.
 
-2. Install QGIS binary from Kyngchaos
+2. Using the official QGIS binary
 
-Homebrew also supports [GUI installations](https://caskroom.github.io/). 
-QGIS can be installed using 
-
-```sh
-brew cask install qgis
-```
-
-from the command line if homebrew is installed and configured correctly. 
 If you do not (want to) use `homebrew`, you can install the QGIS binary from [https://www.qgis.org/en/site/forusers/download.html](https://www.qgis.org/en/site/forusers/download.html). 
-This is exactly the same as calling `brew cask install qgis`.
 
 If you choose this option, you will get the following error messages during QGIS processing
 
