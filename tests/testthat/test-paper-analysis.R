@@ -1,4 +1,4 @@
-library("RQGIS")
+library("RQGIS3")
 library("RSAGA")
 library("raster")
 library("sf")
@@ -8,7 +8,7 @@ context("paper")
 
 test_that("qgis_session_info yields a list as output", {
   skip_on_cran()
-  
+
   info_r = version
   info_qgis = qgis_session_info()
   info = c(platform = info_r$platform, R = info_r$version.string, info_qgis)
@@ -17,7 +17,7 @@ test_that("qgis_session_info yields a list as output", {
 
 test_that("find_algorithms finds curvature algorithms", {
   skip_on_cran()
-  
+
   algs = find_algorithms(
     search_term = "curvature",
     name_only = TRUE
@@ -27,7 +27,7 @@ test_that("find_algorithms finds curvature algorithms", {
 
 test_that("get_usage finds grass7:r.slope.aspect", {
   skip_on_cran()
-  
+
   use = get_usage(alg = "grass7:r.slope.aspect", intern = TRUE)
   expect_match(use, "^r.slope.aspect")
 })
@@ -37,7 +37,7 @@ test_that(paste(
   "the model can be fitted"
 ), {
   skip_on_cran()
-  
+
   params = get_args_man(alg = "grass7:r.slope.aspect")
   expect_length(params, 19)
   # Calculate curvatures
@@ -53,7 +53,7 @@ test_that(paste(
   # check if the output is a raster
   expect_is(out[[1]], "RasterLayer")
   expect_is(out[[2]], "RasterLayer")
-  
+
   # Remove possible artifacts
   run_qgis(
     "saga:sinkremoval",
@@ -63,7 +63,7 @@ test_that(paste(
     show_output_paths = FALSE
   )
   expect_true(file.exists(file.path(tempdir(), "sdem.sdat")))
-  
+
   # Compute wetness index
   run_qgis(
     "saga:sagawetnessindex",
@@ -77,7 +77,7 @@ test_that(paste(
   )
   expect_true(file.exists(file.path(tempdir(), "cslope.sdat")))
   expect_true(file.exists(file.path(tempdir(), "carea.sdat")))
-  
+
   # transform
   cslope = raster(file.path(tempdir(), "cslope.sdat"))
   cslope = cslope * 180 / pi
@@ -101,7 +101,7 @@ test_that(paste(
       overwrite = TRUE
     )
   }
-  
+
   # extract values to points
   data("random_points", package = "RQGIS")
   random_points[, c("x", "y")] = sf::st_coordinates(random_points)
@@ -117,13 +117,13 @@ test_that(paste(
     varname = raster_names
   )
   expect_false(any(!raster_names %in% names(vals)))
-  
+
   fit = glm(
     spri ~ dem1 + dem2 + cslope + ndvi + log_carea,
     data = vals,
     family = "poisson"
   )
-  
+
   # make the prediction
   raster_names = c(
     "dem1.asc", "dem2.asc", "log_carea.asc", "cslope.asc",
@@ -141,12 +141,12 @@ test_that(paste(
 
 test_that("Test that we can call the PYQGIS API directly", {
   skip_on_cran()
-  
-  met = py_run_string("methods = dir(RQGIS)")$methods
+
+  met = py_run_string("methods = dir(RQGIS3)")$methods
   expect_gt(length(met), 5)
-  
+
   py_cmd =
-    "opts = RQGIS.get_options('grass7:r.slope.aspect')"
+    "opts = RQGIS3.get_options('grass7:r.slope.aspect')"
   opts = py_capture_output(py_run_string(py_cmd)$opts)
   expect_is(opts, "character")
   py_cmd = "processing.algorithmHelp('grass7:r.slope.aspect')"

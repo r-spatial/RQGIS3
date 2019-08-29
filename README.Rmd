@@ -43,7 +43,16 @@ rvers = "3.2.0"
 <!-- C:\OSGeo4W64\bin\python-qgis -> opens Python!!
 /usr/share/qgis/python/plugins/processing-->
 
-**RQGIS3** establishes an interface between R and QGIS3, i.e. it allows the user to access QGIS3 functionalities from within R. 
+
+## RQGIS3 problems under Unix-based systems
+**RQGIS3** probably does not run on MacOSX platforms, we haven't tested that yet (any help here would be appreciated!).
+Under Linux, **RQGIS3** runs without problems in an R session started from the terminal.
+However, when running **RQGIS3** within RStudio, this crashes the RStudio R session (see https://github.com/jannes-m/RQGIS3/issues/10 and https://github.com/rstudio/rstudio/issues/4606).
+If Linux and MacOSX users would like to use **RQGIS3** in conjunction with RStudio, we suggest to use this [docker image](https://github.com/jannes-m/docker-rqgis/tree/master/rqgis3_ltr).
+
+## RQGIS3
+
+**RQGIS3** establishes an interface between R and QGIS3, i.e., it allows the user to access QGIS3 functionalities from within R. 
 It achieves this by establishing a tunnel to the Python QGIS3 API via the [reticulate-package](https://github.com/rstudio/reticulate).
 This provides the user with an extensive suite of GIS functions, since QGIS3 allows you to call native as well as third-party algorithms via its processing framework (see
 also [https://docs.qgis.org/testing/en/docs/user_manual/processing/index.html](https://docs.qgis.org/testing/en/docs/user_manual/processing/index.html)).
@@ -252,8 +261,8 @@ out = run_qgis(alg = "native:centroids",
 
 ... or we can use R named arguments in `run_qgis()`
 
-```{r, eval = FALSE}
-out = run_qgis(alg = "qgis:polygoncentroids",
+```{r, eval=FALSE}
+out = run_qgis(alg = "native:centroids",
                INPUT = ger,
                OUTPUT = file.path(tempdir(), "ger_coords.shp"),
                load_output = TRUE)

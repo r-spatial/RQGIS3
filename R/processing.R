@@ -31,7 +31,7 @@
 #'
 #' @export
 #' @author Jannes Muenchow, Patrick Schratz
-set_env = function(root = NULL, new = FALSE, dev = TRUE, ...) {
+set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
   # ok, let's try to find QGIS first in the most likely place!
   dots = list(...)
   # load cached qgis_env if possible
@@ -245,7 +245,7 @@ open_app = function(qgis_env = set_env()) {
     # there before, so we should at least add the old PATH to our newly created
     # one
     reset_path(settings)
-  } else if (Sys.info()["sysname"] == "Linux" | 
+  } else if (Sys.info()["sysname"] == "Linux" |
              Sys.info()["sysname"] == "FreeBSD") {
     setup_linux(qgis_env = qgis_env)
   } else if (Sys.info()["sysname"] == "Darwin") {
@@ -278,6 +278,10 @@ open_app = function(qgis_env = set_env()) {
       "except:\n  pass")
   # cat(py_cmd)
   py_run_string(py_cmd)
+  
+  # instead of using pyvirtualdisplay, one could also use Xvfb directly:
+  # system('export DISPLAY=:99 && xdpyinfo -display $DISPLAY > /dev/null || sudo Xvfb $DISPLAY -screen 99 1024x768x16 &')
+  
   # next attach all required modules
   py_run_string("import os, sys")
   py_run_string("from qgis.core import *")
@@ -325,6 +329,8 @@ open_app = function(qgis_env = set_env()) {
     # py_run_string("a = QCoreApplication.libraryPaths()")$a
   }
 
+  # on Arch you might have to run
+  # py_run_string("app = QgsApplication([b''], True)")
   py_run_string("app = QgsApplication([], True)")
   py_run_string("QgsApplication.initQgis()")
   py_run_string(paste0("sys.path.append(r'", qgis_env$python_plugins, "')"))
@@ -344,22 +350,22 @@ open_app = function(qgis_env = set_env()) {
   py_file = system.file("python", "python3_funs.py", package = "RQGIS3")
   py_run_file(py_file)
   # instantiate/initialize RQGIS class
-  py_run_string("RQGIS = RQGIS()")
+  py_run_string("RQGIS3 = RQGIS3()")
 }
 
 
 #' @title QGIS session info
 #' @description `qgis_session_info()` reports the version of QGIS and
 #'   installed third-party providers (so far GRASS 6, GRASS 7, and SAGA).
-#'   Additionally, it figures out with which SAGA versions the QGIS installation
+#'   Additionally, it figures out with which SAGA versions the QGIS3 installation
 #'   is compatible.
 #' @param qgis_env Environment settings containing all the paths to run the QGIS
 #'   API. For more information, refer to [set_env()].
 #' @return The function returns a list with following elements:
 #' \enumerate{
-#'  \item{gdal: Name and version of GDAL used by RQGIS.}
+#'  \item{gdal: Name and version of GDAL used by RQGIS3.}
 #'  \item{grass7: GRASS 7 version number, if installed to use with QGIS.}
-#'  \item{qgis_version: Name and version of QGIS used by RQGIS.}
+#'  \item{qgis_version: Name and version of QGIS used by RQGIS3.}
 #'  \item{saga: The installed SAGA version used by QGIS.}
 #' @author Jannes Muenchow, Victor Olaya, QGIS core team
 #' @export
@@ -372,13 +378,8 @@ qgis_session_info = function(qgis_env = set_env()) {
 
   # retrieve the output
   suppressWarnings({
-    out =
-      py_run_string("my_session_info = RQGIS.qgis_session_info()")$my_session_info
-    })
-  # clean up after yourself!!
-  py_run_string(
-    "try:\n  del(my_session_info)\nexcept:\  pass"
-  )
+    out = py$RQGIS3$qgis_session_info()
+  })
 
   if ((Sys.info()["sysname"] == "Linux" | Sys.info()["sysname"] == "FreeBSD") &&
       (out$grass7)) {
@@ -464,7 +465,7 @@ find_algorithms = function(search_term = NULL, name_only = FALSE,
   # Advantage of this approach: we are using directly alglist and do not have to
   # save it in inst
   # Disadvantage: more processing
-  algs = py_capture_output(py_run_string("RQGIS.alglist()"))
+  algs = py_capture_output(py$RQGIS3$alglist())
   algs = gsub("\n", "', '", algs)
   algs = unlist(strsplit(algs, "', |, '"))
   algs = unlist(strsplit(algs, '", '))
@@ -516,8 +517,7 @@ get_usage = function(alg = NULL, intern = FALSE,
                       qgis_env = set_env()) {
   tmp = try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
 
-  out =
-    py_capture_output(py_run_string(sprintf("RQGIS.alghelp('%s')", alg)))
+  out = py_capture_output(py$RQGIS3$alghelp(alg))
   out = gsub("^\\[|\\]$|'", "", out)
   # some refining needed here, e.g., in case of qgis:distancematrix
   out = gsub(", ", "\n", out)
@@ -548,10 +548,7 @@ get_usage = function(alg = NULL, intern = FALSE,
 get_options = function(alg = "", intern = FALSE,
                         qgis_env = set_env()) {
   tmp = try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
-  out =
-    py_capture_output(py_run_string(
-      sprintf("RQGIS.get_options('%s')", alg)
-    ))
+  out = py_capture_output(py$RQGIS3$get_options(alg))
   out = gsub("^\\[|\\]$|'", "", out)
   out = gsub(", ", "\n", out)
   if (intern) {
@@ -602,7 +599,7 @@ open_help = function(alg = "", qgis_env = set_env()) {
   } else {
     algName = alg
     # open the QGIS online help
-    py_run_string(sprintf("RQGIS.open_help('%s')", algName))
+    py_run_string(sprintf("RQGIS3.open_help('%s')", algName))
   }
 }
 
@@ -651,7 +648,7 @@ get_args_man = function(alg = "", options = TRUE,
 
   args = py_run_string(
     sprintf(
-      "algorithm_params = RQGIS.get_args_man('%s')",
+      "algorithm_params = RQGIS3.get_args_man('%s')",
       alg
     )
   )$algorithm_params
@@ -741,7 +738,7 @@ get_args_man = function(alg = "", options = TRUE,
 #' @importFrom utils capture.output
 #' @examples
 #' \dontrun{
-#' data(dem, package = "RQGIS")
+#' data(dem, package = "RQGIS3")
 #' alg = "grass7:r.slope.aspect"
 #' get_usage(alg)
 #' # 1. using R named arguments
@@ -758,7 +755,7 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
   dots = list(...)
   if (!is.null(params) && (length(dots) > 0)) {
     stop(paste(
-      "Use either QGIS parameters as R arguments,",
+      "Use either QGIS3 parameters as R arguments,",
       "or as a parameter argument list object, but not both"
     ))
   }
@@ -810,12 +807,7 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
   # print a message if default values have been automatically chosen. This will
   # happen if the user has specified not all arguments via ... or if he used a
   # parameter-argument list without indicating an optional parameter.
-  args = py_run_string(
-    sprintf(
-      "algorithm_params = RQGIS.get_args_man('%s')",
-      alg
-    )
-  )$algorithm_params
+  args = py$RQGIS3$get_args_man(alg)
   ind_2 = args$params[args$opts] %in% ind
   if (any(ind_2)) {
     msg = paste(paste0(args$params[args$opts][ind_2], ": 0"), collapse = "\n")
@@ -826,14 +818,11 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
   }
 
   # Save Spatial-Objects (sp, sf and raster)
-  # here, we would like to retrieve the type type of the argument (which is list
-  # element 4)
-  out = py_run_string(sprintf("out = RQGIS.get_args_man('%s')", alg))$out
-  # just run through list elements which might be an input file (i.e. which are
+  # just run through list elements which might be an input file (i.e., which are
   # certainly not an output file)
-  params[!out$output] = save_spatial_objects(
-    params = params[!out$output],
-    type_name = out$type_name,
+  params[!args$output] = save_spatial_objects(
+    params = params[!args$output],
+    type_name = args$type_name[!args$output],
     NA_flag = NA_flag
   )
 
@@ -841,7 +830,7 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
   # make sure that the output will be saved to the current directory (R default)
   # if the user has not specified any output files, the QGIS temporary folder
   # will be used (if None is specified which is the QGIS default)
-  params[out$output] = lapply(params[out$output], function(x) {
+  params[args$output] = lapply(params[args$output], function(x) {
     if (basename(x) != "None" && dirname(x) == ".") {
       tmp = normalizePath(getwd(), winslash = "/")
       # if a network folder is given, normalizePath will convert //, \\, \\\\
@@ -864,15 +853,15 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
   # provide automatically extent objects in case the user has not specified them
   # (most often needed for the GRASS_REGION_PARAMETER)
 
-  ind = out$type_name == "extent" & (params == "\"None\"" | params == "None")
+  ind = args$type_name == "extent" & (params == "\"None\"" | params == "None")
   if (any(ind)) {
     # run through the arguments and check if we can extract a bbox. While doing
     # so, dismiss the output arguments. Not doing so could cause R to crash
     # since the output-file might already exist. For instance, the already
     # existing output might have another CRS.
     ext = get_extent(
-      params = params[!out$output],
-      type_name = out$type_name[!out$output]
+      params = params[!args$output],
+      type_name = args$type_name[!args$output]
     )
     # final bounding box in the QGIS/GRASS notation
     params[ind] = paste(ext, collapse = ",")
@@ -883,10 +872,6 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
   # However, otherwise, the user might become confused...
   params = params[names(params_all)]
 
-  # # clean up after yourself!!
-  py_run_string(
-    "try:\n  del(out, opts)\nexcept:\  pass"
-  )
   # return your result
   params
 }
@@ -948,7 +933,7 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
 #' \dontrun{
 #' # calculate the slope of a DEM
 #' # load dem - a raster object
-#' data(dem, package = "RQGIS")
+#' data(dem, package = "RQGIS3")
 #' # find out the name of a GRASS function with which to calculate the slope
 #' find_algorithms(search_term = "grass7.*slope")
 #' # find out how to use the function
@@ -1003,35 +988,27 @@ run_qgis = function(alg = NULL, ..., params = NULL, load_output = FALSE,
                       qgis_env = qgis_env)
 
   # build the Python command
-  # r_to_py(params) would also create a dictionary which would be a rather
-  # elegant solution. But there are two problems: First, we did not get rid off
-  # strange/incomplete shell quotes (though that might not be an issue here,
-  # since we are going to use Python via the tunnel and the strange/incomplete
-  # shellquotes were returned by Python). Secondly, True, False and None should
-  # be unquoted which can be only achieved in R by collapsing all arguments into
-  # one long string. Maybe it would work even if we did not explicitly take care
-  # of this. But to be on the safe side, we proceed as follows:
+  # first convert NULL, TRUE, FALSE to Python equivalents None, True, False
+  # only apply convert_ntf to characters ("None", "True", "False"), applying it
+  # to a spatial object, for example, would fail
+  ind = vapply(params, class, character(1)) == "character"
+  params[ind] = convert_ntf(params[ind])
 
   # convert R parameter-argument list into a Python dictionary
-  py_run_string(paste0("args = ", convert_to_tuple(params)))  # argument tuple
-  # r_to_py(paste0("args = ", convert_to_tuple(params)))
-  # r_to_py(paste0("params = ", convert_to_tuple(names(params))))
-  py_run_string(paste0("params = ", convert_to_tuple(names(params))))  # name tuple
-  py_run_string("params = dict((x, y) for x, y in zip(params, args))")
-
-  cmd =
-    paste(sprintf(
-      "res = Processing.runAlgorithm(algOrName = '%s', parameters = params, feedback = QgsProcessingFeedback())", alg))
-
+  params = r_to_py(params)
   # run QGIS
-  msg = py_capture_output(py_run_string(cmd))
+  msg = py_capture_output(expr = {
+    res =
+      py$processing$run(algOrName = alg, parameters = params,
+                        feedback = py$QgsProcessingFeedback())
+  })
   # If QGIS produces an error message, stop and report it
   if (grepl("Unable to execute algorithm|Error", msg)) {
     stop(msg)
   }
   # res contains all the output paths of the files created by QGIS
-  res = py_run_string("res")$res
-  # show the output files to the user
+
+  # print the created output files to the console
   if (show_output_paths) {
     print(res)
   }
@@ -1039,27 +1016,15 @@ run_qgis = function(alg = NULL, ..., params = NULL, load_output = FALSE,
   if (msg != "") {
     message(msg)
   }
-  # clean up after yourself!!
-  py_run_string(
-    "try:\n  del(res, args, params)\nexcept:\  pass"
-  )
 
   # load output
   if (load_output) {
-    # just keep the output files
-    # Find out what the output names are
-    out_names =
-      py_run_string(
-        sprintf("out_names = RQGIS.get_args_man('%s')", alg)
-      )$out_names
-    out_names = out_names$params[out_names$output]
-    # clean up after yourself!!
-    py_run_string(
-      "try:\n  del(out_names)\nexcept:\  pass"
-    )
-    params_out = params[out_names]
+    # convert Python dictionary back into an R list
+    params = py_to_r(params)
+    params_out = params[names(res)]
     # just keep the files which were actually specified by the user
-    out_files = params_out[params_out != "None"]
+    out_files = params_out[vapply(params_out, length,
+                                  FUN.VALUE = numeric(1)) > 0]
     ls_1 = lapply(out_files, function(x) {
       # even if the user only specified an output name without an output
       # directory, we have made sure above that the output is written to the

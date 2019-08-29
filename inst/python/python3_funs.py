@@ -56,7 +56,7 @@ from processing.tools.system import isWindows, isMac
 # classes will inherit from the object class, like so:
 # class RQGIS(object):
 # Do we need object-power, I guess not:
-class RQGIS:
+class RQGIS3:
   def __init__(self):
     # well, you need to specify something here, e.g.,
     # self.x = ""
@@ -80,7 +80,7 @@ class RQGIS:
     g7 = Grass7Utils.isGrassInstalled
     if g7 is True and isWindows():
       g7 = Grass7Utils.grassPath()
-      g7 = re.findall('grass-(.*)',  g7)
+      g7 = re.findall('grass-?(.*)',  g7)
     if g7 is True and isMac():
       g7 = Grass7Utils.grassPath()[0:21]
       g7 = os.listdir(g7)

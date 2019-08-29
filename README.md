@@ -5,7 +5,7 @@
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![minimal R version](https://img.shields.io/badge/R%3E%3D-3.2.0-6666ff.svg)](https://cran.r-project.org/)
-[![Last-changedate](https://img.shields.io/badge/last%20change-2018--11--27-yellowgreen.svg)](/commits/master)  
+[![Last-changedate](https://img.shields.io/badge/last%20change-2019--06--09-yellowgreen.svg)](/commits/master)  
 
 [![linux=true Status](https://badges.herokuapp.com/travis/jannes-m/RQGIS?branch=master&env=linux=true&label=Linux)](https://travis-ci.org/jannes-m/RQGIS) 
 [![mac=true Status](https://badges.herokuapp.com/travis/jannes-m/RQGIS?branch=master&env=mac=true&label=macOS)](https://travis-ci.org/jannes-m/RQGIS) 
@@ -20,7 +20,15 @@
 -->
 <!-- C:\OSGeo4W64\bin\python-qgis -> opens Python!!
 /usr/share/qgis/python/plugins/processing-->
-**RQGIS3** establishes an interface between R and QGIS3, i.e. it allows the user to access QGIS3 functionalities from within R. It achieves this by establishing a tunnel to the Python QGIS3 API via the [reticulate-package](https://github.com/rstudio/reticulate). This provides the user with an extensive suite of GIS functions, since QGIS3 allows you to call native as well as third-party algorithms via its processing framework (see also <https://docs.qgis.org/testing/en/docs/user_manual/processing/index.html>). Third-party providers include among others GDAL, GRASS GIS, and SAGA GIS. **RQGIS3** brings you this incredibly powerful geoprocessing environment to the R console.
+RQGIS3 problems under Unix-based systems
+----------------------------------------
+
+**RQGIS3** probably does not run on MacOSX platforms, we haven't tested that yet (any help here would be appreciated!). Under Linux, **RQGIS3** runs without problems in an R session started from the terminal. However, when running **RQGIS3** within RStudio, this crashes the RStudio R session (see <https://github.com/jannes-m/RQGIS3/issues/10> and <https://github.com/rstudio/rstudio/issues/4606>). If Linux and MacOSX users would like to use **RQGIS3** in conjunction with RStudio, we suggest to use this [docker image](https://github.com/jannes-m/docker-rqgis/tree/master/rqgis3_ltr).
+
+RQGIS3
+------
+
+**RQGIS3** establishes an interface between R and QGIS3, i.e., it allows the user to access QGIS3 functionalities from within R. It achieves this by establishing a tunnel to the Python QGIS3 API via the [reticulate-package](https://github.com/rstudio/reticulate). This provides the user with an extensive suite of GIS functions, since QGIS3 allows you to call native as well as third-party algorithms via its processing framework (see also <https://docs.qgis.org/testing/en/docs/user_manual/processing/index.html>). Third-party providers include among others GDAL, GRASS GIS, and SAGA GIS. **RQGIS3** brings you this incredibly powerful geoprocessing environment to the R console.
 
 Please check also out our paper presenting **RQGIS** in detail:
 
@@ -200,7 +208,7 @@ out = run_qgis(alg = "native:centroids",
 ... or we can use R named arguments in `run_qgis()`
 
 ``` r
-out = run_qgis(alg = "qgis:polygoncentroids",
+out = run_qgis(alg = "native:centroids",
                INPUT = ger,
                OUTPUT = file.path(tempdir(), "ger_coords.shp"),
                load_output = TRUE)

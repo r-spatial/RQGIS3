@@ -40,10 +40,13 @@ test_that("Test, if multiple input works with pass_args?", {
   alg = "grass7:r.patch"
   # params = pass_args(alg, input = list(r1, r2, r3))  # must also work...
   # perfect, it does
-  params = pass_args(alg, input = list(r1, r2, r3), output = "name.tif")
-  # now check if multiple raster input was converted to a string containing the
+  params = pass_args(alg, input = list(r1, r2, r3), 
+                     output = file.path(tempdir(), "patch.tif"))
+  # now check if multiple raster input was converted to a list containing the
   # paths to the rasters
-  expect_type(params$input, "character")
+  expect_type(params$input[[1]], "character")
+  expect_type(params$input[[2]], "character")
+  expect_type(params$input[[3]], "character")
   # check if the correct GRP was extracted
   expect_identical(params$GRASS_REGION_PARAMETER, "-10.8,28.8,-10.8,30.6")
   
@@ -72,7 +75,8 @@ test_that("Test, if multiple input works with pass_args?", {
   # check if multiple sf-object input was converted into a string containing the
   # paths to the shapefiles
   params = pass_args("grass7:v.patch", input = list(poly_1, poly_2))
-  expect_type(params$input, "character")
+  expect_type(params$input[[1]], "character")
+  expect_type(params$input[[1]], "character")
   # check if the correct GRP was extracted
   expect_identical(params$GRASS_REGION_PARAMETER, "0,3,0,3")
 })
