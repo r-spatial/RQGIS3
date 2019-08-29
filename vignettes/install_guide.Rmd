@@ -44,15 +44,16 @@ Download it and follow the instructions when executing the installer.
 
 ## Ubuntu
 
-### QGIS (and GRASS)
-If you install QGIS with the built-in software managers, you will most likely get an outdated QGIS version. 
-To install more recent QGIS releases, we recommend to follow the installation instructions from the [QGIS installers website](https://www.qgis.org/en/site/forusers/alldownloads.html). 
+### QGIS3 (and GRASS)
+If you install QGIS3 with the built-in software managers, you will most likely get an outdated QGIS3 version. 
+To install more recent QGIS3 releases, we recommend to follow the installation instructions from the [QGIS3 installers website](https://www.qgis.org/en/site/forusers/alldownloads.html). 
 
-Here, we just describe exemplarily the QGIS installation procedure under Debian/Ubuntu following the description found [here](https://www.qgis.org/en/site/forusers/alldownloads.html#debian-ubuntu).
+Here, we just describe exemplarily the QGIS3 installation procedure under Debian/Ubuntu following the description found [here](https://www.qgis.org/en/site/forusers/alldownloads.html#debian-ubuntu).
 **RQGIS3** should also work with Linux derivatives other than Ubuntu.
 However, we did not test this.
 
-Open a terminal window. First of all, make sure to remove QGIS and GRASS packages you may have installed before from other repositories:
+Open a terminal window. 
+First of all, make sure to remove QGIS3 and GRASS packages you may have installed before from other repositories:
 
 <!--http://gis.stackexchange.com/questions/167472/qgis-2-8-ubuntu-14-04-installation-issues-terminal-command-attempts-to-install-->
 ```sh 
