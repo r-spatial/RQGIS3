@@ -1,5 +1,5 @@
 ---
-title: "(R)QGIS installation guide for Windows, Mac & Linux"
+title: "(R)QGIS3 installation guide for Windows, Mac & Linux"
 author: "Jannes Muenchow, Patrick Schratz"
 date: "`r Sys.Date()`"
 output: 
@@ -22,79 +22,38 @@ knitr::opts_chunk$set(
 
 
 # Vignette info
-This vignette guides you through the installation process of QGIS, GRASS- and SAGA-GIS on three different platforms (Windows, Mac, Linux). 
-Please use the QGIS long-term release.
+This vignette guides you through the installation process of QGIS3, GRASS- and SAGA-GIS on three different platforms (Windows, Mac, Linux). 
+Please use the QGIS3 long-term release.
 Following our instructions should ensure that **RQGIS3** will work properly. 
 With the exception of SAGA, we recommend to use the latest stable version of all software packages. 
 Though other versions might also work with **RQGIS3**, we did not test this.
 
-Overall, **RQGIS3** allows access to more than 1000 geoalgorithms.
+Overall, **RQGIS3** allows access to almost 1000 geoalgorithms.
 However, please note that the number of geoalgorithms you can use from within **RQGIS3** depends on the platform, the system architecture, the selection of installed third-party providers and software package versions.
 
 # Windows
 
 There are at least two options to install QGIS on Windows in such a way that RQGIS can access QGIS.
 The first option is the Standalone Installer from the [QGIS installer page](https://www.qgis.org/en/site/forusers/download.html). 
-This will install QGIS along with the third-party providers GRASS and SAGA. 
-However, if you would like to use even more third-party providers (e.g., GDAL, GEOS, Taudem, OTB, PostGIS, etc.), we recommend to use the OSGeo4W Network installer. 
+This will install QGIS3 along with the third-party providers GRASS and SAGA, and most likely will meet the need of most users.
+However, if you would like to install specific software versions and use even more third-party providers, use the OSGeo4W Network installer. 
 This installer is available on the [QGIS installer page](https://www.qgis.org/en/site/forusers/download.html) as well as on the [OSGeo4W-website](http://trac.osgeo.org/osgeo4w/). 
-
-To install OSGeo4W, the easiest way is to to use the Express installation:
-
-![](https://raw.githubusercontent.com/jannes-m/RQGIS/master/figures/00_express.PNG)
-
-We are sorry, that our installer uses a German dialog.
-Apparently, OSGeo4w automatically uses the language in accordance with the system locale. 
-Nevertheless, it should be easy enough to follow our steps.
-
-1. Select "Express Installation" 
-2. Next check "QGIS, GRASS and GDAL"
-3. Start the installation.
-
-This installation is more or less equivalent to the standalone QGIS-installation.
-However, to have the full choice of available geoalgorithms provided by QGIS, we recommend to use the  advanced settings of the OSGeo4W Network installer:
-
-1. Run the OSGeo4W setup and choose the advanced installation. 
-
-![](https://raw.githubusercontent.com/jannes-m/RQGIS/master/figures/01_initial_setup.PNG)
-
-2. Subsequently, accept the default settings until you reach the “Select Packages” window.
-
-![](https://raw.githubusercontent.com/jannes-m/RQGIS/master/figures/04_select_packages.PNG)
-
-3. After expanding the command line utilities, we choose several commandline tools such as gdal and python-core (of course, you can select other components as well):
-
-![](https://raw.githubusercontent.com/jannes-m/RQGIS/master/figures/05_command_line_utilties.PNG)
-
-Additionally, we choose the Desktop-GIS GRASS 7, SAGA, and of course QGIS.
-Here, we install both the most recent QGIS version as well as the long-term release. 
-**RQGIS3** will use the latter by default since this is the most stable version.
-4. We leave the rest as is, click "Next" and wait for the OSGeo4W-suggestions which we accept.
-
-![](https://raw.githubusercontent.com/jannes-m/RQGIS/master/figures/08_suggestions.PNG)
-
-Clicking "Next" once more will start the download and installation process which might take a while.
-
-If you wish to to modify, uninstall or update some of the installed components, you might do so later on by running `../OSGeo4W/bin/osgeo4w-setup.exe`. 
-Alternatively, you can download and run again the latest [OSGeo4W-executable](http://trac.osgeo.org/osgeo4w/).
-
-<!--
-If you additionally want to use the **LiDAR processing tools** (LAStools), please follow the steps found [here](https://rapidlasso.com/2013/09/29/how-to-install-lastools-toolbox-in-qgis/).
--->
+Download it and follow the instructions when executing the installer.
 
 # Linux
 
 ## Ubuntu
 
-### QGIS (and GRASS)
-If you install QGIS with the built-in software managers, you will most likely get an outdated QGIS version. 
-To install more recent QGIS releases, we recommend to follow the installation instructions from the [QGIS installers website](https://www.qgis.org/en/site/forusers/alldownloads.html). 
+### QGIS3 (and GRASS)
+If you install QGIS3 with the built-in software managers, you will most likely get an outdated QGIS3 version. 
+To install more recent QGIS3 releases, we recommend to follow the installation instructions from the [QGIS3 installers website](https://www.qgis.org/en/site/forusers/alldownloads.html). 
 
-Here, we just describe exemplarily the QGIS installation procedure under Debian/Ubuntu following the description found [here](https://www.qgis.org/en/site/forusers/alldownloads.html#debian-ubuntu).
+Here, we just describe exemplarily the QGIS3 installation procedure under Debian/Ubuntu following the description found [here](https://www.qgis.org/en/site/forusers/alldownloads.html#debian-ubuntu).
 **RQGIS3** should also work with Linux derivatives other than Ubuntu.
 However, we did not test this.
 
-Open a terminal window. First of all, make sure to remove QGIS and GRASS packages you may have installed before from other repositories:
+Open a terminal window. 
+First of all, make sure to remove QGIS3 and GRASS packages you may have installed before from other repositories:
 
 <!--http://gis.stackexchange.com/questions/167472/qgis-2-8-ubuntu-14-04-installation-issues-terminal-command-attempts-to-install-->
 ```sh 
