@@ -12,9 +12,7 @@
 #'   `set_env()` again. Otherwise, the cached output will be loaded back into R
 #'   even if you used new values for function arguments `root` and/or `dev`.
 #' @param dev If set to `TRUE`, `set_env()` will use the development version of
-#'   QGIS (if available). Since RQGIS so far does not support QGIS 3 (developer
-#'   version), setting `dev` to TRUE will result in an error message under
-#'   Windows.
+#'   QGIS3 (if available).
 #' @param ... Currently not in use.
 #' @return The function returns a list containing all the path necessary to run
 #'   QGIS from within R. This is the root path, the QGIS prefix path and the
@@ -98,6 +96,7 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
     root = gsub("/{1,}$", "", root)
   }
 
+  browser()
   if (Sys.info()["sysname"] == "Darwin") {
     if (is.null(root)) {
       message("Checking for homebrew osgeo4mac installation on your system. \n")
@@ -134,7 +133,7 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
           path3 =
             as.numeric(regmatches(path[3], gregexpr("[0-9]+", path[3]))[[1]][1])
         }
-        
+
         if (!3 %in% c(path1, path2)) {
           if (2 %in% c(path1, path2)) {
             stop("A QGIS2 installation was found but no QGIS3 installation. Please install QGIS3.")
@@ -142,6 +141,33 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
             stop("No QGIS installation was found in your system.")
           }
         }
+        # account for 'dev' arg installations are not constant within path ->
+        # depend on which version was installed first/last hence we have to
+        # catch all possibilites
+
+        # extract version out of root path
+        path1 =
+          as.numeric(regmatches(path[1], gregexpr("[0-9]+", path[1]))[[1]][2])
+        path2 =
+          as.numeric(regmatches(path[2], gregexpr("[0-9]+", path[2]))[[1]][2])
+        if (length(path) == 3) {
+          path3 =
+            as.numeric(regmatches(path[3], gregexpr("[0-9]+", path[3]))[[1]][3])
+        }
+        if (dev == TRUE && path1 > path2) {
+          root <- path[1]
+          message("Found QGIS osgeo4mac DEV installation. Setting environment...")
+        } else if (dev == TRUE && path1 < path2) {
+          root <- path[2]
+          message("Found QGIS osgeo4mac DEV installation. Setting environment...")
+        } else if (dev == FALSE && path1 > path2) {
+          root <- path[2]
+          message("Found QGIS osgeo4mac LTR installation. Setting environment...")
+        } else if (dev == FALSE && path1 < path2) {
+          root <- path[1]
+          message("Found QGIS osgeo4mac LTR installation. Setting environment...")
+        }
+
         if (path1 > path2 && path1 == 3) {
           root = path[1]
           message("Found QGIS3 osgeo4mac installation. Setting environment...")
@@ -278,10 +304,10 @@ open_app = function(qgis_env = set_env()) {
       "except:\n  pass")
   # cat(py_cmd)
   py_run_string(py_cmd)
-  
+
   # instead of using pyvirtualdisplay, one could also use Xvfb directly:
   # system('export DISPLAY=:99 && xdpyinfo -display $DISPLAY > /dev/null || sudo Xvfb $DISPLAY -screen 99 1024x768x16 &')
-  
+
   # next attach all required modules
   py_run_string("import os, sys")
   py_run_string("from qgis.core import *")
