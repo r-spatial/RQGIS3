@@ -6,13 +6,12 @@
 \format{A dataframe with 100 sites (rows) and 69 species (columns). Species
 presence is given in percentage points (between 0-100% per species and
 site). Due to overlapping cover between individual plants, the total cover
-per site can be >100%.}
+per site can be >100\%.}
 \description{
 A community matrix with species as columns and sites as rows.
 The rownames correspond to the id which can be also found in
-\link{random_points}. Please note that in fact 100 sites have been
-visited but in 16 of them no species could be found (see again
-\link{random_points}).
+\link{random_points}. Please note that in fact 100 sites have been visited but
+in 16 of them no species could be found (see again \link{random_points}).
 }
 \references{
 Muenchow, J., Bräuning, A., Rodríguez, E.F. & von Wehrden, H.

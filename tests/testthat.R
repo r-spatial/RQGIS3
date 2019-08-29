@@ -1,10 +1,4 @@
 library("testthat")
-library("RQGIS")
+library("RQGIS3")
 
-# manually env specification for appveyor
-# not sure if this really helps!
-if(Sys.getenv("R_ARCH") == "x64") {
-  set_env("C:\\Program Files\\QGIS 2.18")
-}
-
-test_check("RQGIS")
+test_check("RQGIS3")

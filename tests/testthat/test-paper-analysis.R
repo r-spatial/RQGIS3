@@ -2,6 +2,7 @@ library("RQGIS3")
 library("RSAGA")
 library("raster")
 library("sf")
+library("RQGIS")
 
 context("paper")
 
@@ -83,14 +84,14 @@ test_that(paste(
   cslope = cslope * 180 / pi
   carea = raster(file.path(tempdir(), "carea.sdat"))
   log_carea = log(carea / 1e+06)
-  data("dem", package = "RQGIS")
+  data("dem")
   dem = dem / 1000
   my_poly = poly(values(dem), degree = 2)
   dem1 = dem2 = dem
   values(dem1) = my_poly[, 1]
   values(dem2) = my_poly[, 2]
   # load NDVI
-  data("ndvi", package = "RQGIS")
+  data("ndvi")
   for (i in c("dem1", "dem2", "log_carea", "cslope", "ndvi")) {
     tmp = crop(get(i), dem)
     writeRaster(
@@ -103,7 +104,7 @@ test_that(paste(
   }
 
   # extract values to points
-  data("random_points", package = "RQGIS")
+  data("random_points")
   random_points[, c("x", "y")] = sf::st_coordinates(random_points)
   raster_names = c("dem1", "dem2", "log_carea", "cslope", "ndvi")
   vals = RSAGA::pick.from.ascii.grids(

@@ -3,20 +3,17 @@
 \name{random_points}
 \alias{random_points}
 \title{Random points.}
-\format{An \link{sf} object with 100 rows and 3 variables:
-\describe{
-\item{id}{Plot ID.}
-\item{spri}{Number of vascular plant species per plot (species richness).}
-\item{geometry}{Simple feature point geometry.}
-}}
+\format{An \link{sf} object with 100 rows and 3 variables: \describe{
+\item{id}{Plot ID.} \item{spri}{Number of vascular plant species per plot
+(species richness).} \item{geometry}{Simple feature point geometry.} }}
 \description{
-An \link{sf} (EPSG:32717) object
-with 100 randomly sampled points (stratified by altitude). For more
-details, please refer to Muenchow et al. (2013).
+An \link{sf} (EPSG:32717) object with 100 randomly sampled points
+(stratified by altitude). For more details, please refer to Muenchow et al.
+(2013).
 }
 \references{
-Muenchow, J., Bräuning, A., Rodríguez, E.F. & von Wehrden, H. (2013):
-Predictive mapping of species richness and plant species' distributions of a
-Peruvian fog oasis along an altitudinal gradient. Biotropica 45, 5, 557-566,
-doi: 10.1111/btp.12049.
+Muenchow, J., Bräuning, A., Rodríguez, E.F. & von Wehrden, H.
+(2013): Predictive mapping of species richness and plant species'
+distributions of a Peruvian fog oasis along an altitudinal gradient.
+Biotropica 45, 5, 557-566, doi: 10.1111/btp.12049.
 }

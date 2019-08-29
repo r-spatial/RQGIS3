@@ -3,17 +3,14 @@
 \name{study_area}
 \alias{study_area}
 \title{Mask of the study area}
-\format{An \link{sf} object with 1 row and 2 variables:
-\describe{
-\item{name}{Name.}
-\item{geometry}{Simple feature polygon geometry.}
-}}
+\format{An \link{sf} object with 1 row and 2 variables: \describe{
+\item{name}{Name.} \item{geometry}{Simple feature polygon geometry.} }}
 \description{
 An \link{sf} (EPSG:32717) object of geometry class polygon.
 }
 \references{
-Muenchow, J., Bräuning, A., Rodríguez, E.F. & von Wehrden, H. (2013):
-Predictive mapping of species richness and plant species' distributions of a
-Peruvian fog oasis along an altitudinal gradient. Biotropica 45, 5, 557-566,
-doi: 10.1111/btp.12049.
+Muenchow, J., Bräuning, A., Rodríguez, E.F. & von Wehrden, H.
+(2013): Predictive mapping of species richness and plant species'
+distributions of a Peruvian fog oasis along an altitudinal gradient.
+Biotropica 45, 5, 557-566, doi: 10.1111/btp.12049.
 }
