@@ -9,14 +9,20 @@ status](https://www.r-pkg.org/badges/version/RQGIS3)](https://cran.r-project.org
 status](https://codecov.io/gh/jannes-m/RQGIS3/branch/master/graph/badge.svg)](https://codecov.io/github/jannes-m/RQGIS3?branch=master)
 [![StackOverflow](https://img.shields.io/badge/stackoverflow-rqgis-orange.svg)](https://stackoverflow.com/questions/tagged/rqgis)
 
-## RQGIS3 and RStudio
+## ATTENTION
 
-Running **RQGIS3** within RStudio causes a crash of the R session (see
-<https://github.com/jannes-m/RQGIS3/issues/10> and
-<https://github.com/rstudio/rstudio/issues/4606>). If Linux and macOS
+**RQGIS3 and RStudio does not work on UNIX-based OS**
+
+Though **RQGIS3** works when running it in a plain R session in the
+terminal, it crashes the R session when ran inside RStudio (see
+<https://github.com/r-spatial/RQGIS3/issues/10> and
+<https://github.com/rstudio/rstudio/issues/4606>). If Linux and MacOS
 users would like to use **RQGIS3** in conjunction with RStudio, we
-suggest to use this [docker
-image](https://github.com/jannes-m/docker-rqgis/tree/master/rqgis3_ltr).
+recommend to use the [geocompr docker
+image](https://hub.docker.com/r/robinlovelace/geocompr/). Please refer
+also to the instructions on the [geocompr landing
+page](https://github.com/robinlovelace/geocompr#running-geocompr-code-in-docker)
+how to use the docker image.
 
 ## Description
 
@@ -32,8 +38,7 @@ Third-party providers include among others GDAL, GRASS GIS, and SAGA
 GIS. **RQGIS3** brings you this incredibly powerful geoprocessing
 environment to the R console.
 
-Please check also out our paper presenting **RQGIS (2)** in
-detail:
+Please check also out our paper presenting **RQGIS (2)** in detail:
 
 <div style="text-align:center">
 
@@ -50,7 +55,7 @@ detail:
 The main advantages of **RQGIS3** are:
 
 1.  It provides access to QGIS3 functionalities. Thereby, it calls the
-    Python3 QGIS API but R users can stay in their programming
+    Python QGIS3 API but R users can stay in their programming
     environment of choice without having to touch Python3.
 2.  It offers a broad suite of geoalgorithms making it possible to solve
     most GIS problems.
@@ -60,8 +65,6 @@ The main advantages of **RQGIS3** are:
     since both packages offer various other advantages. For instance,
     **RSAGA** provides many user-friendly and ready-to-use GIS functions
     such as `rsaga.slope.asp.curv()` and `multi.focal.function()`.
-
-# Installation
 
 ## Package installation
 
@@ -82,7 +85,7 @@ install.packages("RQGIS3")
 ```
 -->
 
-  - the latest RQGIS development version from Github with:
+  - the latest **RQGIS3** development version from Github with:
 
 <!-- end list -->
 
@@ -90,15 +93,16 @@ install.packages("RQGIS3")
 remotes::install_github("jannes-m/RQGIS3")
 ```
 
-# Usage
+## Usage
 
 Subsequently, we will show you a typical workflow of how to use
 **RQGIS3**. Basically, we will follow the steps also described in the
 [QGIS
 documentation](https://docs.qgis.org/testing/en/docs/user_manual/processing/console.html).
 In our first and very simple example we simply would like to retrieve
-the centroid coordinates of a spatial polygon object. First off, we will
-download the administrative areas of Germany using the raster package.
+the centroid coordinates of a spatial polygon object. First, we will
+download the administrative areas of Germany using the **raster**
+package.
 
 ``` r
 # attach packages
@@ -124,7 +128,7 @@ while. If you are running **RQGIS3** under Linux or on a Mac,
 of the **RQGIS3** functions, you are likely to work with (such as
 `find_algorithms()`, `get_args_man()` and `run_qgis()`), require the
 output list (as returned by `set_env()`) containing the paths to the
-various installations necessary to run QGIS from within R. This is why,
+various installations necessary to run QGIS3 from within R. This is why,
 `set_env()` caches its result in a temporary folder, and loads it back
 into R when called again (to overwrite an existing cache, set parameter
 `new` to `TRUE`).
@@ -150,14 +154,27 @@ set_env()
 ## [1] "C:\\OSGeo4W64\\apps\\qgis\\python\\plugins"
 ```
 
-Secondly, we would like to find out how the function in QGIS is called
-which gives us the centroids of a polygon shapefile. To do so, we use
+Next, `open_app()` establishes a tunnel to the Python QGIS3 API which
+naturally is the basis of any QGIS3 geoprocessing from within R.
+
+``` r
+open_app()
+```
+
+Internally, `open_app()` first sets all necessary paths with the help of
+`set_env()` (among others the path to the QGIS Python binary) to run
+QGIS3, and secondly opens a QGIS3 application with the help of
+[reticulate](https://github.com/rstudio/reticulate). `open_app()` is run
+automatically by all **RQGIS3** functions that need access to the QGIS3
+Python API. \[1\]
+
+Next, we would like to find a QGIS3 geoalgorithm that is able to compute
+the centroids of a polygon vector layer. To do so, we use
 `find_algorithms()`. Here, we look for a geoalgorithm that contains the
 word `centroid` in its short description.  
 Note that `search_term` also accepts regular expressions.
 
 ``` r
-library("RQGIS")
 find_algorithms(search_term = "centroid", name_only = TRUE)
 
 #>[1] "native:centroids"
@@ -168,7 +185,7 @@ find_algorithms(search_term = "centroid", name_only = TRUE)
 
 This returns four functions we could use. Here, we’ll choose the QGIS3
 function named `native:centroids`. Subsequently, we would like to know
-how we can use it, i.e. which function parameters we need to specify.
+how we can use it, i.e., which function parameters we need to specify.
 
 ``` r
 get_usage(alg = "native:centroids")
@@ -229,12 +246,12 @@ get_usage(alg = "native:centroids")
 ```
 
 Consequently `native:centroids` only expects a parameter called `INPUT`,
-i.e. the path to a polygon shapefile whose centroid coordinates we wish
-to extract, and a parameter called `OUTPUT`, i.e. the path to the output
-shapefile. Since it would be tedious to specify manually each and every
-function argument, especially if a function expects more than two or
-three arguments, we have written a convenience function, named
-`get_args_man()`, that retrieves all function parameters, and the
+i.e., the path to a spatial polygon file whose centroid coordinates we
+wish to extract, and a parameter called `OUTPUT`, i.e., the path to the
+output spatial object. Since it would be tedious to specify manually
+each and every function argument, especially if a function expects more
+than two or three arguments, we have written a convenience function,
+named `get_args_man()`, that retrieves all function parameters, and the
 respective default values as arguments for a given QGIS geoalgorithm. It
 returns these values in the form of a list. If a function argument lets
 you choose between several options (drop-down menu in a GUI), setting
@@ -270,7 +287,7 @@ out = run_qgis(alg = "native:centroids",
                params = params,
                load_output = TRUE)
 #>$OUTPUT
-[#>1] "/tmp/RtmpC6SKby/ger_coords.shp"
+#>[1] "/tmp/RtmpC6SKby/ger_coords.shp"
 ```
 
 … or we can use R named arguments in `run_qgis()`
@@ -285,11 +302,11 @@ out = run_qgis(alg = "native:centroids",
 ```
 
 Please note that our `INPUT` is a spatial object residing in R’s global
-environment. Of course, you can also use a path to specify `INPUT` (e.g.
-“ger.shp”) which is the better option if your data is already somewhere
-stored on your hard drive. Finally, `run_qgis()` calls the QGIS API to
-run the specified geoalgorithm with the corresponding function
-arguments. Since we set `load_output` to `TRUE`, `run_qgis()`
+environment. Of course, you can also use a path to specify `INPUT`
+(e.g. “ger.shp”) which is the better option if your data is already
+somewhere stored on your hard drive. Finally, `run_qgis()` calls the
+QGIS API to run the specified geoalgorithm with the corresponding
+function arguments. Since we set `load_output` to `TRUE`, `run_qgis()`
 automatically loads the QGIS output back into R (`sf`-objects in the
 case of vector data and `raster`-objects in the case of raster data).
 Naturally, we would like to check if the result meets our expectations.
@@ -309,9 +326,8 @@ plot(out$geometry, pch = 21, add = TRUE, bg = "lightblue", col = "black")
 
 Of course, this is a very simple example. We could have achieved the
 same using `sf::st_as_sf(ger) %>% sf::st_centroid()`. For a more
-detailed introduction to **RQGIS** and more complex examples have a look
-at our
-paper:
+detailed introduction to **RQGIS3** and more complex examples have a
+look at our paper:
 
 <div style="text-align:center">
 
@@ -319,21 +335,13 @@ paper:
 
 </div>
 
-# Advanced topics
-
-**Calling the QGIS Python API**
-
-Internally, `open_app()` first sets all necessary paths (among others
-the path to the QGIS Python binary) to run QGIS, and secondly opens a
-QGIS application with the help of
-[reticulate](https://github.com/rstudio/reticulate). Please note that
-`open_app()` establishes a tunnel to the QGIS Pyton API which can only
-be closed by starting a new R session (see
-<https://github.com/rstudio/reticulate/issues/27>). On the one hand,
-this means that we only have to set up the Python environment once and
-consequently subsequent processing is faster. Additionally, you can use
-your own Python commands to customize RQGIS as you wish. On the other
-hand, it also means that once you have run the first RQGIS command
-interacting with the QGIS Python API (e.g., `find_algorithms()`,
-`get_usage()`, etc.), you have to stay with the chosen QGIS version for
-this session.
+1.   Please note that the Python tunnel can only be closed by starting a
+    new R session (see
+    <https://github.com/rstudio/reticulate/issues/27>). On the one hand,
+    this means that we only have to set up the Python environment once
+    and consequently subsequent processing is faster. Additionally, you
+    can use your own Python commands to customize **RQGIS3** as you
+    like. On the other hand, it also means that once you have run
+    `open_app()` for the first time, you have to stay with the chosen
+    QGIS3 (LTR or developer version) and corresponding Python (Python 3)
+    version for this session.
