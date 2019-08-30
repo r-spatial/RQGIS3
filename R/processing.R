@@ -403,7 +403,7 @@ qgis_session_info = function(qgis_env = set_env()) {
   tmp = try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
 
   # suppress R CMD check note
-  py = NULL
+  # py = NULL
 
   # retrieve the output
   suppressWarnings({
@@ -491,9 +491,6 @@ find_algorithms = function(search_term = NULL, name_only = FALSE,
   # check if the QGIS application has already been started
   tmp = try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
 
-  # suppress R CMD check note
-  py = NULL
-
   # Advantage of this approach: we are using directly alglist and do not have to
   # save it in inst
   # Disadvantage: more processing
@@ -549,9 +546,6 @@ get_usage = function(alg = NULL, intern = FALSE,
                      qgis_env = set_env()) {
   tmp = try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
 
-  # suppress R CMD check note
-  py = NULL
-
   out = py_capture_output(py$RQGIS3$alghelp(alg))
   out = gsub("^\\[|\\]$|'", "", out)
   # some refining needed here, e.g., in case of qgis:distancematrix
@@ -582,9 +576,6 @@ get_usage = function(alg = NULL, intern = FALSE,
 #' @export
 get_options = function(alg = "", intern = FALSE,
                        qgis_env = set_env()) {
-
-  # suppress R CMD check note
-  py = NULL
 
   tmp = try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
   out = py_capture_output(py$RQGIS3$get_options(alg))
@@ -792,9 +783,6 @@ get_args_man = function(alg = "", options = TRUE,
 pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
                      qgis_env = set_env()) {
 
-  # suppress R CMD check note
-  py = NULL
-
   dots = list(...)
   if (!is.null(params) && (length(dots) > 0)) {
     stop(paste(
@@ -1000,9 +988,6 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
 run_qgis = function(alg = NULL, ..., params = NULL, load_output = FALSE,
                     show_output_paths = TRUE, NA_flag = -99999,
                     qgis_env = set_env()) {
-
-  # suppress R CMD check note
-  py = NULL
 
   # check if the QGIS application has already been started
   tmp = try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
