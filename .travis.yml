@@ -3,6 +3,9 @@
 # tic documentation to get started: https://ropenscilabs.github.io/tic/
 # Usually you shouldn't need to change the first part of the file
 
+language: r
+cache: packages
+
 addons:
   apt:
     sources:
