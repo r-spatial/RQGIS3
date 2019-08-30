@@ -91,3 +91,4 @@ env:
 
 #services
 services:
+  - xvfb
