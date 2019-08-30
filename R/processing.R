@@ -12,9 +12,7 @@
 #'   `set_env()` again. Otherwise, the cached output will be loaded back into R
 #'   even if you used new values for function arguments `root` and/or `dev`.
 #' @param dev If set to `TRUE`, `set_env()` will use the development version of
-#'   QGIS (if available). Since RQGIS so far does not support QGIS 3 (developer
-#'   version), setting `dev` to TRUE will result in an error message under
-#'   Windows.
+#'   QGIS3 (if available).
 #' @param ... Currently not in use.
 #' @return The function returns a list containing all the path necessary to run
 #'   QGIS from within R. This is the root path, the QGIS prefix path and the
@@ -98,6 +96,7 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
     root = gsub("/{1,}$", "", root)
   }
 
+  browser()
   if (Sys.info()["sysname"] == "Darwin") {
     if (is.null(root)) {
       message("Checking for homebrew osgeo4mac installation on your system. \n")
@@ -111,7 +110,7 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
 
       no_homebrew = str_detect(path, "find: /usr/local")
 
-      if (is.na(no_homebrew[1])) {
+      if (length(no_homebrew) == 0L) {
         message(paste0(
           "Found no QGIS homebrew installation. ",
           "Checking for QGIS Kyngchaos version now."
@@ -127,35 +126,60 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
 
         # extract version out of root path
         path1 =
-          as.numeric(regmatches(path[1], gregexpr("[0-9]+", path[1]))[[1]][3])
+          as.numeric(regmatches(path[1], gregexpr("[0-9]+", path[1]))[[1]][1])
         path2 =
-          as.numeric(regmatches(path[2], gregexpr("[0-9]+", path[2]))[[1]][3])
+          as.numeric(regmatches(path[2], gregexpr("[0-9]+", path[2]))[[1]][1])
+        if (length(path) == 3) {
+          path3 =
+            as.numeric(regmatches(path[3], gregexpr("[0-9]+", path[3]))[[1]][1])
+        }
+
+        if (!3 %in% c(path1, path2)) {
+          if (2 %in% c(path1, path2)) {
+            stop("A QGIS2 installation was found but no QGIS3 installation. Please install QGIS3.")
+          } else {
+            stop("No QGIS installation was found in your system.")
+          }
+        }
+        # account for 'dev' arg installations are not constant within path ->
+        # depend on which version was installed first/last hence we have to
+        # catch all possibilites
+
+        # extract version out of root path
+        path1 =
+          as.numeric(regmatches(path[1], gregexpr("[0-9]+", path[1]))[[1]][2])
+        path2 =
+          as.numeric(regmatches(path[2], gregexpr("[0-9]+", path[2]))[[1]][2])
         if (length(path) == 3) {
           path3 =
             as.numeric(regmatches(path[3], gregexpr("[0-9]+", path[3]))[[1]][3])
         }
-
-        # account for 'dev' arg installations are not constant within path ->
-        # depend on which version was installed first/last hence we have to
-        # catch all possibilites
         if (dev == TRUE && path1 > path2) {
-          root = path[1]
+          root <- path[1]
           message("Found QGIS osgeo4mac DEV installation. Setting environment...")
         } else if (dev == TRUE && path1 < path2) {
-          root = path[2]
+          root <- path[2]
           message("Found QGIS osgeo4mac DEV installation. Setting environment...")
         } else if (dev == FALSE && path1 > path2) {
-          root = path[2]
+          root <- path[2]
           message("Found QGIS osgeo4mac LTR installation. Setting environment...")
         } else if (dev == FALSE && path1 < path2) {
-          root = path[1]
+          root <- path[1]
           message("Found QGIS osgeo4mac LTR installation. Setting environment...")
+        }
+
+        if (path1 > path2 && path1 == 3) {
+          root = path[1]
+          message("Found QGIS3 osgeo4mac installation. Setting environment...")
+        } else if (path2 > path1 && path2 == 3) {
+          root = path[2]
+          message("Found QGIS3 osgeo4mac installation. Setting environment...")
         }
       }
 
       # check for Kyngchaos installation
       if (is.null(root)) {
-        path = system("find /Applications -name 'QGIS.app'", intern = TRUE)
+        path = system("find /Applications -name 'QGIS3.app'", intern = TRUE)
         if (length(path) > 0) {
           root = path
           message("Found QGIS Kyngchaos installation. Setting environment...")
@@ -177,7 +201,7 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
     }
   }
   qgis_env = list(root = root)
-  qgis_env = c(qgis_env, check_apps(root = root, dev = dev))
+  qgis_env = c(qgis_env, check_apps(root = root))
   assign("qgis_env", qgis_env, envir = .RQGIS_cache)
 
 
@@ -185,13 +209,10 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
   if (any(grepl("/Applications", qgis_env))) {
     warning(
       paste0(
-        "We recognized that you are using the Kyngchaos QGIS binary.\n",
+        "We recognized that you are using the QGIS binary.\n",
         "Please consider installing QGIS from homebrew:",
         "'https://github.com/OSGeo/homebrew-osgeo4mac'.",
-        " Run 'vignette(install_guide)' for installation instructions.\n",
-        "The Kyngchaos installation throws some warnings during ",
-        "processing. However, usage/outcome is not affected and you can ",
-        "continue using the Kyngchaos installation."
+        " Run 'vignette(install_guide)' for installation instructions.\n"
       )
     )
   }
@@ -283,10 +304,10 @@ open_app = function(qgis_env = set_env()) {
       "except:\n  pass")
   # cat(py_cmd)
   py_run_string(py_cmd)
-  
+
   # instead of using pyvirtualdisplay, one could also use Xvfb directly:
   # system('export DISPLAY=:99 && xdpyinfo -display $DISPLAY > /dev/null || sudo Xvfb $DISPLAY -screen 99 1024x768x16 &')
-  
+
   # next attach all required modules
   py_run_string("import os, sys")
   py_run_string("from qgis.core import *")
@@ -372,6 +393,7 @@ open_app = function(qgis_env = set_env()) {
 #'  \item{grass7: GRASS 7 version number, if installed to use with QGIS.}
 #'  \item{qgis_version: Name and version of QGIS used by RQGIS3.}
 #'  \item{saga: The installed SAGA version used by QGIS.}
+#' }
 #' @author Jannes Muenchow, Victor Olaya, QGIS core team
 #' @export
 #' @examples
@@ -380,6 +402,9 @@ open_app = function(qgis_env = set_env()) {
 #' }
 qgis_session_info = function(qgis_env = set_env()) {
   tmp = try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
+
+  # suppress R CMD check note
+  py = NULL
 
   # retrieve the output
   suppressWarnings({
@@ -463,9 +488,12 @@ qgis_session_info = function(qgis_env = set_env()) {
 #' @export
 
 find_algorithms = function(search_term = NULL, name_only = FALSE,
-                            qgis_env = set_env()) {
+                           qgis_env = set_env()) {
   # check if the QGIS application has already been started
   tmp = try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
+
+  # suppress R CMD check note
+  py = NULL
 
   # Advantage of this approach: we are using directly alglist and do not have to
   # save it in inst
@@ -519,8 +547,11 @@ find_algorithms = function(search_term = NULL, name_only = FALSE,
 #' }
 
 get_usage = function(alg = NULL, intern = FALSE,
-                      qgis_env = set_env()) {
+                     qgis_env = set_env()) {
   tmp = try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
+
+  # suppress R CMD check note
+  py = NULL
 
   out = py_capture_output(py$RQGIS3$alghelp(alg))
   out = gsub("^\\[|\\]$|'", "", out)
@@ -551,7 +582,11 @@ get_usage = function(alg = NULL, intern = FALSE,
 #' }
 #' @export
 get_options = function(alg = "", intern = FALSE,
-                        qgis_env = set_env()) {
+                       qgis_env = set_env()) {
+
+  # suppress R CMD check note
+  py = NULL
+
   tmp = try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
   out = py_capture_output(py$RQGIS3$get_options(alg))
   out = gsub("^\\[|\\]$|'", "", out)
@@ -642,7 +677,7 @@ open_help = function(alg = "", qgis_env = set_env()) {
 #' get_args_man(alg = "qgis:addfieldtoattributestable", options = TRUE)
 #' }
 get_args_man = function(alg = "", options = TRUE,
-                         qgis_env = set_env()) {
+                        qgis_env = set_env()) {
   # check if the QGIS application has already been started
   tmp = try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
 
@@ -756,7 +791,11 @@ get_args_man = function(alg = "", options = TRUE,
 #' }
 
 pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
-                      qgis_env = set_env()) {
+                     qgis_env = set_env()) {
+
+  # suppress R CMD check note
+  py = NULL
+
   dots = list(...)
   if (!is.null(params) && (length(dots) > 0)) {
     stop(paste(
@@ -784,7 +823,7 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
   # parameter-argument list(see a bit below)
   suppressMessages({
     params_all = get_args_man(alg, options = TRUE)
-    }
+  }
   )
 
   # check if there are too few/many function arguments
@@ -934,6 +973,7 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
 #' @export
 #' @importFrom sf read_sf
 #' @importFrom raster raster
+#' @importFrom reticulate py_to_r
 #' @examples
 #' \dontrun{
 #' # calculate the slope of a DEM
@@ -959,8 +999,11 @@ pass_args = function(alg, ..., params = NULL, NA_flag = -99999,
 #' }
 
 run_qgis = function(alg = NULL, ..., params = NULL, load_output = FALSE,
-                     show_output_paths = TRUE, NA_flag = -99999,
-                     qgis_env = set_env()) {
+                    show_output_paths = TRUE, NA_flag = -99999,
+                    qgis_env = set_env()) {
+
+  # suppress R CMD check note
+  py = NULL
 
   # check if the QGIS application has already been started
   tmp = try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
@@ -990,7 +1033,7 @@ run_qgis = function(alg = NULL, ..., params = NULL, load_output = FALSE,
 
   # construct a parameter-argument list using get_args_man and user input
   params = pass_args(alg, ..., params = params, NA_flag = NA_flag,
-                      qgis_env = qgis_env)
+                     qgis_env = qgis_env)
 
   # build the Python command
   # first convert NULL, TRUE, FALSE to Python equivalents None, True, False

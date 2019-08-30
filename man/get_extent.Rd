@@ -13,7 +13,7 @@ extent should be retrieved.}
 
 \item{type_name}{A character string containing the QGIS parameter type for
 each parameter (boolean, multipleinput, extent, number, etc.) of \code{params}.
-The Python method \code{RQGIS.get_args_man()} returns a Python dictionary with one
+The Python method \code{RQGIS3.get_args_man()} returns a Python dictionary with one
 of its elements corresponding to the type_name (see also the example
 section).}
 }
@@ -25,7 +25,7 @@ Still there are geoalgorithms which require an extent object.
 }
 \examples{
 \dontrun{
-library("RQGIS")
+library("RQGIS3")
 library("raster")
 library("reticulate")
 r = raster(ncol = 100, nrow = 100)
@@ -36,7 +36,7 @@ r1[] = 1:ncell(r1)
 r2[] = 1:ncell(r2)
 r3[] = 1:ncell(r3)
 alg = "grass7:r.patch"
-out = py_run_string(sprintf("out = RQGIS.get_args_man('\%s')", alg))$out
+out = py$RQGIS3$get_args_man()
 params = get_args_man(alg)
 params$input = list(r1, r2, r3)
 get_extent(params = params, type_name = out$type_name)

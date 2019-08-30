@@ -23,7 +23,7 @@ check_apps = function(root, ...) {
     dots = list(...)
     if (length(dots) > 0 && !isTRUE(dots$dev)) {
       my_qgis = ifelse("qgis-ltr" %in% my_qgis, "qgis-ltr", my_qgis[1])
-      # stop("When using QGIS3, you have to use the developer version, so please", 
+      # stop("When using QGIS3, you have to use the developer version, so please",
       #      " use dev = TRUE and make sure that you have installed QGIS3.")
     } else {
       # use ../apps/qgis, i.e. most likely the most recent QGIS version
@@ -249,14 +249,14 @@ setup_win = function(qgis_env = set_env()) {
   # we will find out). Another solution would be to hard-code "C:/Windows" but
   # I don't know if system32 can always be found there...
   # windir = windir[length(windir)]
-  
+
   # maybe this is a more generic approach
   cwd = getwd()
   on.exit(setwd(cwd))
   setwd("C:/")
   windir = shell("ECHO %WINDIR%", intern = TRUE)
   windir = normalizePath(windir, "/")
-  
+
   # start with a fresh PATH
   Sys.setenv(PATH = paste(
     file.path(qgis_env$root, "bin"),
@@ -282,7 +282,7 @@ setup_win = function(qgis_env = set_env()) {
   Sys.setenv(PATH = paste(file.path(qgis_env$root, "apps", py3),
                           file.path(qgis_env$root, "apps", py3, "Scripts"),
                           Sys.getenv("PATH"), sep = ";"))
-  
+
   # we need to make sure that qgis-ltr can also be used...
   my_qgis = gsub(".*/", "", qgis_env$qgis_prefix_path)
   # add the directories where the QGIS libraries reside to search path
@@ -290,7 +290,7 @@ setup_win = function(qgis_env = set_env()) {
   Sys.setenv(PATH = paste(
     Sys.getenv("PATH"),
     # this fails:
-    # file.path(qgis_env$root, "apps", my_qgis), 
+    # file.path(qgis_env$root, "apps", my_qgis),
     # so you need to use /bin
     file.path(qgis_env$root, "apps", my_qgis, "bin"),
     sep = ";"
@@ -306,12 +306,12 @@ setup_win = function(qgis_env = set_env()) {
     python_path = gsub("^;", "", python_path)
     Sys.setenv(PYTHONPATH = python_path)
   }
-  
+
   # defining QGIS prefix path (i.e. without bin)
   Sys.setenv(QGIS_PREFIX_PATH = file.path(qgis_env$root, "apps", my_qgis))
   Sys.setenv(
     QT_PLUGIN_PATH = paste(file.path(qgis_env$root, "apps/qgis/qtplugins"),
-                           file.path(qgis_env$root, "apps/qt5/plugins"), 
+                           file.path(qgis_env$root, "apps/qt5/plugins"),
                            sep = ";"))
   # shell.exec("python")  # yeah, it works!!!
   # !!!Try to make sure that the right Python version is used!!!
@@ -319,7 +319,7 @@ setup_win = function(qgis_env = set_env()) {
     file.path(qgis_env$root, "bin/python3.exe"),
     required = TRUE
   )
-  
+
   # compare py_config path with set_env path!!
   a = py_config()
   # py_config() adds following paths to PATH:
@@ -400,13 +400,14 @@ setup_mac = function(qgis_env = set_env()) {
   # append PYTHONPATH to import qgis.core etc. packages
   python_path = Sys.getenv("PYTHONPATH")
 
-  qgis_python_path =
-    paste0(qgis_env$root, paste(
-      "/Contents/Resources/python/",
-      "/usr/local/lib/qt-4/python2.7/site-packages",
-      "/usr/local/lib/python2.7/site-packages",
-      "$PYTHONPATH", sep = ":"
-    ))
+  # python packages of QGIS are stored in '/usr/local/opt/osgeo-qgis/QGIS.app/Contents/Resources/python'
+  qgis_python_path = "/usr/local/opt/lib/python3.7/site-packages:/usr/local/opt/osgeo-qgis/lib/python3.7/site-packages:/usr/local/opt/osgeo-qgis/QGIS.app/Contents/Resources/python:/usr/local/opt/osgeo-gdal-python/lib/python3.7/site-packages:$PYTHONPATH"
+    # paste0(qgis_env$root, paste(
+    #   "/Contents/Resources/python/",
+    #   #"/usr/local/lib/qt-4/python3.6/site-packages",
+    #   "/usr/local/lib/python3.7/site-packages",
+    #   "$PYTHONPATH", sep = ":"
+    # ))
   if (python_path != "" & !grepl(qgis_python_path, python_path)) {
     qgis_python_path = paste(
       qgis_python_path, Sys.getenv("PYTHONPATH"),
@@ -424,20 +425,33 @@ setup_mac = function(qgis_env = set_env()) {
   qgis_ld = paste(paste0(
     qgis_env$qgis_prefix_path,
     file.path(
-      "/MacOS/lib/:/Applications/QGIS.app/",
+      "/MacOS/lib/:/Applications/QGIS3.app/",
       "Contents/Frameworks/"
     )
   )) # homebrew
   if (ld_library != "" & !grepl(paste0(qgis_ld, ":"), ld_library)) {
     qgis_ld = paste(
       paste0(qgis_env$root, "/lib"),
-      Sys.getenv("LD_LIBRARY_PATH"), sep = ":"
+      Sys.getenv("LD_LIBRARY_PATH"),
+      sep = ":"
     )
   }
   Sys.setenv(LD_LIBRARY_PATH = qgis_ld)
 
   # suppress verbose QGIS output for homebrew
   Sys.setenv(QGIS_DEBUG = -1)
+
+  # FIXME
+  # when using kyngchaos check for python3 installation
+
+
+  # make sure to use Python3
+  # in QGIS Python console run
+  # import sys
+  # sys.version  # which python version is used
+  # sys.exectutable  # and where to find the executable
+  # use_python("/usr/bin/python2.7", required = TRUE)
+  use_python("/usr/local/bin/python3", required = TRUE)
 }
 
 #' @title Save spatial objects
@@ -474,7 +488,7 @@ setup_mac = function(qgis_env = set_env()) {
 save_spatial_objects = function(params, type_name, NA_flag = -99999) {
   lapply(seq_along(params), function(i) {
     tmp = class(params[[i]])
-    if (tmp == "list" && type_name[i] == "multilayer" && 
+    if (tmp == "list" && type_name[i] == "multilayer" &&
         # if the class of params[[i]][[1]] is a character (and not a spatial
         # object), then it is (hopefully) a list containing file paths to
         # spatial objects
@@ -585,14 +599,14 @@ get_extent = function(params, type_name) {
       if (is.list(x)) {
         get_extent(x, "")
       } else {
-        get_extent(unlist(strsplit(x, split = ";")), "") 
+        get_extent(unlist(strsplit(x, split = ";")), "")
       }
     } else {
       # determine bbox in the case of a vector/raster layer residing in R
       tmp = try(expr = extent(x), silent = TRUE)
       # determine bbox in the case of a raster stored on disk
       if (!inherits(tmp, "try-error")) {
-        tmp 
+        tmp
       } else {
         tmp = try(
           expr = {
@@ -621,9 +635,9 @@ get_extent = function(params, type_name) {
           # case for all vector formats (hopefully)
           expr = {
             my_layer = file_path_sans_ext(basename(as.character(x)))
-            extent(ogrInfo(dsn = dirname(as.character(x)), 
+            extent(ogrInfo(dsn = dirname(as.character(x)),
                            layer = my_layer)$extent[c(1, 3, 2, 4)])
-          }, silent = TRUE) 
+          }, silent = TRUE)
       }
       # return tmp if an extent could be determined, if not return NA for the
       # given object object

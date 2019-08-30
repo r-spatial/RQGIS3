@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_funs.R
 \name{check_for_server}
 \alias{check_for_server}
-\title{Check if RQGIS is loaded on a server}
+\title{Check if RQGIS3 is loaded on a server}
 \usage{
 check_for_server()
 }

@@ -72,7 +72,7 @@ i.e., use a character string and separate the coordinates with a comma:
 \dontrun{
 # calculate the slope of a DEM
 # load dem - a raster object
-data(dem, package = "RQGIS")
+data(dem, package = "RQGIS3")
 # find out the name of a GRASS function with which to calculate the slope
 find_algorithms(search_term = "grass7.*slope")
 # find out how to use the function

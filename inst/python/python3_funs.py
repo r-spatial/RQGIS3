@@ -82,12 +82,12 @@ class RQGIS3:
       g7 = Grass7Utils.grassPath()
       g7 = re.findall('grass-?(.*)',  g7)
     if g7 is True and isMac():
-      g7 = Grass7Utils.grassPath()[0:21]
+      g7 = Grass7Utils.grassPath()[0:27]
       g7 = os.listdir(g7)
       delim = ';'
       g7 = delim.join(g7)
       #g7 = re.findall(';(grass[0-9].);', g7)
-      g7 = re.findall('[0-9].[0-9].[0-9]', g7)
+      g7 = re.findall('[0-9][0-9]', g7)
     # installed SAGA version
     saga = SagaUtils.getInstalledVersion()
     # GDAL

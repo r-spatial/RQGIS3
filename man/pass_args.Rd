@@ -75,7 +75,7 @@ This function was inspired by \code{\link[rgrass7:doGRASS]{rgrass7::doGRASS()}}.
 }
 \examples{
 \dontrun{
-data(dem, package = "RQGIS")
+data(dem, package = "RQGIS3")
 alg = "grass7:r.slope.aspect"
 get_usage(alg)
 # 1. using R named arguments

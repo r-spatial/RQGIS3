@@ -2,55 +2,20 @@
 output: github_document
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+# RQGIS3
 
-```{r, echo = FALSE}
-knitr::opts_chunk$set(
-  #fig.path = "https://raw.githubusercontent.com/jannes-m/RQGIS/master/figures/",
-  fig.align = "center",
-  collapse = TRUE,
-  eval = FALSE,
-  comment = "#>",
-  cache = TRUE
-)
-```
-
-```{r, echo = FALSE, eval = TRUE}
-# v = R.Version()
-# rvers = paste(v$major, v$minor, sep = ".")
-rvers = "3.2.0"
-```
-
-<!--
-#### General
-
-[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-[![minimal R version](https://img.shields.io/badge/R%3E%3D-`r rvers`-6666ff.svg)](https://cran.r-project.org/)
-[![Last-changedate](https://img.shields.io/badge/last%20change-`r gsub('-', '--', Sys.Date())`-yellowgreen.svg)](/commits/master)  
-
-[![linux=true Status](https://badges.herokuapp.com/travis/jannes-m/RQGIS?branch=master&env=linux=true&label=Linux)](https://travis-ci.org/jannes-m/RQGIS) 
-[![mac=true Status](https://badges.herokuapp.com/travis/jannes-m/RQGIS?branch=master&env=mac=true&label=macOS)](https://travis-ci.org/jannes-m/RQGIS) 
-[![Build status](https://ci.appveyor.com/api/projects/status/ftk03jo1933vm3we/branch/master?svg=true)](https://ci.appveyor.com/project/jannes-m/rqgis/branch/master)
-<a href="https://codecov.io/gh/jannes-m/RQGIS"><img src="https://codecov.io/gh/jannes-m/RQGIS/branch/master/graph/badge.svg" alt="Coverage Status"/></a>  
-
-#### CRAN
-
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/RQGIS3)](http://cran.r-project.org/package=RQGIS3)
-[![Downloads](http://cranlogs.r-pkg.org/badges/RQGIS?color=brightgreen)](http://www.r-pkg.org/pkg/RQGIS3)
-![](http://cranlogs.r-pkg.org/badges/grand-total/RQGIS3)
--->
-
-<!-- C:\OSGeo4W64\bin\python-qgis -> opens Python!!
-/usr/share/qgis/python/plugins/processing-->
+[![Travis build status](https://travis-ci.org/jannes-m/RQGIS3.svg?branch=master)](https://travis-ci.org/jannes-m/RQGIS3)
+[![CRAN status](https://www.r-pkg.org/badges/version/RQGIS3)](https://cran.r-project.org/package=RQGIS3)
+[![Coverage status](https://codecov.io/gh/jannes-m/RQGIS3/branch/master/graph/badge.svg)](https://codecov.io/github/jannes-m/RQGIS3?branch=master)
+[![StackOverflow](https://img.shields.io/badge/stackoverflow-rqgis-orange.svg)](https://stackoverflow.com/questions/tagged/rqgis)
 
 
-## RQGIS3 problems under Unix-based systems
-**RQGIS3** probably does not run on MacOSX platforms, we haven't tested that yet (any help here would be appreciated!).
-Under Linux, **RQGIS3** runs without problems in an R session started from the terminal.
-However, when running **RQGIS3** within RStudio, this crashes the RStudio R session (see https://github.com/jannes-m/RQGIS3/issues/10 and https://github.com/rstudio/rstudio/issues/4606).
-If Linux and MacOSX users would like to use **RQGIS3** in conjunction with RStudio, we suggest to use this [docker image](https://github.com/jannes-m/docker-rqgis/tree/master/rqgis3_ltr).
+## RQGIS3 and RStudio
 
-## RQGIS3
+Running **RQGIS3** within RStudio causes a crash of the R session (see https://github.com/jannes-m/RQGIS3/issues/10 and https://github.com/rstudio/rstudio/issues/4606).
+If Linux and macOS users would like to use **RQGIS3** in conjunction with RStudio, we suggest to use this [docker image](https://github.com/jannes-m/docker-rqgis/tree/master/rqgis3_ltr).
+
+## Description
 
 **RQGIS3** establishes an interface between R and QGIS3, i.e., it allows the user to access QGIS3 functionalities from within R. 
 It achieves this by establishing a tunnel to the Python QGIS3 API via the [reticulate-package](https://github.com/rstudio/reticulate).
@@ -59,7 +24,7 @@ also [https://docs.qgis.org/testing/en/docs/user_manual/processing/index.html](h
 Third-party providers include among others GDAL, GRASS GIS, and SAGA GIS.
 **RQGIS3** brings you this incredibly powerful geoprocessing environment to the R console.
 
-Please check also out our paper presenting **RQGIS** in detail:
+Please check also out our paper presenting **RQGIS (2)** in detail:
 
 <div style = "text-align:center"> 
 <a href = "https://rjournal.github.io/archive/2017/RJ-2017-067/RJ-2017-067.pdf">https://rjournal.github.io/archive/2017/RJ-2017-067/RJ-2017-067.pdf</a>
@@ -98,17 +63,17 @@ install.packages("RQGIS3")
 - the latest RQGIS development version from Github with:
 
 ```{r, eval=FALSE}
-devtools::install_github("jannes-m/RQGIS3")
+remotes::install_github("jannes-m/RQGIS3")
 ```
 
-# RQGIS3 usage
+# Usage
 
 Subsequently, we will show you a typical workflow of how to use **RQGIS3**. 
 Basically, we will follow the steps also described in the [QGIS documentation](https://docs.qgis.org/testing/en/docs/user_manual/processing/console.html). 
 In our first and very simple example we simply would like to retrieve the centroid coordinates of a spatial polygon object. 
 First off, we will download the administrative areas of Germany using the raster package.
 
-```{r ger_download, warning=FALSE, error=FALSE, message=FALSE}
+```{r ger_download, eval = FALSE, warning=FALSE, error=FALSE, message=FALSE}
 # attach packages
 library("raster")
 library("rgdal")
@@ -128,7 +93,7 @@ If you are running **RQGIS3** under Linux or on a Mac, `set_env()` assumes that 
 Please note, that most of the **RQGIS3** functions, you are likely to work with (such as `find_algorithms()`, `get_args_man()` and `run_qgis()`), require the output list (as returned by `set_env()`) containing the paths to the various installations necessary to run QGIS from within R. 
 This is why, `set_env()` caches its result in a temporary folder, and loads it back into R when called again (to overwrite an existing cache, set parameter `new` to `TRUE`).
 
-```{r, warning=FALSE, error=FALSE}
+```{r, warning=FALSE, error=FALSE, eval = FALSE}
 # attach RQGIS3
 library("RQGIS3")
 
@@ -153,7 +118,7 @@ Secondly, we would like to find out how the function in QGIS is called which giv
 Here, we look for a geoalgorithm that contains the word `centroid` in its short description.  
 Note that `search_term` also accepts regular expressions.
 
-```{r, warning=FALSE, error=FALSE}
+```{r, warning=FALSE, error=FALSE, eval = FALSE}
 library("RQGIS")
 find_algorithms(search_term = "centroid", name_only = TRUE)
 
@@ -167,7 +132,7 @@ This returns four functions we could use.
 Here, we'll choose the QGIS3 function named `native:centroids`. 
 Subsequently, we would like to know how we can use it, i.e. which function parameters we need to specify.
 
-```{r, error = FALSE}
+```{r, error = FALSE, eval = FALSE}
 get_usage(alg = "native:centroids")
 
 #> Centroids (native:centroids)
@@ -232,7 +197,7 @@ If a function argument lets you choose between several options (drop-down menu i
 For example, `qgis:addfieldtoattributestable` has three options for the `FIELD_TYPE`-parameter, namely integer, float and string. 
 Setting `options` to `TRUE` means that the field type of your new column will be of type integer.
 
-```{r, error=FALSE}
+```{r, error=FALSE, eval = FALSE}
 params = get_args_man(alg = "native:centroids")
 params
 #>$INPUT
@@ -276,7 +241,7 @@ Finally, `run_qgis()` calls the QGIS API to run the specified geoalgorithm with 
 Since we set `load_output` to `TRUE`, `run_qgis()` automatically loads the QGIS output back into R (`sf`-objects in the case of vector data and `raster`-objects in the case of raster data). 
 Naturally, we would like to check if the result meets our expectations. 
 
-```{r, fig.width=5, fig.height=5, align="center"}
+```{r, fig.width=5, fig.height=5, align="center", eval = FALSE}
 # first, plot the federal states of Germany
 plot(ger)
 # next plot the centroids created by QGIS

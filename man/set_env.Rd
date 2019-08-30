@@ -4,7 +4,7 @@
 \alias{set_env}
 \title{Retrieve the environment settings to run QGIS from within R}
 \usage{
-set_env(root = NULL, new = FALSE, dev = TRUE, ...)
+set_env(root = NULL, new = FALSE, dev = FALSE, ...)
 }
 \arguments{
 \item{root}{Root path to the QGIS-installation. If left empty, the function
@@ -19,9 +19,7 @@ its output. Setting \code{new} to \code{TRUE} resets the cache when calling
 even if you used new values for function arguments \code{root} and/or \code{dev}.}
 
 \item{dev}{If set to \code{TRUE}, \code{set_env()} will use the development version of
-QGIS (if available). Since RQGIS so far does not support QGIS 3 (developer
-version), setting \code{dev} to TRUE will result in an error message under
-Windows.}
+QGIS3 (if available).}
 
 \item{...}{Currently not in use.}
 }
