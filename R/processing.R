@@ -96,7 +96,6 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
     root = gsub("/{1,}$", "", root)
   }
 
-  browser()
   if (Sys.info()["sysname"] == "Darwin") {
     if (is.null(root)) {
       message("Checking for homebrew osgeo4mac installation on your system. \n")
@@ -113,7 +112,7 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
       if (length(no_homebrew) == 0L) {
         message(paste0(
           "Found no QGIS homebrew installation. ",
-          "Checking for QGIS Kyngchaos version now."
+          "Checking for other QGIS installations now."
         ))
       }
       if (no_homebrew == FALSE && length(path) == 1) {
@@ -175,17 +174,21 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
           root = path[2]
           message("Found QGIS3 osgeo4mac installation. Setting environment...")
         }
+
+        platform = "macOS (homebrew)"
       }
 
-      # check for Kyngchaos installation
+      # check for QGIS binary installation
       if (is.null(root)) {
-        path = system("find /Applications -name 'QGIS3.app'", intern = TRUE)
+        path = system("find /Applications -name 'QGIS3*.app'", intern = TRUE)
         if (length(path) > 0) {
           root = path
-          message("Found QGIS Kyngchaos installation. Setting environment...")
+          message("Found a QGIS3 installation. Setting environment...")
         }
+        platform = "macOS"
       }
     }
+
   }
 
   if (Sys.info()["sysname"] == "Linux") {
@@ -202,20 +205,19 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
   }
   qgis_env = list(root = root)
   qgis_env = c(qgis_env, check_apps(root = root))
+  qgis_env = c(qgis_env, platform = platform)
   assign("qgis_env", qgis_env, envir = .RQGIS_cache)
 
-
-  # write warning if Kyngchaos QGIS for Mac is installed
-  if (any(grepl("/Applications", qgis_env))) {
-    warning(
-      paste0(
-        "We recognized that you are using the QGIS binary.\n",
-        "Please consider installing QGIS from homebrew:",
-        "'https://github.com/OSGeo/homebrew-osgeo4mac'.",
-        " Run 'vignette(install_guide)' for installation instructions.\n"
-      )
-    )
-  }
+  # if (any(grepl("/Applications", qgis_env))) {
+  #   warning(
+  #     paste0(
+  #       "We recognized that you are not using the QGIS installation from 'homebrew'.\n",
+  #       "Please consider installing QGIS from homebrew:",
+  #       "'https://github.com/OSGeo/homebrew-osgeo4mac'.",
+  #       " Run 'vignette(install_guide)' for installation instructions.\n"
+  #     )
+  #   )
+  # }
 
   # return your result
   qgis_env

@@ -398,21 +398,16 @@ setup_linux = function(qgis_env = set_env()) {
 setup_mac = function(qgis_env = set_env()) {
 
   # append PYTHONPATH to import qgis.core etc. packages
-  python_path = Sys.getenv("PYTHONPATH")
+  # FIXME: Currently we are overriding the PYTHONPATH variable completely -> might cause trouble for some users?
 
-  # python packages of QGIS are stored in '/usr/local/opt/osgeo-qgis/QGIS.app/Contents/Resources/python'
-  qgis_python_path = "/usr/local/opt/lib/python3.7/site-packages:/usr/local/opt/osgeo-qgis/lib/python3.7/site-packages:/usr/local/opt/osgeo-qgis/QGIS.app/Contents/Resources/python:/usr/local/opt/osgeo-gdal-python/lib/python3.7/site-packages:$PYTHONPATH"
-    # paste0(qgis_env$root, paste(
-    #   "/Contents/Resources/python/",
-    #   #"/usr/local/lib/qt-4/python3.6/site-packages",
-    #   "/usr/local/lib/python3.7/site-packages",
-    #   "$PYTHONPATH", sep = ":"
-    # ))
-  if (python_path != "" & !grepl(qgis_python_path, python_path)) {
-    qgis_python_path = paste(
-      qgis_python_path, Sys.getenv("PYTHONPATH"),
-      sep = ":"
+  browser()
+  if (!grepl("homebrew", qgis_env$platform)) {
+    qgis_python_path = glue::glue(glue::glue("{qgis_env$qgis_prefix_path}/Resources/python:"),
+                                  glue::glue("{qgis_env$qgis_prefix_path}/Frameworks/Python.framework/Versions/Current/lib/python3.7/site-packages")
     )
+  } else {
+    # homebrew
+    qgis_python_path = "/usr/local/opt/lib/python3.7/site-packages:/usr/local/opt/osgeo-qgis/lib/python3.7/site-packages:/usr/local/opt/osgeo-qgis/QGIS.app/Contents/Resources/python:/usr/local/opt/osgeo-gdal-python/lib/python3.7/site-packages:$PYTHONPATH"
   }
 
   Sys.setenv(QGIS_PREFIX_PATH = paste0(qgis_env$root, "/Contents/MacOS/"))
@@ -422,36 +417,29 @@ setup_mac = function(qgis_env = set_env()) {
   # dynamic linker
   ld_library = Sys.getenv("LD_LIBRARY_PATH")
 
-  qgis_ld = paste(paste0(
-    qgis_env$qgis_prefix_path,
-    file.path(
-      "/MacOS/lib/:/Applications/QGIS3.app/",
-      "Contents/Frameworks/"
-    )
-  )) # homebrew
-  if (ld_library != "" & !grepl(paste0(qgis_ld, ":"), ld_library)) {
-    qgis_ld = paste(
-      paste0(qgis_env$root, "/lib"),
-      Sys.getenv("LD_LIBRARY_PATH"),
-      sep = ":"
-    )
+  if (!grepl("homebrew", qgis_env$platform)) {
+    qgis_ld = glue::glue(glue::glue("{qgis_env$qgis_prefix_path}/MacOS/lib/:"),
+                         glue::glue("{qgis_env$qgis_prefix_path}/Contents/Frameworks/"))
+  } else {
+    # homebrew
+    if (ld_library != "" & !grepl(paste0(qgis_ld, ":"), ld_library)) {
+      qgis_ld = paste(
+        paste0(qgis_env$root, "/lib"),
+        Sys.getenv("LD_LIBRARY_PATH"),
+        sep = ":"
+      )
+    }
   }
   Sys.setenv(LD_LIBRARY_PATH = qgis_ld)
 
   # suppress verbose QGIS output for homebrew
   Sys.setenv(QGIS_DEBUG = -1)
 
-  # FIXME
-  # when using kyngchaos check for python3 installation
-
-
-  # make sure to use Python3
-  # in QGIS Python console run
-  # import sys
-  # sys.version  # which python version is used
-  # sys.exectutable  # and where to find the executable
-  # use_python("/usr/bin/python2.7", required = TRUE)
-  use_python("/usr/local/bin/python3", required = TRUE)
+  if (!grepl("homebrew", qgis_env$platform)) {
+    use_python("/Applications/QGIS3.4.app/Contents/Frameworks/Python.framework/Versions/Current/bin/python3", required = TRUE)
+  } else {
+    use_python("/usr/local/bin/python3", required = TRUE)
+  }
 }
 
 #' @title Save spatial objects
