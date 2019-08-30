@@ -16,7 +16,7 @@ output: github_document
 
 Though **RQGIS3** works when running it in a plain R session in the terminal, it crashes the R session when ran inside RStudio (see https://github.com/r-spatial/RQGIS3/issues/10 and https://github.com/rstudio/rstudio/issues/4606).
 If Linux and MacOS users would like to use **RQGIS3** in conjunction with RStudio, we recommend to use the [geocompr docker image](https://hub.docker.com/r/robinlovelace/geocompr/).
-Please refer also to the instructions on the [geocompr landing page](https://github.com/robinlovelace/geocompr#running-geocompr-code-in-docker) dehow to use the docker image.
+Please refer also to the instructions on the [geocompr landing page](https://github.com/robinlovelace/geocompr#running-geocompr-code-in-docker) how to use the docker image.
 
 ## Description
 
@@ -74,7 +74,7 @@ Basically, we will follow the steps also described in the [QGIS documentation](h
 In our first and very simple example we simply would like to retrieve the centroid coordinates of a spatial polygon object. 
 First, we will download the administrative areas of Germany using the **raster** package.
 
-```{r ger_download, eval = FALSE, warning=FALSE, error=FALSE, message=FALSE}
+```{r ger_download, eval=FALSE, warning=FALSE, error=FALSE, message=FALSE}
 # attach packages
 library("raster")
 library("rgdal")
@@ -94,7 +94,7 @@ If you are running **RQGIS3** under Linux or on a Mac, `set_env()` assumes that 
 Please note, that most of the **RQGIS3** functions, you are likely to work with (such as `find_algorithms()`, `get_args_man()` and `run_qgis()`), require the output list (as returned by `set_env()`) containing the paths to the various installations necessary to run QGIS3 from within R. 
 This is why, `set_env()` caches its result in a temporary folder, and loads it back into R when called again (to overwrite an existing cache, set parameter `new` to `TRUE`).
 
-```{r, warning=FALSE, error=FALSE, eval=TRUE}
+```{r, warning=FALSE, error=FALSE, eval=FALSE}
 # attach RQGIS3
 library("RQGIS3")
 
@@ -117,7 +117,7 @@ set_env()
 
 Next, `open_app()` establishes a tunnel to the Python QGIS3 API which naturally is the basis of any QGIS3 geoprocessing from within R.
 
-```{r}
+```{r, eval=FALSE}
 open_app()
 ```
 
@@ -135,7 +135,7 @@ To do so, we use `find_algorithms()`.
 Here, we look for a geoalgorithm that contains the word `centroid` in its short description.  
 Note that `search_term` also accepts regular expressions.
 
-```{r, warning=FALSE, error=FALSE}
+```{r, warning=FALSE, error=FALSE, eval=FALSE}
 find_algorithms(search_term = "centroid", name_only = TRUE)
 
 #>[1] "native:centroids"
@@ -148,7 +148,7 @@ This returns four functions we could use.
 Here, we'll choose the QGIS3 function named `native:centroids`. 
 Subsequently, we would like to know how we can use it, i.e., which function parameters we need to specify.
 
-```{r, error=FALSE}
+```{r, error=FALSE, eval=FALSE}
 get_usage(alg = "native:centroids")
 
 #> Centroids (native:centroids)
@@ -213,7 +213,7 @@ If a function argument lets you choose between several options (drop-down menu i
 For example, `qgis:addfieldtoattributestable` has three options for the `FIELD_TYPE`-parameter, namely integer, float and string. 
 Setting `options` to `TRUE` means that the field type of your new column will be of type integer.
 
-```{r, error=FALSE}
+```{r, error=FALSE, eval=FALSE}
 params = get_args_man(alg = "native:centroids")
 params
 #>$INPUT
@@ -230,19 +230,19 @@ In our case, `native:centroids` has only two function arguments and no default v
 We can do so in two ways. 
 Either we use directly our parameter-argument list... 
 
-```{r}
+```{r, eval=FALSE}
 params$INPUT = ger
 params$OUTPUT = file.path(tempdir(), "ger_coords.shp")
 out = run_qgis(alg = "native:centroids",
                params = params,
                load_output = TRUE)
 #>$OUTPUT
-[#>1] "/tmp/RtmpC6SKby/ger_coords.shp"
+#>[1] "/tmp/RtmpC6SKby/ger_coords.shp"
 ```
 
 ... or we can use R named arguments in `run_qgis()`
 
-```{r}
+```{r, eval=FALSE}
 out = run_qgis(alg = "native:centroids",
                INPUT = ger,
                OUTPUT = file.path(tempdir(), "ger_coords.shp"),
@@ -257,7 +257,7 @@ Finally, `run_qgis()` calls the QGIS API to run the specified geoalgorithm with 
 Since we set `load_output` to `TRUE`, `run_qgis()` automatically loads the QGIS output back into R (`sf`-objects in the case of vector data and `raster`-objects in the case of raster data). 
 Naturally, we would like to check if the result meets our expectations. 
 
-```{r, fig.width=5, fig.height=5, align="center"}
+```{r, fig.width=5, fig.height=5, align="center", eval=FALSE}
 # first, plot the federal states of Germany
 plot(ger)
 # next plot the centroids created by QGIS

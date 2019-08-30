@@ -22,7 +22,7 @@ recommend to use the [geocompr docker
 image](https://hub.docker.com/r/robinlovelace/geocompr/). Please refer
 also to the instructions on the [geocompr landing
 page](https://github.com/robinlovelace/geocompr#running-geocompr-code-in-docker)
-dehow to use the docker image.
+how to use the docker image.
 
 ## Description
 
@@ -154,8 +154,8 @@ set_env()
 ## [1] "C:\\OSGeo4W64\\apps\\qgis\\python\\plugins"
 ```
 
-Next, we need to establish a tunnel to the Python QGIS3 API in order to
-be able to use QGIS3 geoalgorithms from within R.
+Next, `open_app()` establishes a tunnel to the Python QGIS3 API which
+naturally is the basis of any QGIS3 geoprocessing from within R.
 
 ``` r
 open_app()
@@ -168,14 +168,13 @@ QGIS3, and secondly opens a QGIS3 application with the help of
 automatically by all **RQGIS3** functions that need access to the QGIS3
 Python API. \[1\]
 
-Secondly, we would like to find a QGIS3 geoalgorithm that is able to
-compute the centroids of a polygon vector layer. To do so, we use
+Next, we would like to find a QGIS3 geoalgorithm that is able to compute
+the centroids of a polygon vector layer. To do so, we use
 `find_algorithms()`. Here, we look for a geoalgorithm that contains the
 word `centroid` in its short description.  
 Note that `search_term` also accepts regular expressions.
 
 ``` r
-library("RQGIS3")
 find_algorithms(search_term = "centroid", name_only = TRUE)
 
 #>[1] "native:centroids"
@@ -288,7 +287,7 @@ out = run_qgis(alg = "native:centroids",
                params = params,
                load_output = TRUE)
 #>$OUTPUT
-[#>1] "/tmp/RtmpC6SKby/ger_coords.shp"
+#>[1] "/tmp/RtmpC6SKby/ger_coords.shp"
 ```
 
 … or we can use R named arguments in `run_qgis()`
@@ -327,8 +326,8 @@ plot(out$geometry, pch = 21, add = TRUE, bg = "lightblue", col = "black")
 
 Of course, this is a very simple example. We could have achieved the
 same using `sf::st_as_sf(ger) %>% sf::st_centroid()`. For a more
-detailed introduction to **RQGIS** and more complex examples have a look
-at our paper:
+detailed introduction to **RQGIS3** and more complex examples have a
+look at our paper:
 
 <div style="text-align:center">
 
