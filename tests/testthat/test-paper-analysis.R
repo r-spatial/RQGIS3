@@ -2,7 +2,6 @@ library("RQGIS3")
 library("RSAGA")
 library("raster")
 library("sf")
-library("RQGIS")
 
 context("paper")
 
