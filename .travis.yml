@@ -40,8 +40,7 @@ before_install:
 install: R -q -e 'tic::install()'
 after_install: R -q -e 'tic::after_install()'
 before_script:
-  - "export DISPLAY=:99.0"
-  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then sh -e /etc/init.d/xvfb start; fi
+  - export DISPLAY=:99.0
   - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then ( sudo Xvfb :99 -ac -screen 0 1024x768x8; echo ok )& fi
   - sleep 3 # give xvfb some time to start
   - R -q -e 'tic::before_script()'
