@@ -36,6 +36,7 @@ before_install:
   # tap osgeo4mac tap
   - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then brew tap osgeo/osgeo4mac; fi
   - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then brew unlink proj && brew unlink libgeotiff && brew unlink libspatialite && brew unlink postgresql && brew unlink gdal && brew unlink postgis; fi
+  - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then sudo rm -rf /usr/local/gfortran/bin/gfortran && sudo rm /usr/local/include/c++; fi
   - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then ulimit -n 1200 && brew install osgeo-qgis-ltr; fi
 
 install: R -q -e 'tic::install()'
