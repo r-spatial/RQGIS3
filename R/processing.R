@@ -1,6 +1,6 @@
 #' @title Retrieve the environment settings to run QGIS from within R
-#' @description `set_env()` tries to find all the paths necessary to run QGIS from
-#'   within R.
+#' @description `set_env()` tries to find all the paths necessary to run QGIS
+#'   from within R.
 #' @importFrom stringr str_detect
 #' @param root Root path to the QGIS-installation. If left empty, the function
 #'   looks for `qgis.bat` first in the most likely locations (C:/OSGEO4~1,
@@ -13,6 +13,9 @@
 #'   even if you used new values for function arguments `root` and/or `dev`.
 #' @param dev If set to `TRUE`, `set_env()` will use the development version of
 #'   QGIS3 (if available).
+#' @param homebrew Prefer QGIS installation via homebrew when setting the
+#'   environment? Only applies to macOS. Currently, only homebrew installations
+#'   are supported.
 #' @param ... Currently not in use.
 #' @return The function returns a list containing all the path necessary to run
 #'   QGIS from within R. This is the root path, the QGIS prefix path and the
@@ -39,6 +42,8 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, homebrew = TRUE, ...) 
 
   if (Sys.info()["sysname"] == "Windows") {
     if (is.null(root)) {
+
+      platform = "Windows"
       # raw command
       # change to C: drive and (&) list all subfolders of C:
       # /b bare format (no heading, file sizes or summary)
@@ -100,6 +105,7 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, homebrew = TRUE, ...) 
     if (is.null(root)) {
 
       if (!homebrew) {
+        stop("Currently only QGIS installations from homebrew are supported.")
         message("Checking for non-homebrew QGIS installation only.")
 
         path = system("find /Applications -name 'QGIS3*.app'", intern = TRUE)
@@ -109,7 +115,6 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, homebrew = TRUE, ...) 
         }
         platform = "macOS"
       } else {
-
 
         message("Checking for homebrew osgeo4mac installation on your system. \n")
         # check for homebrew QGIS installation
@@ -123,9 +128,7 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, homebrew = TRUE, ...) 
         no_homebrew = str_detect(path, "find: /usr/local")
 
         if (length(no_homebrew) == 0L) {
-          message(paste0(
-            "Found no QGIS homebrew installation."
-          ))
+          stop("Found no QGIS homebrew installation.")
         }
         if (no_homebrew == FALSE && length(path) == 1) {
           root = path
@@ -196,6 +199,7 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, homebrew = TRUE, ...) 
 
   if (Sys.info()["sysname"] == "Linux") {
     if (is.null(root)) {
+      platform = "Linux"
       message("Assuming that your root path is '/usr'!")
       root = "/usr"
     }
