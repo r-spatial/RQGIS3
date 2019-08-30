@@ -17,6 +17,7 @@ addons:
       - libudunits2-dev
       - python-gdal
       - saga
+      - grass
 
 # DO NOT CHANGE THE CODE BELOW
 before_install:
