@@ -96,7 +96,6 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
     root = gsub("/{1,}$", "", root)
   }
 
-  browser()
   if (Sys.info()["sysname"] == "Darwin") {
     if (is.null(root)) {
       message("Checking for homebrew osgeo4mac installation on your system. \n")
