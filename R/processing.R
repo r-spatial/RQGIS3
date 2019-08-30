@@ -29,7 +29,7 @@
 #'
 #' @export
 #' @author Jannes Muenchow, Patrick Schratz
-set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
+set_env = function(root = NULL, new = FALSE, dev = FALSE, homebrew = TRUE, ...) {
   # ok, let's try to find QGIS first in the most likely place!
   dots = list(...)
   # load cached qgis_env if possible
@@ -98,97 +98,100 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, ...) {
 
   if (Sys.info()["sysname"] == "Darwin") {
     if (is.null(root)) {
-      message("Checking for homebrew osgeo4mac installation on your system. \n")
-      # check for homebrew QGIS installation
-      path = suppressWarnings(
-        system2(
-          "find", c("/usr/local/Cellar", "-name", "QGIS.app"),
-          stdout = TRUE, stderr = TRUE
-        )
-      )
 
-      no_homebrew = str_detect(path, "find: /usr/local")
+      if (!homebrew) {
+        message("Checking for non-homebrew QGIS installation only.")
 
-      if (length(no_homebrew) == 0L) {
-        message(paste0(
-          "Found no QGIS homebrew installation. ",
-          "Checking for other QGIS installations now."
-        ))
-      }
-      if (no_homebrew == FALSE && length(path) == 1) {
-        root = path
-        message("Found QGIS osgeo4mac installation. Setting environment...")
-      }
-
-      # check for multiple homebrew installations
-      if (length(path) >= 2) {
-
-        # extract version out of root path
-        path1 =
-          as.numeric(regmatches(path[1], gregexpr("[0-9]+", path[1]))[[1]][1])
-        path2 =
-          as.numeric(regmatches(path[2], gregexpr("[0-9]+", path[2]))[[1]][1])
-        if (length(path) == 3) {
-          path3 =
-            as.numeric(regmatches(path[3], gregexpr("[0-9]+", path[3]))[[1]][1])
-        }
-
-        if (!3 %in% c(path1, path2)) {
-          if (2 %in% c(path1, path2)) {
-            stop("A QGIS2 installation was found but no QGIS3 installation. Please install QGIS3.")
-          } else {
-            stop("No QGIS installation was found in your system.")
-          }
-        }
-        # account for 'dev' arg installations are not constant within path ->
-        # depend on which version was installed first/last hence we have to
-        # catch all possibilites
-
-        # extract version out of root path
-        path1 =
-          as.numeric(regmatches(path[1], gregexpr("[0-9]+", path[1]))[[1]][2])
-        path2 =
-          as.numeric(regmatches(path[2], gregexpr("[0-9]+", path[2]))[[1]][2])
-        if (length(path) == 3) {
-          path3 =
-            as.numeric(regmatches(path[3], gregexpr("[0-9]+", path[3]))[[1]][3])
-        }
-        if (dev == TRUE && path1 > path2) {
-          root <- path[1]
-          message("Found QGIS osgeo4mac DEV installation. Setting environment...")
-        } else if (dev == TRUE && path1 < path2) {
-          root <- path[2]
-          message("Found QGIS osgeo4mac DEV installation. Setting environment...")
-        } else if (dev == FALSE && path1 > path2) {
-          root <- path[2]
-          message("Found QGIS osgeo4mac LTR installation. Setting environment...")
-        } else if (dev == FALSE && path1 < path2) {
-          root <- path[1]
-          message("Found QGIS osgeo4mac LTR installation. Setting environment...")
-        }
-
-        if (path1 > path2 && path1 == 3) {
-          root = path[1]
-          message("Found QGIS3 osgeo4mac installation. Setting environment...")
-        } else if (path2 > path1 && path2 == 3) {
-          root = path[2]
-          message("Found QGIS3 osgeo4mac installation. Setting environment...")
-        }
-
-        platform = "macOS (homebrew)"
-      }
-
-      # check for QGIS binary installation
-      if (is.null(root)) {
         path = system("find /Applications -name 'QGIS3*.app'", intern = TRUE)
         if (length(path) > 0) {
           root = path
           message("Found a QGIS3 installation. Setting environment...")
         }
         platform = "macOS"
+      } else {
+
+
+        message("Checking for homebrew osgeo4mac installation on your system. \n")
+        # check for homebrew QGIS installation
+        path = suppressWarnings(
+          system2(
+            "find", c("/usr/local/Cellar", "-name", "QGIS.app"),
+            stdout = TRUE, stderr = TRUE
+          )
+        )
+
+        no_homebrew = str_detect(path, "find: /usr/local")
+
+        if (length(no_homebrew) == 0L) {
+          message(paste0(
+            "Found no QGIS homebrew installation."
+          ))
+        }
+        if (no_homebrew == FALSE && length(path) == 1) {
+          root = path
+          message("Found QGIS osgeo4mac installation. Setting environment...")
+          platform = "macOS (homebrew)"
+        }
+
+        # check for multiple homebrew installations
+        if (length(path) >= 2) {
+
+          # extract version out of root path
+          path1 =
+            as.numeric(regmatches(path[1], gregexpr("[0-9]+", path[1]))[[1]][1])
+          path2 =
+            as.numeric(regmatches(path[2], gregexpr("[0-9]+", path[2]))[[1]][1])
+          if (length(path) == 3) {
+            path3 =
+              as.numeric(regmatches(path[3], gregexpr("[0-9]+", path[3]))[[1]][1])
+          }
+
+          if (!3 %in% c(path1, path2)) {
+            if (2 %in% c(path1, path2)) {
+              stop("A QGIS2 installation was found but no QGIS3 installation. Please install QGIS3.")
+            } else {
+              stop("No QGIS installation was found in your system.")
+            }
+          }
+          # account for 'dev' arg installations are not constant within path ->
+          # depend on which version was installed first/last hence we have to
+          # catch all possibilites
+
+          # extract version out of root path
+          path1 =
+            as.numeric(regmatches(path[1], gregexpr("[0-9]+", path[1]))[[1]][2])
+          path2 =
+            as.numeric(regmatches(path[2], gregexpr("[0-9]+", path[2]))[[1]][2])
+          if (length(path) == 3) {
+            path3 =
+              as.numeric(regmatches(path[3], gregexpr("[0-9]+", path[3]))[[1]][3])
+          }
+          if (dev == TRUE && path1 > path2) {
+            root <- path[1]
+            message("Found QGIS osgeo4mac DEV installation. Setting environment...")
+          } else if (dev == TRUE && path1 < path2) {
+            root <- path[2]
+            message("Found QGIS osgeo4mac DEV installation. Setting environment...")
+          } else if (dev == FALSE && path1 > path2) {
+            root <- path[2]
+            message("Found QGIS osgeo4mac LTR installation. Setting environment...")
+          } else if (dev == FALSE && path1 < path2) {
+            root <- path[1]
+            message("Found QGIS osgeo4mac LTR installation. Setting environment...")
+          }
+
+          if (path1 > path2 && path1 == 3) {
+            root = path[1]
+            message("Found QGIS3 osgeo4mac installation. Setting environment...")
+          } else if (path2 > path1 && path2 == 3) {
+            root = path[2]
+            message("Found QGIS3 osgeo4mac installation. Setting environment...")
+          }
+
+          platform = "macOS (homebrew)"
+        }
       }
     }
-
   }
 
   if (Sys.info()["sysname"] == "Linux") {
@@ -406,7 +409,7 @@ qgis_session_info = function(qgis_env = set_env()) {
   tmp = try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
 
   # suppress R CMD check note
-  py = NULL
+  #py = NULL
 
   # retrieve the output
   suppressWarnings({
@@ -495,7 +498,7 @@ find_algorithms = function(search_term = NULL, name_only = FALSE,
   tmp = try(expr = open_app(qgis_env = qgis_env), silent = TRUE)
 
   # suppress R CMD check note
-  py = NULL
+  # py = NULL
 
   # Advantage of this approach: we are using directly alglist and do not have to
   # save it in inst
