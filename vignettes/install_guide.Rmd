@@ -284,16 +284,5 @@ Otherwise, pre-built bottles (= binaries) will be used which speeds up the insta
 
 2. Using the official QGIS binary
 
-If you do not (want to) use `homebrew`, you can install the QGIS binary from [https://www.qgis.org/en/site/forusers/download.html](https://www.qgis.org/en/site/forusers/download.html). 
-
-If you choose this option, you will get the following error messages during QGIS processing
-
-```
-QSqlDatabase: QSQLITE driver not loaded
-QSqlDatabase: available drivers:
-QSqlQuery::prepare: database not open
-[1] "ERROR: Opening of authentication db FAILED"
-[2] "WARNING: Auth db query exec() FAILED"
-```
-
-These messages **DO NOT affect RQGIS usage**. 
+We currently do not support the QGIS installer from https://www.qgis.org/en/site/forusers/download.html  due to technical issues getting it working with RQGIS3.
+We may add support for it in the future.

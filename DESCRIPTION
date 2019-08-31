@@ -1,52 +1,56 @@
-Package: RQGIS3
-Date: 2018-08-14
 Type: Package
+Package: RQGIS3
 Title: Integrating R with QGIS3
 Version: 1.0.1.9000
-Authors@R: c(
-    person("Jannes", "Muenchow",
-    email = "jannes.muenchow@uni-jena.de", 
-    role = c("aut", "cre"),
-    comment = c(ORCID = '0000-0001-7834-4717')),
-    person("Patrick", "Schratz", ,
-    email = "patrick.schratz@uni-jena.de", 
-    role = c("aut"),
-    comment = c(ORCID = '0000-0003-0748-6624')
-    ))
-Description: Establishes an interface between R and 'QGIS3', i.e., it allows
-    the user to access 'QGIS3' functionalities from the R console. It achieves this
-    by using the 'QGIS3' Python API via the command line. Hence, RQGIS3 extends R's
-    statistical power by the incredible vast geo-functionality of 'QGIS3' (including
-    also 'GDAL', 'SAGA'- and 'GRASS'-GIS among other third-party providers).
-    This in turn creates a powerful environment for advanced and innovative
-    (geo-)statistical geocomputing. 'QGIS3' is licensed under GPL version 2 or
-    greater and is available from <http://www.qgis.org/en/site/>.
+Date: 2018-08-14
+Authors@R: 
+    c(person(given = "Jannes",
+             family = "Muenchow",
+             role = c("aut", "cre"),
+             email = "jannes.muenchow@uni-jena.de",
+             comment = c(ORCID = "0000-0001-7834-4717")),
+      person(given = "Patrick",
+             family = "Schratz",
+             role = "aut",
+             email = "patrick.schratz@uni-jena.de",
+             comment = c(ORCID = "0000-0003-0748-6624")))
+Description: Establishes an interface between R and 'QGIS', i.e.
+    it allows the user to access 'QGIS' functionalities from the R
+    console. It achieves this by using the 'QGIS' Python API via the
+    command line. Hence, RQGIS extends R's statistical power by the
+    incredible vast geo-functionality of 'QGIS' (including also 'GDAL',
+    'SAGA'- and 'GRASS'-GIS among other third-party providers).  This in
+    turn creates a powerful environment for advanced and innovative
+    (geo-)statistical geocomputing. 'QGIS' is licensed under GPL version 2
+    or greater and is available from <http://www.qgis.org/en/site/>.
+License: GPL-3
 URL: https://github.com/jannes-m/RQGIS3
 BugReports: https://github.com/jannes-m/RQGIS3/issues
-License: GPL-3
-LazyData: TRUE
-Encoding: UTF-8
-RoxygenNote: 6.1.1
-Roxygen: list(markdown = TRUE)
-ByteCompile: true
 Depends:
     R (>= 3.2.0),
     reticulate (>= 1.2)
 Imports:
-         raster,
-         RCurl,
-         readr,
-         rgdal,
-         sf (>= 0.4-2),
-         sp,
-         stringr,
-         tools,
-         XML
-SystemRequirements: Python (>= 3.4), QGIS (>= 3.5)
+    raster,
+    RCurl,
+    readr,
+    rgdal,
+    sf (>= 0.4-2),
+    sp,
+    stringr,
+    tools,
+    XML
 Suggests:
+    glue,
     knitr,
     rgrass7,
     rmarkdown,
-    testthat,
-    RSAGA
-VignetteBuilder: knitr
+    RSAGA,
+    testthat
+VignetteBuilder: 
+    knitr
+ByteCompile: true
+Encoding: UTF-8
+LazyData: TRUE
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 6.1.1
+SystemRequirements: Python (>= 3.4), QGIS (>= 3.5)

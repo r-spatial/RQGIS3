@@ -4,7 +4,8 @@
 \alias{set_env}
 \title{Retrieve the environment settings to run QGIS from within R}
 \usage{
-set_env(root = NULL, new = FALSE, dev = FALSE, ...)
+set_env(root = NULL, new = FALSE, dev = FALSE, homebrew = TRUE,
+  ...)
 }
 \arguments{
 \item{root}{Root path to the QGIS-installation. If left empty, the function
@@ -21,6 +22,10 @@ even if you used new values for function arguments \code{root} and/or \code{dev}
 \item{dev}{If set to \code{TRUE}, \code{set_env()} will use the development version of
 QGIS3 (if available).}
 
+\item{homebrew}{Prefer QGIS installation via homebrew when setting the
+environment? Only applies to macOS. Currently, only homebrew installations
+are supported.}
+
 \item{...}{Currently not in use.}
 }
 \value{
@@ -29,8 +34,8 @@ QGIS from within R. This is the root path, the QGIS prefix path and the
 path to the Python plugins.
 }
 \description{
-\code{set_env()} tries to find all the paths necessary to run QGIS from
-within R.
+\code{set_env()} tries to find all the paths necessary to run QGIS
+from within R.
 }
 \examples{
 \dontrun{
