@@ -33,9 +33,9 @@ However, please note that the number of geoalgorithms you can use from within **
 
 # Windows
 
-There are at least two options to install QGIS on Windows in such a way that RQGIS can access QGIS.
+There are at least two options to install QGIS on Windows in such a way that **RQGIS3** can access QGIS.
 The first option is the Standalone Installer from the [QGIS installer page](https://www.qgis.org/en/site/forusers/download.html). 
-This will install QGIS3 along with the third-party providers GRASS and SAGA, and most likely will meet the need of most users.
+This will install QGIS3 along with the third-party providers GRASS and SAGA, and most likely will meet the needs of most users.
 However, if you would like to install specific software versions and use even more third-party providers, use the OSGeo4W Network installer. 
 This installer is available on the [QGIS installer page](https://www.qgis.org/en/site/forusers/download.html) as well as on the [OSGeo4W-website](http://trac.osgeo.org/osgeo4w/). 
 Download it and follow the instructions when executing the installer.
@@ -64,7 +64,7 @@ sudo apt-get update
 ```
 
 Next add the correct repository to `/etc/apt/sources.list`.
-Here, we use the current long-term release (2.18):
+Here, we use the current long-term release:
 
 **QGIS 3.x for Ubuntu 18.04**
 
@@ -91,13 +91,13 @@ sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
 Now we need to add the GPG key so that we do not face key errors:
 
 ```sh
-wget -O - http://qgis.org/downloads/qgis-2017.gpg.key | gpg --import
-# to verify, run:
-# gpg --fingerprint CAEB3DC3BDF7FB45
-gpg --export --armor CAEB3DC3BDF7FB45 | sudo apt-key add -
+wget -O - https://qgis.org/downloads/qgis-2019.gpg.key | gpg --import
+# verify fingerprint
+gpg --fingerprint 51F523511C7028C3
+gpg --export --armor 51F523511C7028C3 | sudo apt-key add -
 ```
 
-After that, we can install QGIS and GRASS as follows:
+After that, we can install QGIS3 and GRASS as follows:
 
 ```sh
 sudo apt-get update
@@ -284,5 +284,5 @@ Otherwise, pre-built bottles (= binaries) will be used which speeds up the insta
 
 2. Using the official QGIS binary
 
-We currently do not support the QGIS installer from https://www.qgis.org/en/site/forusers/download.html  due to technical issues getting it working with RQGIS3.
+We currently do not support the QGIS installer from https://www.qgis.org/en/site/forusers/download.html  due to technical issues getting it working with **RQGIS3**.
 We may add support for it in the future.
