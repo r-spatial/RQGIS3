@@ -6,8 +6,8 @@ context("pass_args")
 test_that("Test, if pass_args works correctly?", {
   testthat::skip_on_cran()
 
-  alg <- "grass7:r.slope.aspect"
-  params <- pass_args(alg, elevation = dem, format = "degrees")
+  alg = "grass7:r.slope.aspect"
+  params = pass_args(alg, elevation = dem, format = "degrees")
   # overall checks
   expect_type(params, "list")
   expect_length(params, 19)
@@ -22,25 +22,25 @@ test_that("Test, if pass_args works correctly?", {
     )
   )
   # check if a parameter was wrongly specified
-  params <- try(pass_args(alg, elev = dem), silent = TRUE)
+  params = try(pass_args(alg, elev = dem), silent = TRUE)
   expect_s3_class(params, "try-error")
 })
 
 test_that("Test, if multiple input works with pass_args?", {
   testthat::skip_on_cran()
 
-  r <- raster(ncol = 100, nrow = 100)
-  r1 <- crop(r, extent(-10, 11, -10, 11))
-  r2 <- crop(r, extent(0, 20, 0, 20))
-  r3 <- crop(r, extent(9, 30, 9, 30))
-  r1[] <- 1:ncell(r1)
-  r2[] <- 1:ncell(r2)
-  r3[] <- 1:ncell(r3)
+  r = raster(ncol = 100, nrow = 100)
+  r1 = crop(r, extent(-10, 11, -10, 11))
+  r2 = crop(r, extent(0, 20, 0, 20))
+  r3 = crop(r, extent(9, 30, 9, 30))
+  r1[] = 1:ncell(r1)
+  r2[] = 1:ncell(r2)
+  r3[] = 1:ncell(r3)
 
-  alg <- "grass7:r.patch"
+  alg = "grass7:r.patch"
   # params = pass_args(alg, input = list(r1, r2, r3))  # must also work...
   # perfect, it does
-  params <- pass_args(alg,
+  params = pass_args(alg,
     input = list(r1, r2, r3),
     output = file.path(tempdir(), "patch.tif")
   )
@@ -63,20 +63,20 @@ test_that("Test, if multiple input works with pass_args?", {
   # also write a test for shapefiles -> find a function that takes multiple
   # shapefiles as input (ParameterMultipleInput), e.g., grass7:v.patch
 
-  coords_1 <- matrix(
+  coords_1 = matrix(
     data = c(0, 0, 1, 0, 1, 1, 0, 1, 0, 0),
     ncol = 2, byrow = TRUE
   )
-  coords_2 <- coords_1 + 2
+  coords_2 = coords_1 + 2
   # convert coordinates into sf-objects
-  poly_1 <- st_sfc(st_polygon(list(coords_1)))
+  poly_1 = st_sfc(st_polygon(list(coords_1)))
   # st_as_sf(poly_1)  # will not work, we need at least one column
-  poly_1 <- st_sf(r = 5, poly_1)
-  poly_2 <- st_sfc(st_polygon(list(coords_2)))
-  poly_2 <- st_sf(r = 5, poly_2)
+  poly_1 = st_sf(r = 5, poly_1)
+  poly_2 = st_sfc(st_polygon(list(coords_2)))
+  poly_2 = st_sf(r = 5, poly_2)
   # check if multiple sf-object input was converted into a string containing the
   # paths to the shapefiles
-  params <- pass_args("grass7:v.patch", input = list(poly_1, poly_2))
+  params = pass_args("grass7:v.patch", input = list(poly_1, poly_2))
   expect_type(params$input[[1]], "character")
   expect_type(params$input[[1]], "character")
   # check if the correct GRP was extracted
