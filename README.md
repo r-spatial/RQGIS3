@@ -11,18 +11,20 @@ status](https://codecov.io/gh/jannes-m/RQGIS3/branch/master/graph/badge.svg)](ht
 
 ## ATTENTION
 
-**RQGIS3 and RStudio does not work on UNIX-based OS**
+**RQGIS3 crashes RStudio R session on UNIX-based OS**
 
 Though **RQGIS3** works when running it in a plain R session in the
-terminal, it crashes the R session when ran inside RStudio (see
-<https://github.com/r-spatial/RQGIS3/issues/10> and
+terminal, it crashes the R session when ran inside RStudio on UNIX-based
+OS (see <https://github.com/r-spatial/RQGIS3/issues/10> and
 <https://github.com/rstudio/rstudio/issues/4606>). If Linux and MacOS
 users would like to use **RQGIS3** in conjunction with RStudio, we
 recommend to use the [geocompr docker
 image](https://hub.docker.com/r/robinlovelace/geocompr/). Please refer
 also to the instructions on the [geocompr landing
 page](https://github.com/robinlovelace/geocompr#running-geocompr-code-in-docker)
-how to use the docker image.
+how to use the docker image. Since **RQGIS3** and RStudio work in
+harmony under Windows, a further alternative would be to use a virtual
+box running Windows.
 
 ## Description
 
