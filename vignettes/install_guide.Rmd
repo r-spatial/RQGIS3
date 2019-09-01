@@ -6,7 +6,7 @@ output:
   rmarkdown::html_vignette:
     toc: true
 vignette: >
-  %\VignetteIndexEntry{(R)QGIS installation guide for Windows, Mac & Linux"}
+  %\VignetteIndexEntry{(R)QGIS3 installation guide for Windows, Mac & Linux"}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -106,6 +106,8 @@ sudo apt-get install qgis python-qgis qgis-plugin-grass
 
 ### SAGA
 
+<!---
+
 You can install the SAGA LTS 2.3.1 version from the [ubuntugis/unstable](https://launchpad.net/~ubuntugis/+archive/ubuntu/ubuntugis-unstable) repository.
 If you haven't done so yet, add the repository and then simply install SAGA via `apt-get`:
 
@@ -115,7 +117,6 @@ sudo apt-get update
 sudo apt-get install saga
 ```
 
-<!---
 To use SAGA functions within (R)QGIS, you naturally need to install SAGA GIS. To install the most recent SAGA version, simply execute the following lines in a terminal window: 
 
 ```sh
@@ -126,19 +127,19 @@ sudo apt-get install saga
 sudo add-apt-repository --remove ppa:johanvdw/saga-gis
 --->
 
-If you would like to use another SAGA version, you need to compile it yourself (see [here](https://sourceforge.net/p/saga-gis/wiki/Compiling%20SAGA%20on%20Linux/)). 
-Please note, however, that QGIS currently only supports the SAGA LTR 2.3.x as far as we know.
+As far as we know, QGIS currently only supports the old SAGA versions 2.3.x (current SAGA version is 7.3).
+To install old SAGA versions, we need to download and compile it manually (see [here](https://sourceforge.net/p/saga-gis/wiki/Compiling%20SAGA%20on%20Linux/)). 
 
-<!--
-After the installation you will find the SAGA algorithms in the processing toolbox of the QGIS GUI (this might not be true for SAGA >= 2.2.1 see further below). 
 Prior to the SAGA installation, we need to install various dependencies required by SAGA.
-Here, we just quickly show how to install SAGA and its dependencies under Ubuntu. Please refer to this [page](https://sourceforge.net/p/saga-gis/wiki/Compiling%20SAGA%20on%20Linux/) for a more comprehensive SAGA installation guide.
-Please note that we here simply reproduce in great parts a copy of this guide.
+Here, we just quickly show how to install SAGA and its dependencies under Ubuntu. 
+Please refer to this [page](https://sourceforge.net/p/saga-gis/wiki/Compiling%20SAGA%20on%20Linux/) for a more comprehensive SAGA installation guide.
+Please note that we here simply reproduce great parts of this guide.
 
 First of all, install all necessary SAGA dependencies and a few compilation and configuration tools:
 
 ```sh
-sudo apt-get install libwxgtk3.0-dev libtiff5-dev libgdal-dev libproj-dev libjasper-dev libexpat1-dev wx-common libexpat1-dev libogdi3.2-dev unixodbc-dev
+sudo apt-get install libwxgtk3.0-dev libtiff5-dev libgdal-dev libproj-dev \
+    libexpat-dev wx-common libogdi-dev unixodbc-dev
 
 # compilation and configuration tools
 sudo apt-get install g++ make automake libtool git
@@ -149,12 +150,12 @@ Check out the various available versions [here](https://sourceforge.net/projects
 Here, we will download SAGA 2.3.1 into our home directory, unpack it and change the working directory to the unpacked folder:
 
 ```sh
-wget -O /home/<YourUserName>/saga-git "https://sourceforge.net/projects/saga-gis/files/SAGA%20-%202.3/SAGA%202.3.1/saga_2.3.1.tar.gz"
-cd /home/<YourUserName>
+wget -O /home/$USER/saga-git "https://sourceforge.net/projects/saga-gis/files/SAGA%20-%202/SAGA%202.3.1/saga_2.3.1.tar.gz/download"
+cd "/home/$USER"
 sudo tar -xvzf saga-git
 cd saga-2.3.1
 ```
-Having done so, we are ready to compile SAGA:
+Having done so, we are ready to compile SAGA (which takes a while...):
 
 ```sh
 sudo autoreconf -i
@@ -181,6 +182,9 @@ export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 saga_gui
 ```
 
+After the installation you will find the SAGA algorithms in the processing toolbox of the QGIS GUI (this might not be true for SAGA >= 2.2.1 see further below). 
+
+
 Using SAGA >= 2.2.1 you might encounter following message in the Processing log when opening QGIS: 
 `Problem with SAGA installation: installed SAGA version (2.3.1) is not supported`. 
 Though in this case SAGA is not available in the processing toolbox, you might still able to use it 
@@ -190,7 +194,7 @@ Please note that SAGA 2.3.1 is the latest SAGA version supported by QGIS (2.14 a
 In case you would like to uninstall SAGA, type:
 
 ```sh
-cd /home/<YourUserName>/saga-2.3.1
+cd "/home/$USER/saga-2.3.1"
 sudo make uninstall
 ```
 --> 
