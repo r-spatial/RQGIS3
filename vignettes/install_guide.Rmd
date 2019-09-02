@@ -58,13 +58,13 @@ First of all, make sure to remove QGIS3 and GRASS packages you may have installe
 <!--http://gis.stackexchange.com/questions/167472/qgis-2-8-ubuntu-14-04-installation-issues-terminal-command-attempts-to-install-->
 ```sh 
 sudo apt-get --purge remove qgis
-#sudo apt autoremove --purge-remove 
 sudo apt autoremove
 sudo apt-get update
 ```
 
 Next add the correct repository to `/etc/apt/sources.list`.
-Here, we use the current long-term release:
+Here, we use the current long-term release.
+To also install GRASS7, we have to add the ubuntugis-unstable ppa repository.
 
 **QGIS 3.x for Ubuntu 18.04**
 
@@ -74,8 +74,6 @@ sudo sh -c 'echo "deb http://qgis.org/ubuntu-ltr bionic main" >> /etc/apt/source
 sudo sh -c 'echo "deb-src http://qgis.org/ubuntu-ltr bionic main" >> /etc/apt/sources.list'
 sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
 ```
-To also install GRASS, we have to add the ubuntugis-unstable ppa repository.
-
 
 **QGIS 3.x for Ubuntu 16.04**
 
@@ -91,7 +89,7 @@ sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
 
 **For other Ubuntu releases, simply replace 'xenial' with the respective release name.**
 
-Now we need to add the GPG key so that we do not face key errors:
+Next we need to add the GPG key to avoid key errors:
 
 ```sh
 wget -O - https://qgis.org/downloads/qgis-2019.gpg.key | gpg --import
@@ -111,8 +109,11 @@ sudo apt-get install qgis python-qgis qgis-plugin-grass
 
 SAGA's current long term release is 7.3.
 Until now, QGIS3 only supports SAGA versions 2.3.x.
-In the meantimer, however, SAGA 2.3.x is no longer actively developed, and depends on old gdal and proj libraries which conflict with those as used by QGIS3 itself.
-Therefore, we can only suggest to wait until QGIS3 also supports a more recent version of SAGA.
+In the meantime, however, SAGA 2.3.x is no longer actively developed, and depends on old gdal and proj libraries which conflict with those used by QGIS3 and GRASS7.
+Therefore, we can only suggest to wait until QGIS3 also supports a more recent version of SAGA. 
+Please note that under Debian which is not using the ubuntugis-unstable repository, one can still use SAGA 2.3.1 and QGIS3 and GRASS7 (see the [geocompr-dockerfile](https://github.com/Robinlovelace/geocompr/blob/master/Dockerfile) for an example).
+So in the meantime, we can offer this [Docker image](https://hub.docker.com/r/robinlovelace/geocompr/) available on docker hub as an alternative to be able to use SAGA also with QGIS3.
+Please see the [geocompr landing page](https://github.com/Robinlovelace/geocompr/#running-geocompr-code-in-docker) for further instructions how to use it.
 
 <!--
 Under Ubuntu we need to install GRASS-GIS7 from ppa:ubuntugis/ubuntugis-unstable.
@@ -211,10 +212,7 @@ In case you would like to uninstall SAGA, type:
 cd "/home/$USER/saga-2.3.1"
 sudo make uninstall
 ```
---> 
--->
 
-<!--
 ### Orfeo Toolbox (OTB)
 
 You can download the Orfeo Toolbox from [here](https://www.orfeo-toolbox.org/download/).
@@ -247,9 +245,10 @@ rmdir /home/<YourUserName>/Applications/
 
 ## Arch Linux
 
-You can install various QGIS, and GRASS versions from the [Arch User Repository](https://aur.archlinux.org/). 
+You can install various QGIS and GRASS versions from the [Arch User Repository](https://aur.archlinux.org/). 
 We recommend to use the [yaourt](https://wiki.archlinux.de/title/Yaourt) package manager.
-
+At the moment it is not possible to use SAGA in conjunction with QGIS3 on Arch-based OS.
+Please use the [geocompr docker image](https://hub.docker.com/r/robinlovelace/geocompr/) as described in the previous section.
 
 # Mac OS X
 
