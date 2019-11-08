@@ -41,9 +41,9 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, homebrew = TRUE, ...) 
   }
 
   if (Sys.info()["sysname"] == "Windows") {
+    platform = "Windows"
     if (is.null(root)) {
 
-      platform = "Windows"
       # raw command
       # change to C: drive and (&) list all subfolders of C:
       # /b bare format (no heading, file sizes or summary)
