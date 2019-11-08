@@ -207,6 +207,7 @@ set_env = function(root = NULL, new = FALSE, dev = FALSE, homebrew = TRUE, ...) 
     if (is.null(root)) {
       message("Assuming that your root path is '/usr/local'!")
       root = "/usr/local"
+      platform = "FreeBSD"
     }
   }
   qgis_env = list(root = root)
