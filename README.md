@@ -337,6 +337,27 @@ look at our paper:
 
 </div>
 
+## macOS
+
+The following setup works to execute `find_algorithms()` on macOS
+10.14.6 (Mojave).
+
+Installed from `homebrew/osgeo4mac`:
+
+  - osgeo-qgis (v3.8.0)
+  - osgeo-gdal (v2.4.1)
+  - osgeo-gdal-python (v2.4.1)
+  - spatialindex (v1.9.0)
+  - <osgeo-proj@5> (soft linked `ln -s
+    /usr/local/opt/osgeo-proj/lib/libproj.15.dylib
+    /usr/local/opt/osgeo-proj/lib/libproj.13.dylib`)
+
+When running `open_app()` you’ll see a bunch of warnings but you should
+be able to run `find_algorithms()`.
+
+The current `osgeo-qgis` formula does not work with gdal v3.0 even
+though the latter is the latest version of `osgeo-gdal`.
+
 1.   Please note that the Python tunnel can only be closed by starting a
     new R session (see
     <https://github.com/rstudio/reticulate/issues/27>). On the one hand,
