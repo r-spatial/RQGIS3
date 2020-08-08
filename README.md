@@ -9,6 +9,180 @@ status](https://www.r-pkg.org/badges/version/RQGIS3)](https://cran.r-project.org
 status](https://codecov.io/gh/jannes-m/RQGIS3/branch/master/graph/badge.svg)](https://codecov.io/github/jannes-m/RQGIS3?branch=master)
 [![StackOverflow](https://img.shields.io/badge/stackoverflow-rqgis-orange.svg)](https://stackoverflow.com/questions/tagged/rqgis)
 
+## Use qgis\_process instead of RQGIS3
+
+From now on, we discourage the usage of **RQGIS3** since it is no longer
+actively maintained and due to various unresolvable issues (see also
+next section). However, the good new is that there is a new [standalone
+executable](https://github.com/qgis/QGIS/pull/34617) available from QGIS
+3.14 onwards. This means, one can now run QGIS processing algorithms
+from the command line with ease. The tool is easy to use, takes care of
+setting the environmental variables to run QGIS and the user no longer
+has to use Python. In short, this seems to be the perfect replacement
+for **RQGIS3**. Let’s have a look how to use the standalone executable.
+Windows users must specify the path to the OSGeo4W Shell in order to run
+`qgis_process`, which for now is called `qgis_process-qgis` under
+Windows.
+
+``` r
+# specify path to OSGeo4W Shell on your system.
+# Path depends on where you have installed QGIS 3.14 on your system, hence, you
+# might have to adjust the path
+os_shell = "C:/OSGEO4~1/OSGeo4W.bat"
+# another typical location is:
+# os_shell = "C:/Program Files/QGIS 3.14/OSGeo4W.bat"
+system2(os_shell, args = "qgis_process-qgis")
+```
+
+Windows users please adjust all following commands using the syntax
+given in the chunk above. By contrast, UNIX users can simply type:
+
+``` r
+system("qgis_process", intern = TRUE)
+```
+
+    ## [1] "QGIS Processing Executor - 3.14.1-Pi 'Pi' (3.14.1-Pi)"                                                                                                                       
+    ## [2] "Usage: qgis_process [command] [algorithm id or path to model file] [parameters]"                                                                                             
+    ## [3] ""                                                                                                                                                                            
+    ## [4] "Available commands:"                                                                                                                                                         
+    ## [5] "\tplugins\tlist available and active plugins"                                                                                                                                
+    ## [6] "\tlist\tlist all available processing algorithms"                                                                                                                            
+    ## [7] "\thelp\tshow help for an algorithm. The algorithm id or a path to a model file must be specified."                                                                           
+    ## [8] "\trun\truns an algorithm. The algorithm id or a path to a model file and parameter values must be specified. Parameter values are specified via the --PARAMETER=VALUE syntax"
+
+Running `qgis_process` without specifying any parameters lists the
+available commands. Let’s have a look at the available geoprocessing
+algorithms.
+
+``` r
+algs = system("qgis_process list", intern = TRUE)
+head(algs, 20)
+```
+
+    ##  [1] "Available algorithms"                                   
+    ##  [2] ""                                                       
+    ##  [3] "QGIS (3D)"                                              
+    ##  [4] "\t3d:tessellate\tTessellate"                            
+    ##  [5] ""                                                       
+    ##  [6] "GDAL"                                                   
+    ##  [7] "\tgdal:aspect\tAspect"                                  
+    ##  [8] "\tgdal:assignprojection\tAssign projection"             
+    ##  [9] "\tgdal:buffervectors\tBuffer vectors"                   
+    ## [10] "\tgdal:buildvirtualraster\tBuild virtual raster"        
+    ## [11] "\tgdal:buildvirtualvector\tBuild virtual vector"        
+    ## [12] "\tgdal:cliprasterbyextent\tClip raster by extent"       
+    ## [13] "\tgdal:cliprasterbymasklayer\tClip raster by mask layer"
+    ## [14] "\tgdal:clipvectorbyextent\tClip vector by extent"       
+    ## [15] "\tgdal:clipvectorbypolygon\tClip vector by mask layer"  
+    ## [16] "\tgdal:colorrelief\tColor relief"                       
+    ## [17] "\tgdal:contour\tContour"                                
+    ## [18] "\tgdal:contour_polygon\tContour Polygons"               
+    ## [19] "\tgdal:convertformat\tConvert format"                   
+    ## [20] "\tgdal:dissolve\tDissolve"
+
+To test if we can actually process some geodata, let’s try to find the
+centroid of a spatial polygon layer. First, we need to know which
+centroid algorithms are at our disposal.
+
+``` r
+grep("centroid", algs, value = TRUE)
+```
+
+    ## [1] "\tnative:centroids\tCentroids"                                                                         
+    ## [2] "\tnative:generatepointspixelcentroidsinsidepolygons\tGenerate points (pixel centroids) inside polygons"
+    ## [3] "\tqgis:generatepointspixelcentroidsalongline\tGenerate points (pixel centroids) along line"
+
+Let’s use `native:centroids` to find the centroids of the NC dataset.
+First, we need to find out which parameters are required by
+`native:centroids`.
+
+``` r
+system("qgis_process help native:centroids", intern = TRUE)
+```
+
+    ##  [1] "Centroids (native:centroids)"                                                                                        
+    ##  [2] ""                                                                                                                    
+    ##  [3] "----------------"                                                                                                    
+    ##  [4] "Description"                                                                                                         
+    ##  [5] "----------------"                                                                                                    
+    ##  [6] "This algorithm creates a new point layer, with points representing the centroid of the geometries in an input layer."
+    ##  [7] ""                                                                                                                    
+    ##  [8] "The attributes associated to each point in the output layer are the same ones associated to the original features."  
+    ##  [9] ""                                                                                                                    
+    ## [10] "----------------"                                                                                                    
+    ## [11] "Arguments"                                                                                                           
+    ## [12] "----------------"                                                                                                    
+    ## [13] ""                                                                                                                    
+    ## [14] "INPUT: Input layer"                                                                                                  
+    ## [15] "\tArgument type:\tsource"                                                                                            
+    ## [16] "\tAcceptable values:"                                                                                                
+    ## [17] "\t\t- Path to a vector layer"                                                                                        
+    ## [18] "ALL_PARTS: Create centroid for each part"                                                                            
+    ## [19] "\tArgument type:\tboolean"                                                                                           
+    ## [20] "\tAcceptable values:"                                                                                                
+    ## [21] "\t\t- 1 for true/yes"                                                                                                
+    ## [22] "\t\t- 0 for false/no"                                                                                                
+    ## [23] "OUTPUT: Centroids"                                                                                                   
+    ## [24] "\tArgument type:\tsink"                                                                                              
+    ## [25] "\tAcceptable values:"                                                                                                
+    ## [26] "\t\t- Path for new vector layer"                                                                                     
+    ## [27] ""                                                                                                                    
+    ## [28] "----------------"                                                                                                    
+    ## [29] "Outputs"                                                                                                             
+    ## [30] "----------------"                                                                                                    
+    ## [31] ""                                                                                                                    
+    ## [32] "OUTPUT: <outputVector>"                                                                                              
+    ## [33] "\tCentroids"                                                                                                         
+    ## [34] ""                                                                                                                    
+    ## [35] ""
+
+We have to specify INPUT and OUTPUT.
+
+``` r
+nc_path = system.file("shape/nc.shp", package = "sf")
+out_path = tempfile(fileext = ".gpkg")
+cmd = sprintf("qgis_process run native:centroids --INPUT=%s --OUTPUT=%s",
+              nc_path, out_path)
+system(cmd, intern = TRUE)
+```
+
+    ##  [1] ""                                                                      
+    ##  [2] "----------------"                                                      
+    ##  [3] "Inputs"                                                                
+    ##  [4] "----------------"                                                      
+    ##  [5] ""                                                                      
+    ##  [6] "INPUT:\t/home/jannes/R/x86_64-pc-linux-gnu-library/4.0/sf/shape/nc.shp"
+    ##  [7] "OUTPUT:\t/tmp/Rtmpc3DRJ2/filed8dc688fb520.gpkg"                        
+    ##  [8] ""                                                                      
+    ##  [9] "0...10...20...30...40...50...60...70...80...90..."                     
+    ## [10] "----------------"                                                      
+    ## [11] "Results"                                                               
+    ## [12] "----------------"                                                      
+    ## [13] ""                                                                      
+    ## [14] "OUTPUT:\t/tmp/Rtmpc3DRJ2/filed8dc688fb520.gpkg"
+
+It seemed to have worked. To check the output, let us read it in and
+plot it.
+
+``` r
+library("sf")
+library("dplyr")
+
+# read in the data
+nc = read_sf(nc_path)
+nc_cen = read_sf(out_path)
+
+# first plot nc polygons
+st_geometry(nc) %>% plot
+# then add the centroids computed by QGIS
+st_geometry(nc_cen) %>% plot(pch = 16, col = "red", add = TRUE)
+```
+
+![](README_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+Excellent. We have computed the centroids of the nc polygons using QGIS
+via the command line.
+
 ## ATTENTION
 
 **RQGIS3 crashes RStudio R session on UNIX-based OS**
