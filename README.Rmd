@@ -16,7 +16,10 @@ However, the good new is that there is a new [standalone executable](https://git
 This means, one can now run QGIS processing algorithms from the command line with ease.
 The tool is easy to use, takes care of setting the environmental variables to run QGIS and the user no longer has to use Python.
 In short, this seems to be the perfect replacement for **RQGIS3**.
-Let's have a look how to use the standalone executable.
+Even better, @paleolimbot is already developing an R package calling `qgis_process` with the help of **processx**. 
+Please refer to [qgisprocess](https://github.com/paleolimbot/qgisprocess) for more information and how to use the package.
+
+Since **qgisprocess** is still under active development, we show here how to use the standalone executable `qgis_process` using simple `system2` calls.
 Windows users must specify the path to the OSGeo4W Shell in order to run `qgis_process`, which for now is called `qgis_process-qgis` under Windows.
 
 ```{r, eval=FALSE}
