@@ -38,7 +38,7 @@ Shell in order to run `qgis_process`, which for now is called
     os_shell = "C:/OSGEO4~1/OSGeo4W.bat"
     # another typical location is:
     # os_shell = "C:/Program Files/QGIS 3.14/OSGeo4W.bat"
-    system2(os_shell, args = "qgis_process-qgis")
+    system2(os_shell, args = "qgis_process-qgis-ltr")
 
 Windows users please adjust all following commands using the syntax
 given in the chunk above. By contrast, UNIX users can simply type:
